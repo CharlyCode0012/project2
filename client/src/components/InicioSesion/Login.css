@@ -1,0 +1,30 @@
+body{
+  min-height: 100vh;
+}
+
+.cascading-right {
+  margin-right: -50px;
+}
+
+@media (max-width: 991.98px) {
+  .cascading-right {
+    margin-right: 0;
+  }
+}
+
+.div_body {
+  background: #c10ca3;
+  background: linear-gradient(to right, #a407d0, #430bea);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+}
+
+.Josefin_Slab {
+  font-family: "Josefin Slab", serif;
+}
