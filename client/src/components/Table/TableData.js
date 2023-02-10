@@ -1,7 +1,8 @@
 const TableData = ({el, data}) => {
+  console.log(String(el[data]));
     return (
       <>
-        <td>{el[data]}</td>
+        <td>{el[data].toString()}</td>
       </>
     );
   };

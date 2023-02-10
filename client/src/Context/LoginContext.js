@@ -7,7 +7,7 @@ const LoginContext = createContext();
 
 function LoginProvider({ children }) {
   const url = "http://localhost:3200/api/users/login"; //dev-back
-  const [error, setError] = useState(null);
+  const [error_, setError_] = useState(null);
   const [responseLogin, setResponseLogin] = useState(false);
 
   let api = helpHTTP();
@@ -19,7 +19,7 @@ function LoginProvider({ children }) {
     if (!cookies.get("user")) {
       navigate("/iniciar-sesion", { replace: true });
     } else {
-      console.log(cookies.get('user').success)
+      console.log(cookies.get('user'));
     }
   }, []);
 
@@ -33,17 +33,17 @@ function LoginProvider({ children }) {
 
     if (!res.err) {
       const cookies = new Cookies();
-      cookies.set("user", res, { path: "/" });
-      setError(null);
+      cookies.set("user", res.success, { path: "/" });
+      setError_(null);
       navigate('/inicio',{replace: true});
     } else {
       setResponseLogin(false);
-      setError(res);
+      setError_(res);
     }
   };
 
   const data = {
-    error,
+    error_,
     handleLogin,
     responseLogin,
   };

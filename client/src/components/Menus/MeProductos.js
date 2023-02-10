@@ -7,6 +7,7 @@ import Categoria from "../../pages/Productos/Categoria";
 import Catalogo from "../../pages/Productos/Catalogo";
 import "../../index.css";
 import { Hover } from "../StyledComponents/Hover.js";
+import Productos from "../../pages/Productos/Productos";
 
 function Menu() {
   /* A placeholder for the background color. */
@@ -34,6 +35,17 @@ function Menu() {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+                <Hover>
+                  <NavLink
+                    className="nav-link active"
+                    aria-current="page"
+                    to="productos"
+                  >
+                    Producto
+                  </NavLink>
+                </Hover>
+              </li>
               <li className="nav-item">
                 <Hover>
                   <NavLink
@@ -84,7 +96,8 @@ function Menu() {
         </div>
       </nav>
       <Routes>
-        <Route path="" element={<Navigate to="catalogo" />} />
+        <Route path="" element={<Navigate to="productos" />} />
+        <Route path="productos/*" element={<Productos />} />
         <Route path="catalogo/*" element={<Catalogo />} />
         <Route path="categoria/*" element={<Categoria />} />
         <Route path="duda" element={<Duda />} />

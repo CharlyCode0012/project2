@@ -94,7 +94,7 @@ const FormUs = () => {
     return aleatoria;
   };
 
-  /* console.log("form.name: ", form.name); */
+   console.log("form.name: ", form.name);
   return (
     <div>
       <form onSubmit={handleSubmit} className="">

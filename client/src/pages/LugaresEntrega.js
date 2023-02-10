@@ -1,15 +1,22 @@
-import React, { useEffect } from 'react'
-import NavBar from '../components/Menus/NavBar'
-import Cookies from 'universal-cookie'
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import NavBar from "../components/Menus/NavBar";
+import CrudLugares from "../components/LuagresEntrega/CrudLugares";
+import { CrudProvider } from "../Context/CrudContext";
+
+const keys = ["name", "cp", "open_h", "close_h"];
+const th = ["Nombre", "Código Postal", "Hora abierto", "Hora cierre"];
+const url = "http://localhost:3200/api/places";
+const path = "/lugar-de-entrega";
 
 const LugaresEntrega = () => {
   return (
-    <div>
+    <>
       <NavBar />
-        <h2>Lugares de Entrega</h2>
-    </div>
-  )
-}
+      <CrudProvider url={url} path={path}>
+        <CrudLugares th={th} keys={keys} />
+      </CrudProvider>
+    </>
+  );
+};
 
-export default LugaresEntrega
+export default LugaresEntrega;

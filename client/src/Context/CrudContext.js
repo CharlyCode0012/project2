@@ -23,6 +23,8 @@ const CrudContext = createContext();
  * nav
  */
 function CrudProvider({ children, url, path, flag = true }) {
+  const [categories, setCategories] = useState([]);
+  const [catalogs, setCatalogs] = useState([]);
   const [db, setDb] = useState([]);
   const [dataToEdit, setDataToEdit] = useState(null);
   const [error, setError] = useState(null);
@@ -33,7 +35,6 @@ function CrudProvider({ children, url, path, flag = true }) {
   const [order, setOrder] = useState("ASC");
   //let Url = path;
   let api = helpHTTP();
-
 
   /**
    * If there is no error, set the database to the response, otherwise set the database to an empty
@@ -46,6 +47,7 @@ function CrudProvider({ children, url, path, flag = true }) {
     //console.log(res);
     if (!res.err) {
       setDb(res);
+      console.log(res);
       setError(null);
     } else {
       setDb([]);
@@ -69,7 +71,7 @@ function CrudProvider({ children, url, path, flag = true }) {
     console.log(tempUrl);
     Url = `${url}${tempUrl[0]}${data}?${tempUrl[1]}`;
     let res = await api.get(Url);
-
+    console.log(Url);
     if (!res.err) {
       setDb(res);
       setError(null);
@@ -80,9 +82,18 @@ function CrudProvider({ children, url, path, flag = true }) {
     setLoading(false);
   };
 
+  const getSelect = async (Url, flag=true) => {
+    const options = await api.get(Url);
+    if(flag){
+      setCatalogs(options);
+    }
+    else{
+      setCatalogs(options);
+    }
+  };
+
   useEffect(() => {
-    if(flag)
-      get();
+    if (flag) get();
   }, []);
 
   /**
@@ -136,49 +147,47 @@ function CrudProvider({ children, url, path, flag = true }) {
   };
 
   /* A function that is called when the user clicks on the delete button. */
-  const deleteData = useCallback(
-    (name, id) => {
-      /**
-       * If the user confirms the deletion, then the function will delete the user from the database and
-       * update the table with the new data.
-       * @param id - the id of the user to be deleted
-       * @returns the result of the function funDelete.
-       */
-      const funDelete = async (id) => {
-        let isDelete = window.confirm(
-          `¿Estás seguro que quieres eliminar a: ${name}?`
-        );
+  const deleteData = (name, id) => {
+    /**
+     * If the user confirms the deletion, then the function will delete the user from the database and
+     * update the table with the new data.
+     * @param id - the id of the user to be deleted
+     * @returns the result of the function funDelete.
+     */
+    const funDelete = async (id) => {
+      let isDelete = window.confirm(
+        `¿Estás seguro que quieres eliminar a: ${name}?`
+      );
 
-        let options = {
-          headers: { "content-type": "application/json" },
-        };
-
-        if (isDelete) {
-          let endpoint = `${url}/${id}`;
-          let res = await api.del(endpoint, options);
-          if (!res.err) {
-            let newData = db.filter((el) => el.id !== id);
-            setDb(newData);
-            setError(null);
-          } else {
-            setError(res);
-          }
-        } else {
-          return;
-        }
+      let options = {
+        headers: { "content-type": "application/json" },
       };
 
-      funDelete(id);
-    },
-    [db, api, url]
-  );
+      if (isDelete) {
+        let endpoint = `${url}/${id}`;
+        let res = await api.del(endpoint, options);
+        if (!res.err) {
+          let newData = db.filter((el) => el.id !== id);
+          setDb(newData);
+          setError(null);
+        } else {
+          setError(res);
+        }
+      } else {
+        return;
+      }
+    };
+
+    funDelete(id);
+  };
 
   /* A function that is called when the user clicks on the edit button. */
   const findData = useCallback(
     (id) => {
       setDataToEdit(null);
       let item = db.find((el) => el.id === id);
-      console.log(`find id: ${id}`);
+      console.log(`find id: ${item.id}`);
+      console.log(item);
       setDataToEdit(item);
       openModalForm();
     },
@@ -210,6 +219,13 @@ function CrudProvider({ children, url, path, flag = true }) {
   const handleSearch = (validationSearch, setErrors, errors, navigate) => {
     const typeGet = validationSearch(navSearch, path, order, navigate);
 
+    if (navSearch === "") {
+      if (errors !== null) setErrors(null);
+      navigate({ pathname: path, search: "?order=" + order });
+      return get();
+    }
+
+    /* 
     if (typeGet.text === "cel") {
       if (errors !== null) setErrors(null);
       //let text = typeGet.format(navSearch);
@@ -219,17 +235,11 @@ function CrudProvider({ children, url, path, flag = true }) {
     if (typeGet.text === "card") {
       if (errors !== null) setErrors(null);
       return getData(navSearch, typeGet.url);
-    }
+    } */
 
-    if (typeGet.text === "name") {
+    if (typeGet.text !== "") {
       if (errors !== null) setErrors(null);
       return getData(navSearch, typeGet.url);
-    }
-
-    if (navSearch === "") {
-      if (errors !== null) setErrors(null);
-      navigate({ pathname: path, search: "?order=" + order });
-      return get();
     }
 
     return setErrors("error");
@@ -250,11 +260,15 @@ function CrudProvider({ children, url, path, flag = true }) {
     closeModalForm,
     handleCreate,
     create,
+    getSelect,
     navSearch,
     setNavSearch,
     handleSearch,
     setOrder,
     path,
+    url,
+    categories,
+    catalogs
   };
   return <CrudContext.Provider value={data}>{children}</CrudContext.Provider>;
 }

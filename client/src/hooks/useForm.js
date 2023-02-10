@@ -1,32 +1,39 @@
 import { useContext, useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 import CrudContext from "../Context/CrudContext";
 import LoginContext from "../Context/LoginContext";
 
 export const useForm = (initialForm, validateForm, error = null) => {
   const { dataToEdit, setDataToEdit, updateData, createData } =
     useContext(CrudContext);
-
-  const { handleLogin} = useContext(LoginContext);
+  const cookies = new Cookies();
+  const { handleLogin } = useContext(LoginContext);
   const [form, setForm] = useState(dataToEdit ? dataToEdit : initialForm);
   const [errors, setErrors] = useState({});
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
-
-
+  
   useEffect(() => {
     return () => {
-      setForm(initialForm);
       setErrors({});
       setResponse(null);
       setLoading(false);
-    }
-  }, [])
-  
+    };
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({
       ...form,
       [name]: value,
+    });
+  };
+
+  const handleChecked = ({target}) => {
+    const {name, checked} = target;
+    setForm({
+      ...form,
+      [name]: checked,
     });
   };
 
@@ -62,7 +69,9 @@ export const useForm = (initialForm, validateForm, error = null) => {
 
     setErrors(validateForm(form));
 
-    if (!Object.keys(errors).length === 0) {
+    console.log(errors)
+    console.log(!Object.keys(errors).length <= 0);
+    if (Object.keys(errors).length > 0) {
       alert("hay errores");
       setResponse(false);
       return;
@@ -78,12 +87,29 @@ export const useForm = (initialForm, validateForm, error = null) => {
     handleReset();
   };
 
+  const handleSubmitPerfil = (e) => {
+    e.preventDefault();
+    setErrors(validateForm(form));
+    const user = cookies.get("user");
+    
+    if (!Object.keys(errors).length === 0) {
+      alert("hay errores");
+      setResponse(false);
+      return;
+    }
+
+    setLoading(true);
+    updateData(form);
+    cookies.set("user", { ...user, ...form }, { path: "/" });
+    setLoading(false);
+  };
+
   const handleSubmitLogin = (e) => {
     e.preventDefault();
 
     setErrors(validateForm(form));
 
-    if (!Object.keys(errors).length === 0 ) {
+    if (!Object.keys(errors).length === 0) {
       alert("hay errores");
       setResponse(false);
       return;
@@ -101,8 +127,10 @@ export const useForm = (initialForm, validateForm, error = null) => {
     response,
     loading,
     handleChange,
+    handleChecked,
     handleBlur,
     handleSubmit,
+    handleSubmitPerfil,
     handleReset,
     handleChangeNumber,
     handleSubmitLogin,

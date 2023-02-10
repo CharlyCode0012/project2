@@ -14,8 +14,9 @@ function Table({ th, keys, title, validationSearch }) {
   const columns = useColumn(th);
   const rows = useRow(db);
   const cookies = new Cookies();
-  const user = cookies.get("user").success;
-  const admin = user.type_use === "admin" ? true : false;
+  const user = cookies.get("user");
+  let admin = false;
+  if (user) admin = user.type_use === "admin" ? true : false;
   //console.log("Fila: ", rows, "columns: ", columns);
 
   return (
@@ -25,14 +26,14 @@ function Table({ th, keys, title, validationSearch }) {
           <NavSearch title={title} validationSearch={validationSearch} />
           <br />
           <h1>{title}</h1>
-          <table className="table-responsive table table-hover mx-auto d-block">
+          <table className="table-responsive table table-hover mx-auto d-block table-bordered">
             <thead className="table-dark">
               <TableHeader th={columns} admin={admin} />
             </thead>
             <tbody className="table-secondary">
               {!db.length > 0 ? (
                 <tr>
-                  <td colSpan={th.length + 1}>Sin datos</td>
+                  <td colSpan={th.length + 2}>Sin datos</td>
                 </tr>
               ) : (
                 rows.map((el, index) => (

@@ -8,7 +8,7 @@ const Order = () => {
     <div className="navbar-brand">
       <select
         className="form-select form-select"
-        aria-label=".form-select-sm example"
+        aria-label="form-select-sm example"
         onChange={(e) => setOrder(e.target.value)}
       >
         <option value="ASC">Ascendente</option>

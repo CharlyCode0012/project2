@@ -4,14 +4,16 @@ import { NavLink } from "react-router-dom";
 import { BsGear, BsHouse } from "react-icons/bs";
 import "../../index.css";
 import { Hover } from "../StyledComponents/Hover.js";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 
 function Menu() {
   /* A placeholder for the background color. */
 
   const cookies = new Cookies();
-  const user = cookies.get('user').success;
-  const admin = user.type_use === "admin" ? true : false;
+  const user = cookies.get("user");
+  let admin = false;
+  if (user) admin = user.type_use === "admin" ? true : false;
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
@@ -81,6 +83,15 @@ function Menu() {
                   Otros
                 </a>
                 <ul className="dropdown-menu">
+                  <li>
+                    <NavLink
+                      className="dropdown-item"
+                      aria-current="page"
+                      to="/analisis"
+                    >
+                      Analisis
+                    </NavLink>
+                  </li>
                   {admin && (
                     <li>
                       <NavLink
@@ -92,16 +103,6 @@ function Menu() {
                       </NavLink>
                     </li>
                   )}
-
-                  <li>
-                    <NavLink
-                      className="dropdown-item"
-                      aria-current="page"
-                      to="/analisis"
-                    >
-                      Analisis
-                    </NavLink>
-                  </li>
                   <li>
                     <hr className="dropdown-divider" />
                   </li>
