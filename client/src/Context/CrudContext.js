@@ -67,7 +67,7 @@ function CrudProvider({ children, url, path, flag = true }) {
     setLoading(true);
     let tempUrl = Url.split("?");
 
-    // Url = url + "/route/" + data + ?order=ASC;
+    // Url = url + "/route/" + data + ? + order=ASC;
     console.log(tempUrl);
     Url = `${url}${tempUrl[0]}${data}?${tempUrl[1]}`;
     let res = await api.get(Url);
@@ -225,17 +225,6 @@ function CrudProvider({ children, url, path, flag = true }) {
       return get();
     }
 
-    /* 
-    if (typeGet.text === "cel") {
-      if (errors !== null) setErrors(null);
-      //let text = typeGet.format(navSearch);
-      return getData(navSearch, typeGet.url);
-    }
-
-    if (typeGet.text === "card") {
-      if (errors !== null) setErrors(null);
-      return getData(navSearch, typeGet.url);
-    } */
 
     if (typeGet.text !== "") {
       if (errors !== null) setErrors(null);
