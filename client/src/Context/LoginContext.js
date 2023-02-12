@@ -33,7 +33,7 @@ function LoginProvider({ children }) {
 
     if (!res.err) {
       const cookies = new Cookies();
-      cookies.set("user", res.success, { path: "/" });
+      cookies.set("user", res.success, { path: "/", sameSite: "none", secure: true });
       setError_(null);
       navigate('/inicio',{replace: true});
     } else {
