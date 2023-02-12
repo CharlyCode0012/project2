@@ -16,10 +16,10 @@ function LoginProvider({ children }) {
   useEffect(() => {
     const cookies = new Cookies();
 
-    if (!cookies.get("user")) {
+    if (!cookies.get("user") || cookies.get("user") === undefined) {
       navigate("/iniciar-sesion", { replace: true });
     } else {
-      console.log(cookies.get('user'));
+      if(cookies.get("user"))console.log(cookies.get('user'));
     }
   }, []);
 
@@ -29,16 +29,30 @@ function LoginProvider({ children }) {
       headers: { "content-type": "application/json" },
     };
 
-    let res = await api.post(url, options);
+    try {
+      
+      let res = await api.post(url, options);
 
-    if (!res.err) {
-      const cookies = new Cookies();
-      cookies.set("user", res.success, { path: "/" });
-      setError_(null);
-      navigate('/inicio',{replace: true});
-    } else {
-      setResponseLogin(false);
-      setError_(res);
+      res.err = res.err === undefined? true : res.err;
+      //console.log(res.err === undefined, typeof res == TypeError, typeof(res), typeof(TypeError));
+
+      /*res.err no existe, res.err === undefined, undefined == false  */
+      console.log(res.err);
+      if (!res.err) {
+        const cookies = new Cookies();
+        /* Logging the response from the server. */
+
+        cookies.set("user", res.success, { path: "/" });
+        setError_(null);
+        console.log(cookies.get("user"));
+     
+        navigate('/inicio',{replace: true});
+      } else {
+        setResponseLogin(false);
+        setError_(res);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
