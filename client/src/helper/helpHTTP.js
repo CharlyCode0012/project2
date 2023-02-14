@@ -8,7 +8,7 @@ export const helpHTTP = () => {
     options.signal = controller.signal;
 
     options.method = options.method || "GET";
-    options.mode = 'cors';
+    options.mode = "cors";
     options.headers = options.headers
       ? { ...defaultHeader, ...options.headers }
       : defaultHeader;
@@ -32,10 +32,10 @@ export const helpHTTP = () => {
 
   const get = (url, options = {}) => customFetch(url, options);
 
-  const getId = (url, id, options ={}) => {
-    let Url = url + '/:' + id;
+  const getId = (url, id, options = {}) => {
+    let Url = url + "/:" + id;
     return customFetch(Url, options);
-  }
+  };
 
   const post = (url, options = {}) => {
     options.method = "POST";

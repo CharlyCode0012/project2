@@ -9,7 +9,7 @@ import "../Search.css";
 import NavSearch from "./NavSearch";
 import Cookies from "universal-cookie";
 
-function Table({ th, keys, title, validationSearch }) {
+function Table({ th, keys, title, validationSearch, buttons = true  }) {
   const { db, handleCreate } = useContext(CrudContext);
   const columns = useColumn(th);
   const rows = useRow(db);
@@ -43,6 +43,7 @@ function Table({ th, keys, title, validationSearch }) {
                     keys={keys}
                     index={index}
                     admin={admin}
+                    buttons={buttons}
                   />
                 ))
               )}
