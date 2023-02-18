@@ -33,11 +33,11 @@ function LoginProvider({ children }) {
       
       let res = await api.post(url, options);
 
+      console.log(res);
       res.err = res.err === undefined? true : res.err;
       //console.log(res.err === undefined, typeof res == TypeError, typeof(res), typeof(TypeError));
 
       /*res.err no existe, res.err === undefined, undefined == false  */
-      console.log(res.err);
       if (!res.err) {
         const cookies = new Cookies();
         /* Logging the response from the server. */

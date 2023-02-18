@@ -49,7 +49,9 @@ const CrudCategorias = ({ th, keys }) => {
           <FormCategory />
         </Modal>
       )}
+      
       {loading && <Loader />}
+      
       {db && (
         <Table
           th={th}
@@ -58,6 +60,7 @@ const CrudCategorias = ({ th, keys }) => {
           validationSearch={validationSearch}
         />
       )}
+      
       {error && (
         <Message
           msg={`Error ${error.status}: ${error.statusText}`}

@@ -16,18 +16,23 @@ const Rutas = ({ setUrl }) => {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/inicio" element={<Inicio />} />
+
+        <Route path="/iniciar-sesion" element={<InicioSesion />} />
+        <Route path="/menu/*" element={<Menu />} />
+        
         <Route path="/analisis/*" element={<Analisis setUrl={setUrl} />} />
         <Route path="/usuarios/*" element={<Alta />} />
-        <Route path="/config/*" element={<Configuracion />} />
-        <Route path="/inicio" element={<Inicio />} />
-        <Route path="/iniciar-sesion" element={<InicioSesion />} />
+
+        <Route path="/producto/*" element={<Productos />} />
         <Route path="/lugar-de-entrega/*" element={<LugaresEntrega />} />
-        <Route path="/menu/*" element={<Menu />} />
         <Route path="/metodo-de-pago/*" element={<MetodosPago />} />
         <Route path="/pedido/*" element={<Pedidos />} />
+
         <Route path="/perfil/*" element={<Perfil />} />
-        <Route path="/producto/*" element={<Productos />} />
-        <Route path="/" element={<Inicio />} />
+        <Route path="/config/*" element={<Configuracion />} />
+
         <Route path="*" element={<Error404 />} />
       </Routes>
     </>
