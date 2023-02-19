@@ -7,7 +7,7 @@ import Message from "../../Message";
 import Table from "../../Table/Table";
 import FormCategory from "./FormCategory";
 import useFetch from "../../../hooks/useFetch";
-import useLogger from "../../../hooks/useLogger";
+import useLogger from "../../../helper/useLogger";
 
 const validationSearch = (text, path, order, navigate) => {
   const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
