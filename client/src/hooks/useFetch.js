@@ -1,52 +1,138 @@
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useCallback, useMemo, useState } from "react";
 
-export const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+axios.defaults.baseURL = "http://127.0.0.1:3200/api"
 
-  useEffect(() => {
-    const abortController = new AbortController();
-    const signial = abortController.signal;
-    const fecthData = async () => {
-      setLoading(true);
+const useFetch = () => {
 
-      try {
-        const res = await fetch(url);
+  /**
+   * Contain info about the requests:
+   * 
+   * - data: Info fetched by a GET request, or uploaded by 
+   *   POST and PUT requests
+   * 
+   * - error: Errors that could be thrown by any of the requests
+   * 
+   * - isFetching: State that tells whether the request is or isn't
+   *   being processed
+   */
+  const [ data, setData ] = useState(null);
+  const [ error, setError ] = useState(null);
+  const [ isFetching, setIsFetching ] = useState(false);
 
-        if (!res.ok) {
-          const error = new Error("Error en la peticion fetch");
-          error.status = res.status || "00";
-          error.statusText = res.statusText || "Ocurrio un error";
-          throw error;
-        }
+  /**
+   * Helper functions that make the enabling and disabling 
+   * fetching state process easer to read 
+   */
+  const beginFetching = () => setIsFetching(true)
+  const endFetching = () => setIsFetching(false)
 
-        const json = await res.json();
+  /**
+   * Executes a GET request to the given path
+   * 
+   * @param path Path upon the base URL, starting with "/"
+   * 
+   * ```
+   * // "https:127.0.0.1/api/categories"
+   * get("/categories") 
+   * ```
+   */
+  const get = useCallback(async (path, params) => {
+    beginFetching();
 
-        if (!signial.aborted) {
-          setData(json);
-          setError(null);
-        }
-      } catch (error) {
-        if (!signial.aborted) {
-          setData(null);
-          setError(error);
-        }
-      } finally {
-        if (!signial.aborted) setLoading(false);
-      }
-    };
+    try {
+      const response = await axios.get(path, { params });
+      setData(response.data);
+    }
+    catch (error) {
+      setError(error)
+    }
 
-    fecthData();
+    endFetching();
+  }, [])
 
-    return () => {
-      abortController.abort();
-    };
-  }, [url]);
+  /**
+   * Executes a POST request to the given path and uploads
+   * the data given in the body
+   * 
+   * @param path Path upon the base URL, starting with "/"
+   * @param body Info that will be uploaded
+   * 
+   * ```
+   * // "https:127.0.0.1/api/categories"
+   * post("/categories") 
+   * ```
+   */
+  const post = useCallback(async (path, body) => {
+    beginFetching();
 
-  return {
-    data,
-    error,
-    loading,
-  };
-};
+    try {
+      await axios.post(path, { body });
+      setData(body)
+    }
+    catch (error) {
+      setError(error)
+    }
+
+    endFetching();
+  }, [])
+
+  /**
+   * Executes a PUT request to the given path and uploads
+   * the data given in the body
+   * 
+   * @param path Path upon the base URL, starting with "/"
+   * @param body Info that will be uploaded
+   * 
+   * ```
+   * // "https:127.0.0.1/api/categories"
+   * put("/categories") 
+   * ```
+   */
+  const put = useCallback(async (path, body) => {
+    beginFetching();
+
+    try {
+      await axios.put(path, { body });
+      setData(body)
+    }
+    catch (error) {
+      setError(error)
+    }
+
+    endFetching();
+  }, [])
+
+  /**
+   * Executes a DELETE request to the given path
+   * 
+   * @param path Path upon the base URL, starting with "/"
+   * 
+   * ```
+   * // "https:127.0.0.1/api/categories"
+   * delete("/categories") 
+   * ```
+   */
+  const remove = useCallback(async (path) => {
+    beginFetching();
+
+    try {
+      await axios.delete(path);
+      setData(null)
+    }
+    catch (error) {
+      setError(error)
+    }
+
+    endFetching();
+  }, [])
+  
+  /**
+   * Contains every HTTP operation that might be used later
+   */
+  const api = useMemo(() => ({ get, post, put, remove }), [ get, post, put, remove ]);
+
+  return [ data, error, isFetching, api ]
+}
+
+export default useFetch;
