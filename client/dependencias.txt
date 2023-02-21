@@ -1,7 +1,0 @@
-npm install --global yarn 
-yarn add react-router-dom
-npm install --save styled-components
-npm install react-bootstrap bootstrap
-npm install react-icons
-npm i -g json-server
-npm i crypto-hash
