@@ -11,8 +11,9 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["components/*"]
     },
     "resolveJsonModule": true,
     "isolatedModules": true,
