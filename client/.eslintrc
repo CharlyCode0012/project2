@@ -23,7 +23,7 @@
 	"rules": {
 		"@typescript-eslint/no-empty-function": "warn",
 		"array-bracket-spacing": [ "error", "never"],
-		"arrow-body-style": [ "error", "as-needed" ],
+		"arrow-body-style": [ "warn", "as-needed" ],
 		"arrow-parens": [ "error", "always" ],
 		"block-spacing": [ "error", "always" ],
 		"brace-style": [ "error", "stroustrup" ],
