@@ -15,11 +15,7 @@ import {
 	TextField,
 } from "@mui/material";
 
-export interface LoginProps {
-	something?: any;
-}
-
-const Login: React.FC<LoginProps> = () => {
+const Login: React.FC = () => {
 	/**
 	 * Determines if the password will be shown or hidden
 	 * in its input field
