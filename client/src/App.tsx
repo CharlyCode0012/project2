@@ -15,7 +15,9 @@ const App: React.FC = () => {
 	return (
 		<Router>
 			<Switch>
+				<Route index element={<Login />} />
 				<Route path="/login" element={<Login />} />
+
 				<Route path="/home" element={<Home />} />
 			</Switch>
 		</Router>
