@@ -14,17 +14,19 @@ import {
 import React, { useState } from "react";
 import "./Categories.css";
 
-const rawCategories = [
-	{ id: 1234567890, name: "Hogar", state: 1 },
-	{ id: 2345678901, name: "Mascotas", state: 0 },
-	{ id: 3456789012, name: "Limpieza", state: 1 },
-	{ id: 4567890123, name: "Electrónica", state: 0 },
-	{ id: 5678901234, name: "Bebidas", state: 1 },
-	{ id: 6789012345, name: "Frutas y verduras", state: 0 },
-	{ id: 7890123456, name: "Panadería", state: 1 },
-	{ id: 8901234567, name: "Carnes", state: 0 },
-	{ id: 9012345678, name: "Juguetes", state: 1 },
-	{ id: 1234567891, name: "Higiene personal", state: 0 },
+import { Category } from "models/Category";
+
+const rawCategories: Category[] = [
+	{ id: 1234567890, name: "Hogar", state: true },
+	{ id: 2345678901, name: "Mascotas", state: false },
+	{ id: 3456789012, name: "Limpieza", state: true },
+	{ id: 4567890123, name: "Electrónica", state: false },
+	{ id: 5678901234, name: "Bebidas", state: true },
+	{ id: 6789012345, name: "Frutas y verduras", state: false },
+	{ id: 7890123456, name: "Panadería", state: true },
+	{ id: 8901234567, name: "Carnes", state: false },
+	{ id: 9012345678, name: "Juguetes", state: true },
+	{ id: 1234567891, name: "Higiene personal", state: false },
 ];
 
 const Categories: React.FC = () => {
@@ -40,13 +42,26 @@ const Categories: React.FC = () => {
 	 *
 	 * // TODO: Delete "rawCategories" usage
 	 */
-	const [categories, setCategories] = useState(rawCategories);
+	const [categories, setCategories] = useState<Category[]>(rawCategories);
 
 	/**
 	 * Determines if some admin action buttons will be
 	 * displayed in the table too
 	 */
 	const isAdmin = true;
+
+	async function deleteCategory(deletedCategoryID: number) {
+		// TODO: Display loader
+
+		const newCategories = categories.filter(
+			(category) => category.id !== deletedCategoryID
+		);
+
+		// TODO: Call category deletion from DB
+		setCategories(newCategories);
+
+		// TODO: Hide loader
+	}
 
 	return (
 		<div className="categories">
@@ -91,7 +106,7 @@ const Categories: React.FC = () => {
 											<IconButton>
 												<Edit fontSize="inherit" />
 											</IconButton>
-											<IconButton>
+											<IconButton onClick={() => deleteCategory(category.id)}>
 												<DeleteForever fontSize="inherit" />
 											</IconButton>
 										</TableCell>
