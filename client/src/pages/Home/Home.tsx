@@ -1,11 +1,8 @@
 import React from "react";
+import "./Home.css";
 
-export interface HomeProps {
-	something?: any;
-}
-
-const Home: React.FC<HomeProps> = () => {
-	return <div>Home</div>;
+const Home: React.FC = () => {
+	return <div className="home">Home</div>;
 };
 
 export default Home;

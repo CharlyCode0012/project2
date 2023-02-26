@@ -7,7 +7,9 @@ import {
 	Avatar,
 	Box,
 	Button,
+	Checkbox,
 	FormControl,
+	FormControlLabel,
 	IconButton,
 	InputAdornment,
 	InputLabel,
@@ -33,11 +35,21 @@ const Login: React.FC = () => {
 		const username = data.get("username");
 		const cellphone = data.get("cellphone");
 		const password = data.get("password");
+		const userWantsToBeRemembered = data.get("remember") === "on";
 
 		// TODO: Authenticate user
+		console.table({ username, cellphone, password, userWantsToBeRemembered });
 		const userWasAuthenticated = true;
-		if (userWasAuthenticated) navigate("/home");
+
+		if (userWasAuthenticated) {
+			if (userWantsToBeRemembered) storeUserAuthentication();
+
+			navigate("/home");
+		}
 	}
+
+	// TODO: Create store user authentication logic
+	function storeUserAuthentication() {}
 
 	return (
 		<div className="login">
@@ -96,6 +108,13 @@ const Login: React.FC = () => {
 				<Button type="submit" variant="contained" fullWidth>
 					Iniciar Sesion
 				</Button>
+
+				<FormControlLabel
+					name="remember"
+					sx={{ alignSelf: "flex-start" }}
+					label="Recuérdame"
+					control={<Checkbox />}
+				/>
 			</Box>
 		</div>
 	);

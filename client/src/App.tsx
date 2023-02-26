@@ -8,6 +8,7 @@ import "./App.css";
 
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
+import Categories from "pages/Categories/Categories";
 
 const App: React.FC = () => {
 	const avoidError = 0;
@@ -16,9 +17,14 @@ const App: React.FC = () => {
 		<Router>
 			<Switch>
 				<Route index element={<Login />} />
-				<Route path="/login" element={<Login />} />
+				<Route path="login" element={<Login />} />
 
-				<Route path="/home" element={<Home />} />
+				<Route path="home" element={<Home />} />
+
+				<Route path="products">
+					<Route index element={<>Products</>} />
+					<Route path="categories" element={<Categories />} />
+				</Route>
 			</Switch>
 		</Router>
 	);
