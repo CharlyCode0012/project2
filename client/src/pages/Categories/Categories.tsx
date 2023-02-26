@@ -15,6 +15,7 @@ import React, { useState } from "react";
 import "./Categories.css";
 
 import { Category } from "models/Category";
+import Loading from "@/Loading/Loading";
 
 const rawCategories: Category[] = [
 	{ id: 1234567890, name: "Hogar", state: true },
@@ -65,6 +66,7 @@ const Categories: React.FC = () => {
 
 	return (
 		<div className="categories">
+			<Loading />
 			<Box
 				sx={{
 					display: "flex",
