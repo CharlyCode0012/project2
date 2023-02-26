@@ -19,11 +19,11 @@ const App: React.FC = () => {
 				<Route index element={<Login />} />
 				<Route path="login" element={<Login />} />
 
-				<Route path="home" element={<Home />} />
+				<Route path="inicio" element={<Home />} />
 
-				<Route path="products">
-					<Route index element={<>Products</>} />
-					<Route path="categories" element={<Categories />} />
+				<Route path="productos">
+					<Route index element={<>Productos</>} />
+					<Route path="categorias" element={<Categories />} />
 				</Route>
 			</Switch>
 		</Router>

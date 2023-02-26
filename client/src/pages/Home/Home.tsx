@@ -1,8 +1,13 @@
+import Navbar from "@/Navbar/Navbar";
 import React from "react";
 import "./Home.css";
 
-const Home: React.FC = () => {
-	return <div className="home">Home</div>;
+const Home = () => {
+	return (
+		<div id="home">
+			<Navbar />
+		</div>
+	);
 };
 
 export default Home;

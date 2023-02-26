@@ -1,11 +1,150 @@
-import React from "react";
-import { AppBar, Box, Toolbar } from "@mui/material";
+import React, { useState } from "react";
+import {
+	AppBar,
+	Box,
+	Button,
+	Container,
+	IconButton,
+	Menu,
+	MenuItem,
+	Toolbar,
+	Tooltip,
+	Typography,
+} from "@mui/material";
+import { AccountCircle, ArrowDropDown, Home } from "@mui/icons-material";
+import { NavLink } from "react-router-dom";
+
+type NavPage = {
+	name: string;
+	admin?: boolean;
+};
+
+const pages: NavPage[] = [
+	{ name: "Productos" },
+	{ name: "Pedidos" },
+	{ name: "Analisis" },
+	{
+		name: "Usuarios",
+		admin: true,
+	},
+];
+
+const navSettings: NavPage[] = [
+	{ name: "Lugares de Entrega" },
+	{ name: "Metodos de Pago" },
+];
+
+const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 
 const Navbar = () => {
+	// These are the anchor HTML elements where the submenus display.
+	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+	// Submenus open and close handlers.
+	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElNav(event.currentTarget);
+	};
+
+	const handleCloseNavMenu = () => {
+		setAnchorElNav(null);
+	};
+
+	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElUser(event.currentTarget);
+	};
+
+	const handleCloseUserMenu = () => {
+		setAnchorElUser(null);
+	};
+
 	return (
-		<Box sx={{ flexGrow: 1 }}>
+		<Box component="nav" sx={{ flexGrow: 1 }}>
 			<AppBar position="static">
-				<Toolbar></Toolbar>
+				<Container maxWidth="xl">
+					<Toolbar variant="dense" disableGutters>
+						<NavLink to="/home">
+							<IconButton size="large" edge="start" aria-label="inicio">
+								<Home sx={{ color: "white" }} />
+							</IconButton>
+						</NavLink>
+
+						{/* Maps each page to a <NavLink /> with an href of 'pages-name-with-dashes'. */}
+						<Box sx={{ flexGrow: 1, display: "flex" }}>
+							{pages.map((page) => (
+								<NavLink
+									key={page.name}
+									to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
+								>
+									<Button sx={{ color: "white" }}>{page.name}</Button>
+								</NavLink>
+							))}
+
+							{/* Mapping each page in the navbar submenu. */}
+							<Box>
+								<Button onClick={handleOpenNavMenu} sx={{ color: "white" }}>
+									Otros
+									<ArrowDropDown />
+								</Button>
+								<Menu
+									sx={{ mt: "45px" }}
+									id="menu-nav"
+									anchorEl={anchorElNav}
+									anchorOrigin={{ vertical: "top", horizontal: "right" }}
+									keepMounted
+									transformOrigin={{ vertical: "top", horizontal: "right" }}
+									open={Boolean(anchorElNav)}
+									onClose={handleCloseNavMenu}
+								>
+									{navSettings.map((page) => (
+										<MenuItem key={page.name} onClick={handleCloseUserMenu}>
+											<NavLink
+												to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
+												style={{ color: "inherit", textDecoration: "none" }}
+											>
+												<Typography textAlign="center">{page.name}</Typography>
+											</NavLink>
+										</MenuItem>
+									))}
+								</Menu>
+							</Box>
+						</Box>
+
+						{/* Mapping each page in the user's submenu. */}
+						<Box sx={{ flexGrow: 0 }}>
+							<Tooltip title="Mas Opciones">
+								<IconButton
+									size="large"
+									edge="end"
+									onClick={handleOpenUserMenu}
+								>
+									<AccountCircle sx={{ color: "white" }} />
+								</IconButton>
+							</Tooltip>
+							<Menu
+								sx={{ mt: "45px" }}
+								id="menu-user"
+								anchorEl={anchorElUser}
+								anchorOrigin={{ vertical: "top", horizontal: "right" }}
+								keepMounted
+								transformOrigin={{ vertical: "top", horizontal: "right" }}
+								open={Boolean(anchorElUser)}
+								onClose={handleCloseUserMenu}
+							>
+								{userSettings.map((page) => (
+									<MenuItem key={page.name} onClick={handleCloseUserMenu}>
+										<NavLink
+											to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
+											style={{ color: "inherit", textDecoration: "none" }}
+										>
+											<Typography textAlign="center">{page.name}</Typography>
+										</NavLink>
+									</MenuItem>
+								))}
+							</Menu>
+						</Box>
+					</Toolbar>
+				</Container>
 			</AppBar>
 		</Box>
 	);
