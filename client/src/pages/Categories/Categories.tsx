@@ -1,4 +1,7 @@
+import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import {
+	Box,
+	IconButton,
 	Paper,
 	Table,
 	TableBody,
@@ -26,40 +29,68 @@ const rawCategories = [
 
 const Categories: React.FC = () => {
 	const tableHeaders = ["ID", "Nombre", "Estado"];
+	const isAdmin = true;
 
 	return (
 		<div className="categories">
-			<h1>Categorias</h1>
-
-			<TableContainer
-				sx={{ width: "600px", maxHeight: "400px" }}
-				component={Paper}
-				elevation={5}
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					gap: "10px",
+				}}
 			>
-				<Table>
-					<TableHead>
-						<TableRow>
-							{tableHeaders.map((header) => (
-								<TableCell key={header} align="left">
-									<TableSortLabel>{header}</TableSortLabel>
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
+				<h1>Categorias</h1>
 
-					<TableBody>
-						{rawCategories.map((category) => (
-							<TableRow key={category.id}>
-								<TableCell align="left">{category.id}</TableCell>
-								<TableCell align="left">{category.name}</TableCell>
-								<TableCell align="left">
-									{category.state ? "Activada" : "Desactivada"}
-								</TableCell>
+				<TableContainer
+					sx={{ width: "600px", maxHeight: "400px" }}
+					component={Paper}
+					elevation={5}
+				>
+					<Table>
+						<TableHead>
+							<TableRow>
+								{tableHeaders.map((header) => (
+									<TableCell key={header} align="left">
+										<TableSortLabel>{header}</TableSortLabel>
+									</TableCell>
+								))}
+
+								{isAdmin && <TableCell />}
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+						</TableHead>
+
+						<TableBody>
+							{rawCategories.map((category) => (
+								<TableRow key={category.id}>
+									<TableCell align="left">{category.id}</TableCell>
+									<TableCell align="left">{category.name}</TableCell>
+									<TableCell align="left">
+										{category.state ? "Activada" : "Desactivada"}
+									</TableCell>
+
+									{isAdmin && (
+										<TableCell align="center">
+											<IconButton>
+												<Edit fontSize="inherit" />
+											</IconButton>
+											<IconButton>
+												<DeleteForever fontSize="inherit" />
+											</IconButton>
+										</TableCell>
+									)}
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+
+				<IconButton
+					sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+				>
+					<AddCircle fontSize="inherit" />
+				</IconButton>
+			</Box>
 		</div>
 	);
 };
