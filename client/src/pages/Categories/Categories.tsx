@@ -11,7 +11,7 @@ import {
 	TableRow,
 	TableSortLabel,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import "./Categories.css";
 
 const rawCategories = [
@@ -28,7 +28,24 @@ const rawCategories = [
 ];
 
 const Categories: React.FC = () => {
+	/**
+	 * Headers that will be displayed to the table, not
+	 * counting the last one which will be for admin
+	 * purposes
+	 */
 	const tableHeaders = ["ID", "Nombre", "Estado"];
+
+	/**
+	 * Contains all the categories that will be displayed to the user
+	 *
+	 * // TODO: Delete "rawCategories" usage
+	 */
+	const [categories, setCategories] = useState(rawCategories);
+
+	/**
+	 * Determines if some admin action buttons will be
+	 * displayed in the table too
+	 */
 	const isAdmin = true;
 
 	return (
@@ -61,7 +78,7 @@ const Categories: React.FC = () => {
 						</TableHead>
 
 						<TableBody>
-							{rawCategories.map((category) => (
+							{categories.map((category) => (
 								<TableRow key={category.id}>
 									<TableCell align="left">{category.id}</TableCell>
 									<TableCell align="left">{category.name}</TableCell>
