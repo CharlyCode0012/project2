@@ -44,7 +44,7 @@ const Login: React.FC = () => {
 		if (userWasAuthenticated) {
 			if (userWantsToBeRemembered) storeUserAuthentication();
 
-			navigate("/home");
+			navigate("/menu");
 		}
 	}
 

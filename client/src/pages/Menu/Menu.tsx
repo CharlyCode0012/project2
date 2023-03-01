@@ -1,13 +1,13 @@
 import Navbar from "@/Navbar/Navbar";
 import React from "react";
-import "./Home.css";
+import "./Menu.css";
 
-const Home = () => {
+const Menu = () => {
 	return (
-		<div id="home">
+		<div id="menu">
 			<Navbar />
 		</div>
 	);
 };
 
-export default Home;
+export default Menu;

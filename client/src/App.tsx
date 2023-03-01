@@ -7,7 +7,7 @@ import {
 import "./App.css";
 
 import Login from "./pages/Login/Login";
-import Home from "./pages/Home/Home";
+import Menu from "./pages/Menu/Menu";
 import Categories from "pages/Categories/Categories";
 
 const App: React.FC = () => {
@@ -19,7 +19,7 @@ const App: React.FC = () => {
 				<Route index element={<Login />} />
 				<Route path="login" element={<Login />} />
 
-				<Route path="inicio" element={<Home />} />
+				<Route path="menu" element={<Menu />} />
 
 				<Route path="productos">
 					<Route index element={<>Productos</>} />
