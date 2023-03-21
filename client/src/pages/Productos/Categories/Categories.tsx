@@ -10,6 +10,7 @@ import {
 	TableHead,
 	TableRow,
 	TableSortLabel,
+	Container,
 } from "@mui/material";
 import React, { useState } from "react";
 import "./Categories.css";
@@ -68,7 +69,7 @@ const Categories: React.FC = () => {
 	return (
 		<>
 			<NavbarProduct />
-			<div className="container">
+			<Container maxWidth="sm">
 				<div className="categories">
 					<Box
 						sx={{
@@ -131,7 +132,7 @@ const Categories: React.FC = () => {
 						</IconButton>
 					</Box>
 				</div>
-			</div>
+			</Container>
 		</>
 	);
 };
