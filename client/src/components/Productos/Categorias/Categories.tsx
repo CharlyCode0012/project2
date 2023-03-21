@@ -66,7 +66,6 @@ const Categories: React.FC = () => {
 
 	return (
 		<div className="categories">
-			<Loading />
 			<Box
 				sx={{
 					display: "flex",

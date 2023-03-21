@@ -8,24 +8,16 @@ import "./App.css";
 
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
-import Categories from "pages/Categories/Categories";
+import Categorias from "pages/Productos/Categories/Categorias";
+import Productos from "pages/Productos/Productos";
+import Rutas from "@/Rutas";
 
 const App: React.FC = () => {
 	const avoidError = 0;
 
 	return (
 		<Router>
-			<Switch>
-				<Route index element={<Login />} />
-				<Route path="login" element={<Login />} />
-
-				<Route path="/home/*" element={<Home />} />
-
-				<Route path="productos">
-					<Route index element={<>Productos</>} />
-					<Route path="categorias" element={<Categories />} />
-				</Route>
-			</Switch>
+			<Rutas />
 		</Router>
 	);
 };

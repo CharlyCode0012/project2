@@ -19,24 +19,11 @@ type NavPage = {
 	admin?: boolean;
 };
 
-const pages: NavPage[] = [
-	{ name: "Productos" },
-	{ name: "Pedidos" },
-	{ name: "Analisis" },
-	{
-		name: "Usuarios",
-		admin: true,
-	},
-];
-
-const navSettings: NavPage[] = [
-	{ name: "Lugares de Entrega" },
-	{ name: "Metodos de Pago" },
-];
+const pages: NavPage[] = [{ name: "Catalogos" }, { name: "Categorias" }];
 
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 
-const Navbar = () => {
+const NavbarProduct = () => {
 	// These are the anchor HTML elements where the submenus display.
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -74,40 +61,14 @@ const Navbar = () => {
 							{pages.map((page) => (
 								<NavLink
 									key={page.name}
-									to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
+									to={`/productos/${page.name
+										.toLowerCase()
+										.split(/ +/)
+										.join("-")}`}
 								>
 									<Button sx={{ color: "white" }}>{page.name}</Button>
 								</NavLink>
 							))}
-
-							{/* Mapping each page in the navbar submenu. */}
-							<Box>
-								<Button onClick={handleOpenNavMenu} sx={{ color: "white" }}>
-									Otros
-									<ArrowDropDown />
-								</Button>
-								<Menu
-									sx={{ mt: "45px" }}
-									id="menu-nav"
-									anchorEl={anchorElNav}
-									anchorOrigin={{ vertical: "top", horizontal: "right" }}
-									keepMounted
-									transformOrigin={{ vertical: "top", horizontal: "right" }}
-									open={Boolean(anchorElNav)}
-									onClose={handleCloseNavMenu}
-								>
-									{navSettings.map((page) => (
-										<MenuItem key={page.name} onClick={handleCloseUserMenu}>
-											<NavLink
-												to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
-												style={{ color: "inherit", textDecoration: "none" }}
-											>
-												<Typography textAlign="center">{page.name}</Typography>
-											</NavLink>
-										</MenuItem>
-									))}
-								</Menu>
-							</Box>
 						</Box>
 
 						{/* Mapping each page in the user's submenu. */}
@@ -150,4 +111,4 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+export default NavbarProduct;
