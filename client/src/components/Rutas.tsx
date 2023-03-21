@@ -18,26 +18,28 @@ const Rutas = () => {
 	return (
 		<>
 			<Routes>
+				<Route index path="" element={<Login />} />
+
 				<Route index path="login" element={<Login />} />
 
 				<Route path="/analisis/*" element={<Analisis />} />
 
-				<Route path="configuracion/*" element={<Perfil />} />
+				<Route path="/configuracion/*" element={<Perfil />} />
 
 				<Route path="/inicio/*" element={<Home />} />
 
-				<Route path="lugares-de-entrega/*" element={<LugaresEntrega />} />
+				<Route path="/lugares-de-entrega/*" element={<LugaresEntrega />} />
 
-				<Route path="metodos-de-pago/*" element={<MetodosPago />} />
+				<Route path="/metodos-de-pago/*" element={<MetodosPago />} />
 
-				<Route path="pedidos/*" element={<Pedidos />} />
+				<Route path="/pedidos/*" element={<Pedidos />} />
 
-				<Route path="perfil/*" element={<Perfil />} />
+				<Route path="/perfil/*" element={<Perfil />} />
 
-				<Route path="productos">
+				<Route path="/productos">
 					<Route index element={<Productos />} />
-					<Route path="categorias" element={<Categorias />} />
-					<Route path="catalogos" element={<Catalogos />} />
+					<Route path="/categorias" element={<Categorias />} />
+					<Route path="/catalogos" element={<Catalogos />} />
 				</Route>
 
 				<Route path="usuarios/*" element={<Usuarios />} />
