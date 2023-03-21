@@ -3,7 +3,7 @@ import React from "react";
 import Login from "pages/Login/Login";
 import { Route, Routes } from "react-router-dom";
 import Home from "pages/Home/Home";
-import Categorias from "pages/Productos/Categories/Categorias";
+import Categorias from "pages/Productos/Categories/Categories";
 import Productos from "pages/Productos/Productos";
 import Usuarios from "pages/Usuarios/Usuarios";
 import Pedidos from "pages/Pedidos/Pedidos";
@@ -12,7 +12,6 @@ import LugaresEntrega from "pages/LuagresEntrega/LuagresEntrega";
 import MetodosPago from "pages/MetodosPago/MetodosPago";
 import Perfil from "pages/Perfil/Perfil";
 import Catalogos from "pages/Productos/Catalogos/Catalogos";
-import Error404 from "pages/Error404";
 
 const Rutas = () => {
 	const num = 0;

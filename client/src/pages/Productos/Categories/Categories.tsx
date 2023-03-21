@@ -16,6 +16,7 @@ import "./Categories.css";
 
 import { Category } from "models/Category";
 import Loading from "@/Loading/Loading";
+import NavbarProduct from "@/Navbar/NavbarProduct";
 
 const rawCategories: Category[] = [
 	{ id: 1234567890, name: "Hogar", state: true },
@@ -65,66 +66,73 @@ const Categories: React.FC = () => {
 	}
 
 	return (
-		<div className="categories">
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					gap: "10px",
-				}}
-			>
-				<h1>Categorias</h1>
+		<>
+			<NavbarProduct />
+			<div className="container">
+				<div className="categories">
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: "10px",
+						}}
+					>
+						<h1>Categorias</h1>
 
-				<TableContainer
-					sx={{ width: "600px", maxHeight: "400px" }}
-					component={Paper}
-					elevation={5}
-				>
-					<Table>
-						<TableHead>
-							<TableRow>
-								{tableHeaders.map((header) => (
-									<TableCell key={header} align="left">
-										<TableSortLabel>{header}</TableSortLabel>
-									</TableCell>
-								))}
+						<TableContainer
+							sx={{ width: "600px", maxHeight: "400px" }}
+							component={Paper}
+							elevation={5}
+						>
+							<Table>
+								<TableHead>
+									<TableRow>
+										{tableHeaders.map((header) => (
+											<TableCell key={header} align="left">
+												<TableSortLabel>{header}</TableSortLabel>
+											</TableCell>
+										))}
 
-								{isAdmin && <TableCell />}
-							</TableRow>
-						</TableHead>
+										{isAdmin && <TableCell />}
+									</TableRow>
+								</TableHead>
 
-						<TableBody>
-							{categories.map((category) => (
-								<TableRow key={category.id}>
-									<TableCell align="left">{category.id}</TableCell>
-									<TableCell align="left">{category.name}</TableCell>
-									<TableCell align="left">
-										{category.state ? "Activada" : "Desactivada"}
-									</TableCell>
+								<TableBody>
+									{categories.map((category) => (
+										<TableRow key={category.id}>
+											<TableCell align="left">{category.id}</TableCell>
+											<TableCell align="left">{category.name}</TableCell>
+											<TableCell align="left">
+												{category.state ? "Activada" : "Desactivada"}
+											</TableCell>
 
-									{isAdmin && (
-										<TableCell align="center">
-											<IconButton>
-												<Edit fontSize="inherit" />
-											</IconButton>
-											<IconButton onClick={() => deleteCategory(category.id)}>
-												<DeleteForever fontSize="inherit" />
-											</IconButton>
-										</TableCell>
-									)}
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</TableContainer>
+											{isAdmin && (
+												<TableCell align="center">
+													<IconButton>
+														<Edit fontSize="inherit" />
+													</IconButton>
+													<IconButton
+														onClick={() => deleteCategory(category.id)}
+													>
+														<DeleteForever fontSize="inherit" />
+													</IconButton>
+												</TableCell>
+											)}
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
 
-				<IconButton
-					sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-				>
-					<AddCircle fontSize="inherit" />
-				</IconButton>
-			</Box>
-		</div>
+						<IconButton
+							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+						>
+							<AddCircle fontSize="inherit" />
+						</IconButton>
+					</Box>
+				</div>
+			</div>
+		</>
 	);
 };
 
