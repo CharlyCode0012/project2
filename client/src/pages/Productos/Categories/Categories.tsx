@@ -20,16 +20,16 @@ import Loading from "@/Loading/Loading";
 import NavbarProduct from "@/Navbar/NavbarProduct";
 
 const rawCategories: Category[] = [
-	{ id: 1234567890, name: "Hogar", state: true },
-	{ id: 2345678901, name: "Mascotas", state: false },
-	{ id: 3456789012, name: "Limpieza", state: true },
-	{ id: 4567890123, name: "Electrónica", state: false },
-	{ id: 5678901234, name: "Bebidas", state: true },
-	{ id: 6789012345, name: "Frutas y verduras", state: false },
-	{ id: 7890123456, name: "Panadería", state: true },
-	{ id: 8901234567, name: "Carnes", state: false },
-	{ id: 9012345678, name: "Juguetes", state: true },
-	{ id: 1234567891, name: "Higiene personal", state: false },
+	{ id: "1234567890", name: "Hogar", state: true },
+	{ id: "2345678901", name: "Mascotas", state: false },
+	{ id: "3456789012", name: "Limpieza", state: true },
+	{ id: "4567890123", name: "Electrónica", state: false },
+	{ id: "5678901234", name: "Bebidas", state: true },
+	{ id: "6789012345", name: "Frutas y verduras", state: false },
+	{ id: "7890123456", name: "Panadería", state: true },
+	{ id: "8901234567", name: "Carnes", state: false },
+	{ id: "9012345678", name: "Juguetes", state: true },
+	{ id: "1234567891", name: "Higiene personal", state: false },
 ];
 
 const Categories: React.FC = () => {
@@ -53,7 +53,7 @@ const Categories: React.FC = () => {
 	 */
 	const isAdmin = true;
 
-	async function deleteCategory(deletedCategoryID: number) {
+	async function deleteCategory(deletedCategoryID: string) {
 		// TODO: Display loader
 
 		const newCategories = categories.filter(

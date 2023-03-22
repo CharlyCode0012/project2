@@ -1,5 +1,5 @@
 export interface PlacesDelivery {
-	id: number;
+	id: string;
 	name: string;
 	address: string;
 	cp: string;
