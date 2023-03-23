@@ -68,7 +68,6 @@ const Categories: React.FC = () => {
 
 	return (
 		<>
-			<NavbarProduct />
 			<Container maxWidth="sm">
 				<div className="categories">
 					<Box

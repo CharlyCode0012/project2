@@ -65,6 +65,7 @@ const NavbarProduct = () => {
 										.toLowerCase()
 										.split(/ +/)
 										.join("-")}`}
+									style={{ textDecoration: "none" }}
 								>
 									<Button sx={{ color: "white" }}>{page.name}</Button>
 								</NavLink>
