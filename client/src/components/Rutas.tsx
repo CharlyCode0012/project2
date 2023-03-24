@@ -12,6 +12,7 @@ import LugaresEntrega from "pages/LuagresEntrega/LuagresEntrega";
 import MetodosPago from "pages/MetodosPago/MetodosPago";
 import Perfil from "pages/Perfil/Perfil";
 import Catalogos from "pages/Productos/Catalogos/Catalogos";
+import CategoriesForm from "./Productos/Categorias/CategoriesForm";
 
 const Rutas = () => {
 	const num = 0;
@@ -35,6 +36,8 @@ const Rutas = () => {
 				<Route path="pedidos/*" element={<Pedidos />} />
 
 				<Route path="perfil/*" element={<Perfil />} />
+
+				<Route path="Formulario/*" element={<CategoriesForm />} />
 
 				<Route path="productos">
 					<Route index element={<Productos />} />
