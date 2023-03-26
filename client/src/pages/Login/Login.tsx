@@ -32,6 +32,7 @@ const Login: React.FC = () => {
 
 		// Get data from the form
 		const data = new FormData(event.currentTarget);
+		console.log(data);
 		const username = data.get("username");
 		const cellphone = data.get("cellphone");
 		const password = data.get("password");
@@ -44,7 +45,7 @@ const Login: React.FC = () => {
 		if (userWasAuthenticated) {
 			if (userWantsToBeRemembered) storeUserAuthentication();
 
-			navigate("/home");
+			navigate("/inicio");
 		}
 	}
 
