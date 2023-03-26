@@ -1,14 +1,8 @@
 import {
-	Avatar,
 	Box,
 	Button,
-	FormControl,
 	FormControlLabel,
 	FormGroup,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	OutlinedInput,
 	Switch,
 	TextField,
 } from "@mui/material";
