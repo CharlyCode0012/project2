@@ -1,9 +1,5 @@
-export interface Option {
-	index: number;
-	brief: string;
-	description: string;
-	keywords: string[];
-	action: null;
+export interface Menu {
+	id: string;
+	option_key: string;
+	keywords: string;
 }
-
-export type MenuData = Option[];

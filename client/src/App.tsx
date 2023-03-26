@@ -1,32 +1,28 @@
 import React from "react";
-import {
-	BrowserRouter as Router,
-	Routes as Switch,
-	Route,
-} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
 
-import Login from "./pages/Login/Login";
-import Menu from "./pages/Menu/Menu";
-import Categories from "pages/Categories/Categories";
+import Rutas from "@/Rutas";
+
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+
+const darkTheme = createTheme({
+	palette: {
+		mode: "dark",
+	},
+});
 
 const App: React.FC = () => {
 	const avoidError = 0;
 
 	return (
-		<Router>
-			<Switch>
-				<Route index element={<Login />} />
-				<Route path="login" element={<Login />} />
-
-				<Route path="menu" element={<Menu />} />
-
-				<Route path="productos">
-					<Route index element={<>Productos</>} />
-					<Route path="categorias" element={<Categories />} />
-				</Route>
-			</Switch>
-		</Router>
+		<ThemeProvider theme={darkTheme}>
+			<CssBaseline />
+			<Router>
+				<Rutas />
+			</Router>
+		</ThemeProvider>
 	);
 };
 
