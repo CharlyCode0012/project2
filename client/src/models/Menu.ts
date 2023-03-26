@@ -6,4 +6,4 @@ export interface Option {
 	action: null;
 }
 
-export type Menu = Option[];
+export type MenuData = Option[];

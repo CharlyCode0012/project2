@@ -32,8 +32,8 @@ const rawCategories: Category[] = [
 
 const Categories: React.FC = () => {
 	/**
-	 * Headers that will be displayed to the table, not
-	 * counting the last one which will be for admin
+	 * Headers that will be displayed to the categories table,
+	 * not counting the last one which will be for admin
 	 * purposes
 	 */
 	const tableHeaders = ["ID", "Nombre", "Estado"];
