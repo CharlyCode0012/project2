@@ -1,17 +1,19 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { config } from "dotenv";
+config();
 
-axios.defaults.baseURL = "https://server-production-4487.up.railway.app/api/";
+const instance = axios.create({
+	baseURL: process.env.SERVER_HOST,
+	headers: {
+		"Access-Control-Allow-Origin": "*",
+		"Content-Type": "application/json",
+	},
+});
 
-axios.defaults.headers.post["Content-Type"] =
-	"application/x-www-form-urlencoded";
-
-const get = async <T extends object>(
-	endpoint: string,
-	options: AxiosRequestConfig
-) => {
+const get = async <T extends object>(endpoint: string, options: any) => {
 	try {
 		console.log(options);
-		const response = await axios.get<T>(endpoint, options);
+		const response = await instance.get<T>(endpoint, options);
 		const info = await response.data;
 		return info;
 	}
@@ -23,10 +25,10 @@ const get = async <T extends object>(
 
 const post = async <T extends object>(
 	endpoint: string,
-	options: AxiosRequestConfig
+	options: any
 ): Promise<T | undefined> => {
 	try {
-		const response = await axios.post<T>(endpoint, options);
+		const response = await instance.post<T>(endpoint, JSON.stringify(options));
 		const info = response.data;
 		return info;
 	}
@@ -41,7 +43,7 @@ const put = async <T extends object>(
 	options: AxiosRequestConfig
 ): Promise<T | undefined> => {
 	try {
-		const response = await axios.put<T>(endpoint, options);
+		const response = await instance.put<T>(endpoint, options);
 		const info = response.data;
 		return info;
 	}
@@ -56,7 +58,7 @@ const remove = async (
 	options: AxiosRequestConfig
 ): Promise<void> => {
 	try {
-		await axios.delete(endpoint, options);
+		await instance.delete(endpoint, options);
 	}
 	catch (error: unknown) {
 		if (axios.isAxiosError(error)) console.log(error);
