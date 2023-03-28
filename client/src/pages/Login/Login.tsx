@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { http } from "helper/API";
 
 import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
@@ -16,6 +17,13 @@ import {
 	OutlinedInput,
 	TextField,
 } from "@mui/material";
+import { ServerResponse } from "models/ServerResponse";
+
+interface FormLogin {
+	name: string;
+	pass: string;
+	cel: string;
+}
 
 const Login: React.FC = () => {
 	/**
@@ -27,22 +35,73 @@ const Login: React.FC = () => {
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
 
+	const validationsForm = (form: FormLogin) => {
+		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+		const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
+		const regexPass =
+			/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+		const regexSigns = /[-<>/]+/g;
+		const errors = {};
+
+		if (!form.name.trim()) alert("Llena el campo nombre");
+		else if (!regexName.test(form.name.trim()))
+			alert("El campo nombre solo acepta letras y espcios en blanco ' '");
+
+		if (!form.pass.trim()) alert("El campo contraseña es requerido");
+		else if (
+			!regexPass.test(form.pass.trim()) ||
+			regexSigns.test(form.pass.trim())
+		)
+			alert("Debe ser una contraseña robusta y no se permiten \"-<>/</>\"");
+
+		if (!form.cel.trim()) alert("Llena el campo celular");
+		else if (!regexNum.test(form.cel.trim())) {
+			alert(
+				"El campo celular solo acepta numeros y no mas de 10 digitos, (XX-XXXX-XXXX)"
+			);
+		}
+		return errors;
+	};
+
+	const hanldeLogin = async (url: string, data: any) => {
+		const response = await http.post<ServerResponse>(url, data);
+		console.log(data);
+		console.log(response);
+		return response?.err;
+	};
+
 	async function authenticate(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get data from the form
 		const data = new FormData(event.currentTarget);
-		console.log(data);
-		const username = data.get("username");
-		const cellphone = data.get("cellphone");
-		const password = data.get("password");
+		const username = data.get("username")?.toString();
+		const cellphone = data.get("cellphone")?.toString();
+		const password = data.get("password")?.toString();
 		const userWantsToBeRemembered = data.get("remember") === "on";
+
+		const userLog = {
+			data: {
+				name: username,
+				pass: password,
+				cel: cellphone,
+			},
+		};
 
 		// TODO: Authenticate user
 		console.table({ username, cellphone, password, userWantsToBeRemembered });
-		const userWasAuthenticated = true;
 
-		if (userWasAuthenticated) {
+		const url = "users/login";
+
+		console.log(userLog);
+
+		const userWasAuthenticated: boolean | undefined = await hanldeLogin(
+			url,
+			userLog
+		);
+		console.log(userWasAuthenticated);
+
+		if (!userWasAuthenticated) {
 			if (userWantsToBeRemembered) storeUserAuthentication();
 
 			navigate("/inicio");

@@ -86,7 +86,6 @@ const Menu = () => {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					backgroundColor: "white",
 				}}
 			>
 				<Box

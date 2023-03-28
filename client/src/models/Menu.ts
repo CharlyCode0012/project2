@@ -1,5 +1,7 @@
-export interface Menu {
-	id: string;
-	option_key: string;
-	keywords: string;
+export interface MenuData extends Object {
+	index: number;
+	brief: string;
+	description: string;
+	keywords: string[];
+	action: null;
 }
