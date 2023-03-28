@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-axios.defaults.baseURL = "https://api.example.com";
+axios.defaults.baseURL = "https://server-production-4487.up.railway.app/api/";
 
 axios.defaults.headers.post["Content-Type"] =
 	"application/x-www-form-urlencoded";
@@ -10,6 +10,7 @@ const get = async <T extends object>(
 	options: AxiosRequestConfig
 ) => {
 	try {
+		console.log(options);
 		const response = await axios.get<T>(endpoint, options);
 		const info = await response.data;
 		return info;
