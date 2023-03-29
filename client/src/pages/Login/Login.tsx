@@ -63,9 +63,11 @@ const Login: React.FC = () => {
 		return errors;
 	};
 
-	const hanldeLogin = async (url: string, data: any) => {
+	const hanldeLogin = async (
+		url: string,
+		data: any
+	): Promise<boolean | undefined> => {
 		const response = await http.post<ServerResponse>(url, data);
-		console.log(data);
 		console.log(response);
 		return response?.err;
 	};
@@ -81,17 +83,15 @@ const Login: React.FC = () => {
 		const userWantsToBeRemembered = data.get("remember") === "on";
 
 		const userLog = {
-			data: {
-				name: username,
-				pass: password,
-				cel: cellphone,
-			},
+			name: username,
+			pass: password,
+			cel: cellphone,
 		};
 
 		// TODO: Authenticate user
 		console.table({ username, cellphone, password, userWantsToBeRemembered });
 
-		const url = "users/login";
+		const url = "/users/login";
 
 		console.log(userLog);
 

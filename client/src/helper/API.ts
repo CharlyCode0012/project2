@@ -1,9 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { config } from "dotenv";
-config();
 
 const instance = axios.create({
-	baseURL: process.env.SERVER_HOST,
+	// baseURL: "https://server-production-4487.up.railway.app/api/",
+	baseURL: "http://localhost:3200/api",
 	headers: {
 		"Access-Control-Allow-Origin": "*",
 		"Content-Type": "application/json",
@@ -28,7 +27,7 @@ const post = async <T extends object>(
 	options: any
 ): Promise<T | undefined> => {
 	try {
-		const response = await instance.post<T>(endpoint, JSON.stringify(options));
+		const response = await instance.post<T>(endpoint, options);
 		const info = response.data;
 		return info;
 	}
