@@ -1,4 +1,5 @@
 import Navbar from "@/Navbar/Navbar";
+import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import {
 	Box,
 	Paper,
@@ -9,12 +10,14 @@ import {
 	TableHead,
 	TableRow,
 	TableSortLabel,
+	IconButton,
+	Container,
 } from "@mui/material";
 import { MenuData } from "models/Menu";
 import React, { useState } from "react";
 import "./Menu.css";
 
-const rawMenu: MenuData = [
+const rawMenu: MenuData[] = [
 	{
 		index: 1,
 		brief: "Comprar un producto",
@@ -74,7 +77,21 @@ const Menu = () => {
 	 *
 	 * // TODO: Delete "rawMenu" usage
 	 */
-	const [menu, setMenu] = useState<MenuData>(rawMenu);
+	const [menu, setMenu] = useState<MenuData[]>(rawMenu);
+
+	const isAdmin = true;
+
+	async function deleteRawMenu(deletedRawMenuID: number) {
+		// TODO: Display loader
+
+		const newRawMenu = menu.filter(
+			(option) => option.index !== deletedRawMenuID
+		);
+
+		// TODO: Call Option Menu deletion from DB
+		setMenu(newRawMenu);
+		// TODO: Hide loader
+	}
 
 	return (
 		<>
@@ -96,7 +113,6 @@ const Menu = () => {
 					}}
 				>
 					<h1>Menu</h1>
-
 					<TableContainer
 						sx={{ width: "650px", maxHeight: "400px" }}
 						component={Paper}
@@ -123,11 +139,26 @@ const Menu = () => {
 											{option.keywords.join(", ")}
 										</TableCell>
 										<TableCell align="left">{option.action}</TableCell>
+										{isAdmin && (
+											<TableCell align="center">
+												<IconButton>
+													<Edit fontSize="inherit" />
+												</IconButton>
+												<IconButton onClick={() => deleteRawMenu(option.index)}>
+													<DeleteForever fontSize="inherit" />
+												</IconButton>
+											</TableCell>
+										)}
 									</TableRow>
 								))}
 							</TableBody>
 						</Table>
 					</TableContainer>
+					<IconButton
+						sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+					>
+						<AddCircle fontSize="inherit" />
+					</IconButton>
 				</Box>
 			</Box>
 		</>
