@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import { http } from "helper/API";
+import { instance } from "helper/API";
 
 import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
@@ -18,12 +18,16 @@ import {
 	TextField,
 } from "@mui/material";
 import { ServerResponse } from "models/ServerResponse";
+import Cookies from "universal-cookie";
+import { DeleteProps } from "helper/DeleteProps";
 
 interface FormLogin {
 	name: string;
 	pass: string;
 	cel: string;
 }
+
+const cookies = new Cookies();
 
 const Login: React.FC = () => {
 	/**
@@ -63,15 +67,6 @@ const Login: React.FC = () => {
 		return errors;
 	};
 
-	const hanldeLogin = async (
-		url: string,
-		data: any
-	): Promise<boolean | undefined> => {
-		const response = await http.post<ServerResponse>(url, data);
-		console.log(response);
-		return response?.err;
-	};
-
 	async function authenticate(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -88,31 +83,43 @@ const Login: React.FC = () => {
 			cel: cellphone,
 		};
 
-		// TODO: Authenticate user
 		console.table({ username, cellphone, password, userWantsToBeRemembered });
 
 		const url = "/users/login";
+		try {
+			const response = await instance.post<ServerResponse>(url, userLog);
+			const user = await response.data;
 
-		console.log(userLog);
+			console.log(user);
+			let userWasAuthenticated: boolean | undefined = user?.err;
 
-		let userWasAuthenticated: boolean | undefined = await hanldeLogin(
-			url,
-			userLog
-		);
-		console.log(userWasAuthenticated);
+			userWasAuthenticated = userWasAuthenticated ?? true;
 
-		userWasAuthenticated =
-			userWasAuthenticated === undefined ? true : userWasAuthenticated;
+			if (!userWasAuthenticated) {
+				DeleteProps(user?.success, ["createdAt", "updatedAt"]);
+				if (userWantsToBeRemembered) storeUserAuthentication(user);
 
-		if (!userWasAuthenticated) {
-			if (userWantsToBeRemembered) storeUserAuthentication();
-
-			navigate("/inicio");
+				navigate("/inicio");
+			}
+			else {
+				const message = user?.statusText;
+				const status = user?.status;
+				throw { message, status };
+			}
+		}
+		catch (error: any) {
+			alert(
+				`Descripcion del error: ${error.message}\nEstado: ${
+					error?.status ?? 500
+				}`
+			);
 		}
 	}
 
 	// TODO: Create store user authentication logic
-	function storeUserAuthentication() {}
+	function storeUserAuthentication(user: ServerResponse | undefined) {
+		cookies.set("user", user?.success, { path: "/" });
+	}
 
 	return (
 		<div className="login">

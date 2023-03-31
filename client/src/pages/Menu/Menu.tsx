@@ -114,7 +114,7 @@ const Menu = () => {
 				>
 					<h1>Menu</h1>
 					<TableContainer
-						sx={{ width: "650px", maxHeight: "400px" }}
+						sx={{ width: "800px", maxHeight: "400px" }}
 						component={Paper}
 						elevation={5}
 					>

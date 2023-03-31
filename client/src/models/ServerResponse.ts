@@ -1,4 +1,7 @@
 export interface ServerResponse {
-	success?: unknown;
+	success?: any;
 	err?: boolean;
+	statusText?: string;
+	status: number;
+	message?: string;
 }
