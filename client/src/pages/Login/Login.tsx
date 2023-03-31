@@ -95,11 +95,14 @@ const Login: React.FC = () => {
 
 		console.log(userLog);
 
-		const userWasAuthenticated: boolean | undefined = await hanldeLogin(
+		let userWasAuthenticated: boolean | undefined = await hanldeLogin(
 			url,
 			userLog
 		);
 		console.log(userWasAuthenticated);
+
+		userWasAuthenticated =
+			userWasAuthenticated === undefined ? true : userWasAuthenticated;
 
 		if (!userWasAuthenticated) {
 			if (userWantsToBeRemembered) storeUserAuthentication();
