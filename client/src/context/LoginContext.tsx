@@ -1,18 +1,19 @@
 import React, { useState, useEffect, createContext } from "react";
-import { useSessionStorage } from "usehooks-ts";
-import Cookies from "universal-cookie";
+import { useLocalStorage } from "usehooks-ts";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { User } from "models/User";
+import { useReadLocalStorage } from "usehooks-ts";
 
 interface CurrentUserContextType {
 	username?: string;
-	success?: User;
+	logIn: User | null;
 	handleLogin: (user: User | null) => void;
 }
 
 const defaultState = {
 	username: "",
-	success: {
+	logIn: {
 		id: "",
 		name: "",
 		date_B: new Date("Jan 17, 2003"),
@@ -31,9 +32,7 @@ interface LoginProviderProps {
 }
 
 const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
-	const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-	const [logIn, setLogIn] = useSessionStorage<User | null>("log_in", null);
+	const [logIn, setLogIn] = useLocalStorage<User | null>("log_in", null);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -43,31 +42,21 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 	}
 
 	useEffect(() => {
-		const cookies = new Cookies();
-		const user = cookies.get<User>("user");
-
 		console.log("log_in: ", logIn);
 
 		const { pathname } = location;
 		console.log(pathname);
 
-		if ((!user || user === undefined) && !logIn)
-			navigate("/", { replace: true });
-		else {
-			if (pathname === "/") navigate("/inicio", { replace: true });
+		if (!logIn) navigate("/", { replace: true });
+		else if (pathname === "/") navigate("/inicio", { replace: true });
 
-			if (user) {
-				console.log(user);
-				setCurrentUser(user);
-			}
-		}
 		return () => {
 			// cookies.remove("log_in");
 		};
 	}, []);
 
 	const data = {
-		currentUser,
+		logIn,
 		handleLogin,
 	};
 	return <LoginContext.Provider value={data}>{children}</LoginContext.Provider>;

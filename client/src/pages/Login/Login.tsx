@@ -20,6 +20,7 @@ import { ServerResponse } from "models/ServerResponse";
 import Cookies from "universal-cookie";
 import { DeleteProps } from "helper/DeleteProps";
 import LoginContext from "context/LoginContext";
+import { useReadLocalStorage } from "usehooks-ts";
 
 interface FormLogin {
 	name: string;
@@ -27,52 +28,63 @@ interface FormLogin {
 	cel: string;
 }
 
+const initialForm = {
+	name: "",
+	pass: "",
+	cel: "",
+};
+
 const cookies = new Cookies();
+
+function validationsForm(form: FormLogin) {
+	const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+	const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
+	const regexPass =
+		/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+	const regexSigns = /[-<>/]+/g;
+	const errors = {};
+
+	if (!form.name.trim()) alert("Llena el campo nombre");
+	else if (!regexName.test(form.name.trim()))
+		alert("El campo nombre solo acepta letras y espcios en blanco ' '");
+
+	if (!form.pass.trim()) alert("El campo contraseña es requerido");
+	else if (
+		!regexPass.test(form.pass.trim()) ||
+		regexSigns.test(form.pass.trim())
+	)
+		alert("Debe ser una contraseña robusta y no se permiten \"-<>/</>\"");
+
+	if (!form.cel.trim()) alert("Llena el campo celular");
+	else if (!regexNum.test(form.cel.trim())) {
+		alert(
+			"El campo celular solo acepta numeros y no mas de 10 digitos, (XX-XXXX-XXXX)"
+		);
+	}
+	return errors;
+}
 
 const Login: React.FC = () => {
 	/**
 	 * Determines if the password will be shown or hidden
 	 * in its input field
 	 */
+
 	const [showPassword, setShowPassword] = useState(false);
-
+	const [formLog, setFormLog] = useState<FormLogin>(initialForm);
 	const { handleLogin } = useContext(LoginContext);
-
-	useEffect(() => {
-		if (cookies.get("user") || cookies.get("user") !== undefined)
-			navigate("/inicio", { replace: true });
-	}, []);
-
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
 
-	function validationsForm(form: FormLogin) {
-		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
-		const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
-		const regexPass =
-			/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
-		const regexSigns = /[-<>/]+/g;
-		const errors = {};
-
-		if (!form.name.trim()) alert("Llena el campo nombre");
-		else if (!regexName.test(form.name.trim()))
-			alert("El campo nombre solo acepta letras y espcios en blanco ' '");
-
-		if (!form.pass.trim()) alert("El campo contraseña es requerido");
-		else if (
-			!regexPass.test(form.pass.trim()) ||
-			regexSigns.test(form.pass.trim())
-		)
-			alert("Debe ser una contraseña robusta y no se permiten \"-<>/</>\"");
-
-		if (!form.cel.trim()) alert("Llena el campo celular");
-		else if (!regexNum.test(form.cel.trim())) {
-			alert(
-				"El campo celular solo acepta numeros y no mas de 10 digitos, (XX-XXXX-XXXX)"
-			);
+	useEffect(() => {
+		if (cookies.get("user") || cookies.get("user") !== undefined) {
+			const { name, pass, cel } = cookies.get("user");
+			const rememberedUser = { name: name, pass: pass, cel: cel };
+			setFormLog(rememberedUser);
 		}
-		return errors;
-	}
+	}, []);
+
+	function handleChange(form: FormLogin): void {}
 
 	// TODO: Create store user authentication logic
 	function storeUserAuthentication(user: ServerResponse | undefined) {
@@ -110,8 +122,8 @@ const Login: React.FC = () => {
 			if (!userWasAuthenticated) {
 				DeleteProps(user?.success, ["createdAt", "updatedAt"]);
 
+				handleLogin(user?.success);
 				if (userWantsToBeRemembered) storeUserAuthentication(user);
-				else handleLogin(user?.success);
 
 				navigate("/inicio");
 			}
@@ -150,6 +162,7 @@ const Login: React.FC = () => {
 					sx={{ width: "300px" }}
 					label="Usuario"
 					name="username"
+					value={formLog.name}
 					variant="outlined"
 					type="text"
 					required
@@ -161,6 +174,7 @@ const Login: React.FC = () => {
 					name="cellphone"
 					variant="outlined"
 					type="text"
+					value={formLog.cel}
 					required
 				/>
 
@@ -171,6 +185,7 @@ const Login: React.FC = () => {
 						label="Contraseña"
 						name="password"
 						type={showPassword ? "text" : "password"}
+						value={formLog.pass}
 						endAdornment={
 							<InputAdornment position="end">
 								<IconButton

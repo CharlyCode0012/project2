@@ -12,7 +12,7 @@ import {
 	TableSortLabel,
 	Container,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "./Categories.css";
 
 import { Category } from "models/Category";
@@ -20,6 +20,9 @@ import Loading from "@/Loading/Loading";
 import { SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
 import CategoriesForm from "./CategoriesForm";
+import { useReadLocalStorage } from "usehooks-ts";
+import Cookies from "universal-cookie";
+import { User } from "models/User";
 
 const rawCategories: Category[] = [
 	/* 	{ id: "1234567890", name: "Hogar", state: true },
@@ -34,9 +37,14 @@ const rawCategories: Category[] = [
 	{ id: "1234567891", name: "Higiene personal", state: false }, */
 ];
 
+const cookie = new Cookies();
+
 const Categories: React.FC = () => {
 	const [isOpen, setOpen] = useState(false);
 	const [categories, setCategories] = useState<Category[]>(rawCategories);
+	const user: User =
+		useReadLocalStorage<User>("log_in") ?? cookie.get<User>("user");
+	console.log("user: ", user);
 
 	/**
 	 * Headers that will be displayed to the table, not
