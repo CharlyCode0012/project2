@@ -7,7 +7,7 @@ import { User } from "models/User";
 interface CurrentUserContextType {
 	username?: string;
 	success?: User;
-	handleLogin?: (user: User) => void;
+	handleLogin: (user: User | null) => void;
 }
 
 const defaultState = {
@@ -21,6 +21,7 @@ const defaultState = {
 		pass: "",
 		type_use: false,
 	},
+	handleLogin: (user: User | null) => {},
 };
 
 const LoginContext = createContext<CurrentUserContextType>(defaultState);
@@ -37,7 +38,7 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	function handleLogin(user: User): void {
+	function handleLogin(user: User | null): void {
 		setLogIn(user);
 	}
 
@@ -73,3 +74,5 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 };
 
 export { LoginProvider };
+
+export default LoginContext;

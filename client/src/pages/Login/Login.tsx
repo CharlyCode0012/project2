@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { instance } from "helper/API";
-
 import { Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
 	Avatar,
@@ -20,6 +19,7 @@ import {
 import { ServerResponse } from "models/ServerResponse";
 import Cookies from "universal-cookie";
 import { DeleteProps } from "helper/DeleteProps";
+import LoginContext from "context/LoginContext";
 
 interface FormLogin {
 	name: string;
@@ -35,6 +35,8 @@ const Login: React.FC = () => {
 	 * in its input field
 	 */
 	const [showPassword, setShowPassword] = useState(false);
+
+	const { handleLogin } = useContext(LoginContext);
 
 	useEffect(() => {
 		if (cookies.get("user") || cookies.get("user") !== undefined)
@@ -109,6 +111,7 @@ const Login: React.FC = () => {
 				DeleteProps(user?.success, ["createdAt", "updatedAt"]);
 
 				if (userWantsToBeRemembered) storeUserAuthentication(user);
+				else handleLogin(user?.success);
 
 				navigate("/inicio");
 			}

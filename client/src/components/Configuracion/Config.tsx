@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Button } from "@mui/material";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
+import LoginContext from "context/LoginContext";
 
 const cookies = new Cookies();
 
 export const Config: React.FC = () => {
-	const num = 0;
+	const { handleLogin } = useContext(LoginContext);
 	const navigate = useNavigate();
 
 	function onClose(): void {
 		cookies.remove("user");
-		cookies.remove("log_in");
+		handleLogin(null);
 		navigate("/", { replace: true });
 	}
 
