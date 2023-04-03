@@ -7,6 +7,7 @@ import { User } from "models/User";
 interface CurrentUserContextType {
 	username?: string;
 	success?: User;
+	handleLogin?: (user: User) => void;
 }
 
 const defaultState = {
@@ -29,8 +30,8 @@ interface LoginProviderProps {
 }
 
 const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
-	const [currentUser, setCurrentUser] =
-		useState<CurrentUserContextType>(defaultState);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+
 	const [logIn, setLogIn] = useSessionStorage<User | null>("log_in", null);
 
 	const navigate = useNavigate();
@@ -42,10 +43,9 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 
 	useEffect(() => {
 		const cookies = new Cookies();
-		const user = cookies.get("user");
-		const log_in = cookies.get("log_in") ?? false;
+		const user = cookies.get<User>("user");
 
-		console.log("log_in: ", log_in);
+		console.log("log_in: ", logIn);
 
 		const { pathname } = location;
 		console.log(pathname);
@@ -57,7 +57,7 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 
 			if (user) {
 				console.log(user);
-				setCurrentUser({ ...currentUser, success: user });
+				setCurrentUser(user);
 			}
 		}
 		return () => {
@@ -65,11 +65,11 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 		};
 	}, []);
 
-	return (
-		<LoginContext.Provider value={currentUser}>
-			{children}
-		</LoginContext.Provider>
-	);
+	const data = {
+		currentUser,
+		handleLogin,
+	};
+	return <LoginContext.Provider value={data}>{children}</LoginContext.Provider>;
 };
 
 export { LoginProvider };

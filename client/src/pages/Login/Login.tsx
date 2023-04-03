@@ -107,8 +107,7 @@ const Login: React.FC = () => {
 
 			if (!userWasAuthenticated) {
 				DeleteProps(user?.success, ["createdAt", "updatedAt"]);
-				cookies.set("log_in", user?.success, { path: "/" });
-				console.log("log in: ", cookies.get("log_in"));
+
 				if (userWantsToBeRemembered) storeUserAuthentication(user);
 
 				navigate("/inicio");
