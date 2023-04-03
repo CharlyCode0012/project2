@@ -18,9 +18,11 @@ import "./Categories.css";
 import { Category } from "models/Category";
 import Loading from "@/Loading/Loading";
 import { SearchAppBar } from "@/Navbar/SearchAppBar";
+import Modal from "@/Modal/Modal";
+import CategoriesForm from "./CategoriesForm";
 
 const rawCategories: Category[] = [
-	{ id: "1234567890", name: "Hogar", state: true },
+	/* 	{ id: "1234567890", name: "Hogar", state: true },
 	{ id: "2345678901", name: "Mascotas", state: false },
 	{ id: "3456789012", name: "Limpieza", state: true },
 	{ id: "4567890123", name: "Electrónica", state: false },
@@ -29,31 +31,37 @@ const rawCategories: Category[] = [
 	{ id: "7890123456", name: "Panadería", state: true },
 	{ id: "8901234567", name: "Carnes", state: false },
 	{ id: "9012345678", name: "Juguetes", state: true },
-	{ id: "1234567891", name: "Higiene personal", state: false },
+	{ id: "1234567891", name: "Higiene personal", state: false }, */
 ];
 
 const Categories: React.FC = () => {
+	const [isOpen, setOpen] = useState(false);
+	const [categories, setCategories] = useState<Category[]>(rawCategories);
+
 	/**
 	 * Headers that will be displayed to the table, not
 	 * counting the last one which will be for admin
 	 * purposes
 	 */
-	const tableHeaders = ["ID", "Nombre", "Estado"];
 
-	/**
-	 * Contains all the categories that will be displayed to the user
-	 *
-	 * // TODO: Delete "rawCategories" usage
-	 */
-	const [categories, setCategories] = useState<Category[]>(rawCategories);
+	const tableHeaders = ["ID", "Nombre", "Estado"];
 
 	/**
 	 * Determines if some admin action buttons will be
 	 * displayed in the table too
 	 */
+
 	const isAdmin = true;
 
-	async function deleteCategory(deletedCategoryID: string) {
+	function handleOpen(op: boolean): void {
+		setOpen(op);
+	}
+
+	async function createCategory() {
+		handleOpen(true);
+	}
+
+	async function deleteCategory(deletedCategoryID: number) {
 		// TODO: Display loader
 
 		const newCategories = categories.filter(
@@ -69,7 +77,15 @@ const Categories: React.FC = () => {
 	return (
 		<>
 			<Container maxWidth="sm">
-				<div className="categories">
+				<Box
+					sx={{
+						height: "560px",
+						flexGrow: 1,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+				>
 					<Box
 						sx={{
 							display: "flex",
@@ -79,9 +95,17 @@ const Categories: React.FC = () => {
 					>
 						<SearchAppBar />
 						<h1>Categorias</h1>
-
+						{isOpen && (
+							<Modal
+								open={isOpen}
+								handleOpen={handleOpen}
+								title="Formulario Categorias"
+							>
+								<CategoriesForm handleOpen={handleOpen}></CategoriesForm>
+							</Modal>
+						)}
 						<TableContainer
-							sx={{ width: "600px", maxHeight: "400px" }}
+							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -124,14 +148,14 @@ const Categories: React.FC = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-
 						<IconButton
 							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+							onClick={() => createCategory()}
 						>
 							<AddCircle fontSize="inherit" />
 						</IconButton>
 					</Box>
-				</div>
+				</Box>
 			</Container>
 		</>
 	);

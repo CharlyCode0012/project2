@@ -15,7 +15,7 @@ export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
 			id="combo-box-demo"
 			options={Options}
 			value={value}
-			sx={{ width: 150, marginRight: 2 }}
+			sx={{ width: 150, marginRight: 15 }}
 			onChange={(
 				event: React.SyntheticEvent<Element, Event>,
 				newValue: string | null

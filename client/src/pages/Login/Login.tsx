@@ -39,7 +39,7 @@ const Login: React.FC = () => {
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
 
-	const validationsForm = (form: FormLogin) => {
+	function validationsForm(form: FormLogin) {
 		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
 		const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
 		const regexPass =
@@ -65,7 +65,12 @@ const Login: React.FC = () => {
 			);
 		}
 		return errors;
-	};
+	}
+
+	// TODO: Create store user authentication logic
+	function storeUserAuthentication(user: ServerResponse | undefined) {
+		cookies.set("user", user?.success, { path: "/" });
+	}
 
 	async function authenticate(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -114,11 +119,6 @@ const Login: React.FC = () => {
 				}`
 			);
 		}
-	}
-
-	// TODO: Create store user authentication logic
-	function storeUserAuthentication(user: ServerResponse | undefined) {
-		cookies.set("user", user?.success, { path: "/" });
 	}
 
 	return (

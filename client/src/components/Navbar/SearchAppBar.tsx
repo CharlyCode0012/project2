@@ -57,9 +57,9 @@ export const SearchAppBar = () => {
 	};
 
 	return (
-		<Box sx={{ flexGrow: 1, marginTop: "20px", width: "600px" }}>
+		<Box sx={{ flexGrow: 0, marginTop: "120px", width: "800px" }}>
 			<AppBar position="static">
-				<Toolbar sx={{ padding: "9px" }}>
+				<Toolbar sx={{ padding: "10px" }}>
 					<Order handleChangeOrder={handleChangeOrder} value={order} />
 					<Search>
 						<SearchIconWrapper>
@@ -72,7 +72,7 @@ export const SearchAppBar = () => {
 					</Search>
 					<Button
 						variant="outlined"
-						sx={{ marginLeft: 2 }}
+						sx={{ marginLeft: 15 }}
 						onClick={() => {
 							console.log(order);
 						}}
