@@ -20,7 +20,7 @@ import { ServerResponse } from "models/ServerResponse";
 import Cookies from "universal-cookie";
 import { DeleteProps } from "helper/DeleteProps";
 import LoginContext from "context/LoginContext";
-import { useReadLocalStorage } from "usehooks-ts";
+import { useForm } from "../../hooks/useForm";
 
 interface FormLogin {
 	name: string;
@@ -28,7 +28,7 @@ interface FormLogin {
 	cel: string;
 }
 
-const initialForm = {
+const initialForm: FormLogin = {
 	name: "",
 	pass: "",
 	cel: "",
@@ -69,9 +69,9 @@ const Login: React.FC = () => {
 	 * Determines if the password will be shown or hidden
 	 * in its input field
 	 */
-
+	const { form, handleChange, setInfo } = useForm<FormLogin>(initialForm);
 	const [showPassword, setShowPassword] = useState(false);
-	const [formLog, setFormLog] = useState<FormLogin>(initialForm);
+
 	const { handleLogin } = useContext(LoginContext);
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
@@ -79,12 +79,10 @@ const Login: React.FC = () => {
 	useEffect(() => {
 		if (cookies.get("user") || cookies.get("user") !== undefined) {
 			const { name, pass, cel } = cookies.get("user");
-			const rememberedUser = { name: name, pass: pass, cel: cel };
-			setFormLog(rememberedUser);
+			const rememberedUser: FormLogin = { name: name, pass: pass, cel: cel };
+			setInfo(rememberedUser);
 		}
 	}, []);
-
-	function handleChange(form: FormLogin): void {}
 
 	// TODO: Create store user authentication logic
 	function storeUserAuthentication(user: ServerResponse | undefined) {
@@ -96,9 +94,9 @@ const Login: React.FC = () => {
 
 		// Get data from the form
 		const data = new FormData(event.currentTarget);
-		const username = data.get("username")?.toString();
-		const cellphone = data.get("cellphone")?.toString();
-		const password = data.get("password")?.toString();
+		const username = data.get("name")?.toString();
+		const cellphone = data.get("cel")?.toString();
+		const password = data.get("pass")?.toString();
 		const userWantsToBeRemembered = data.get("remember") === "on";
 
 		const userLog = {
@@ -161,31 +159,34 @@ const Login: React.FC = () => {
 				<TextField
 					sx={{ width: "300px" }}
 					label="Usuario"
-					name="username"
-					value={formLog.name}
+					name="name"
+					value={form.name}
 					variant="outlined"
 					type="text"
+					onChange={handleChange}
 					required
 				/>
 
 				<TextField
 					sx={{ width: "300px" }}
 					label="Telefono"
-					name="cellphone"
+					name="cel"
 					variant="outlined"
 					type="text"
-					value={formLog.cel}
+					value={form.cel}
+					onChange={handleChange}
 					required
 				/>
 
 				<FormControl sx={{ width: "300px" }}>
 					<InputLabel htmlFor="password">Contraseña</InputLabel>
 					<OutlinedInput
-						id="password"
+						id="pass"
 						label="Contraseña"
-						name="password"
+						name="pass"
 						type={showPassword ? "text" : "password"}
-						value={formLog.pass}
+						value={form.pass}
+						onChange={handleChange}
 						endAdornment={
 							<InputAdornment position="end">
 								<IconButton
