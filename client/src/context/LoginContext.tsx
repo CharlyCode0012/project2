@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
-import { instance } from "../helper/API";
+import { useSessionStorage } from "usehooks-ts";
 import Cookies from "universal-cookie";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { User } from "models/User";
 
 interface CurrentUserContextType {
@@ -31,20 +31,40 @@ interface LoginProviderProps {
 const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 	const [currentUser, setCurrentUser] =
 		useState<CurrentUserContextType>(defaultState);
+	const [logIn, setLogIn] = useSessionStorage<User | null>("log_in", null);
 
 	const navigate = useNavigate();
+	const location = useLocation();
+
+	function handleLogin(user: User): void {
+		setLogIn(user);
+	}
+
 	useEffect(() => {
 		const cookies = new Cookies();
+		const user = cookies.get("user");
+		const log_in = cookies.get("log_in") ?? false;
 
-		if (!cookies.get("user") || cookies.get("user") === undefined)
+		console.log("log_in: ", log_in);
+
+		const { pathname } = location;
+		console.log(pathname);
+
+		if ((!user || user === undefined) && !logIn)
 			navigate("/", { replace: true });
 		else {
-			if (cookies.get("user")) {
-				console.log(cookies.get("user"));
-				setCurrentUser({ ...currentUser, success: cookies.get("user") });
+			if (pathname === "/") navigate("/inicio", { replace: true });
+
+			if (user) {
+				console.log(user);
+				setCurrentUser({ ...currentUser, success: user });
 			}
 		}
+		return () => {
+			// cookies.remove("log_in");
+		};
 	}, []);
+
 	return (
 		<LoginContext.Provider value={currentUser}>
 			{children}

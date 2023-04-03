@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { instance } from "helper/API";
@@ -35,6 +35,11 @@ const Login: React.FC = () => {
 	 * in its input field
 	 */
 	const [showPassword, setShowPassword] = useState(false);
+
+	useEffect(() => {
+		if (cookies.get("user") || cookies.get("user") !== undefined)
+			navigate("/inicio", { replace: true });
+	}, []);
 
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
@@ -102,6 +107,8 @@ const Login: React.FC = () => {
 
 			if (!userWasAuthenticated) {
 				DeleteProps(user?.success, ["createdAt", "updatedAt"]);
+				cookies.set("log_in", user?.success, { path: "/" });
+				console.log("log in: ", cookies.get("log_in"));
 				if (userWantsToBeRemembered) storeUserAuthentication(user);
 
 				navigate("/inicio");
