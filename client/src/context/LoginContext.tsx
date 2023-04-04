@@ -42,10 +42,7 @@ const LoginProvider: React.FC<LoginProviderProps> = ({ children }) => {
 	}
 
 	useEffect(() => {
-		console.log("log_in: ", logIn);
-
 		const { pathname } = location;
-		console.log(pathname);
 
 		if (!logIn) navigate("/", { replace: true });
 		else if (pathname === "/") navigate("/inicio", { replace: true });

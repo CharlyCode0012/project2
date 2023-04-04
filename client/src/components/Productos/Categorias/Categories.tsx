@@ -12,29 +12,21 @@ import {
 	TableSortLabel,
 	Container,
 } from "@mui/material";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./Categories.css";
 import { Category } from "models/Category";
 import Loading from "@/Loading/Loading";
 import { SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
-import CategoriesForm from "../../components/Productos/Categorias/CategoriesForm";
+import CategoriesForm from "@/Productos/Categorias/CategoriesForm";
 import { useReadLocalStorage } from "usehooks-ts";
 import Cookies from "universal-cookie";
 import { User } from "models/User";
+import { instance } from "helper/API";
+import { ServerResponse } from "models/ServerResponse";
+import { DeleteProps } from "helper/DeleteProps";
 
-const rawCategories: Category[] = [
-	/* 	{ id: "1234567890", name: "Hogar", state: true },
-	{ id: "2345678901", name: "Mascotas", state: false },
-	{ id: "3456789012", name: "Limpieza", state: true },
-	{ id: "4567890123", name: "Electrónica", state: false },
-	{ id: "5678901234", name: "Bebidas", state: true },
-	{ id: "6789012345", name: "Frutas y verduras", state: false },
-	{ id: "7890123456", name: "Panadería", state: true },
-	{ id: "8901234567", name: "Carnes", state: false },
-	{ id: "9012345678", name: "Juguetes", state: true },
-	{ id: "1234567891", name: "Higiene personal", state: false }, */
-];
+const rawCategories: Category[] = [];
 
 const cookie = new Cookies();
 
@@ -43,7 +35,6 @@ const Categories: React.FC = () => {
 	const [categories, setCategories] = useState<Category[]>(rawCategories);
 	const user: User =
 		useReadLocalStorage<User>("log_in") ?? cookie.get<User>("user");
-	console.log("user: ", user);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -80,6 +71,38 @@ const Categories: React.FC = () => {
 
 		// TODO: Hide loader
 	}
+
+	async function getCategories() {
+		const url = "/categories";
+
+		try {
+			const response = await instance.get<ServerResponse>(url);
+			const dataCategories = await response.data;
+			console.log(dataCategories);
+
+			if (!dataCategories?.err) {
+				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
+				setCategories(dataCategories?.success);
+				console.log(categories);
+			}
+			else {
+				const message = dataCategories?.statusText;
+				const status = dataCategories?.status;
+				throw { message, status };
+			}
+		}
+		catch (error: any) {
+			alert(
+				`Descripcion del error: ${error.message}\nEstado: ${
+					error?.status ?? 500
+				}`
+			);
+		}
+	}
+
+	useEffect(() => {
+		getCategories();
+	}, []);
 
 	return (
 		<>
