@@ -69,20 +69,27 @@ const Login: React.FC = () => {
 	 * Determines if the password will be shown or hidden
 	 * in its input field
 	 */
-	const { form, handleChange, setInfo } = useForm<FormLogin>(initialForm);
+	// const { form, handleChange, setInfo } = useForm<FormLogin>(initialForm);
+	const [form, setForm] = useState<FormLogin>(initialForm);
 	const [showPassword, setShowPassword] = useState(false);
 
 	const { handleLogin } = useContext(LoginContext);
 	// Helps when taking user to another section of the page
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		if (cookies.get("user") || cookies.get("user") !== undefined) {
-			const { name, pass, cel } = cookies.get("user");
-			const rememberedUser: FormLogin = { name: name, pass: pass, cel: cel };
-			setInfo(rememberedUser);
-		}
-	}, []);
+	function setInfo(data: FormLogin) {
+		setForm(data);
+	}
+
+	function handleChange(
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	): void {
+		const { name, value } = e.target;
+		setForm({
+			...form,
+			[name]: value,
+		});
+	}
 
 	// TODO: Create store user authentication logic
 	function storeUserAuthentication(user: ServerResponse | undefined) {
@@ -139,6 +146,14 @@ const Login: React.FC = () => {
 			);
 		}
 	}
+
+	useEffect(() => {
+		if (cookies.get("user") || cookies.get("user") !== undefined) {
+			const { name, pass, cel } = cookies.get("user");
+			const rememberedUser: FormLogin = { name: name, pass: pass, cel: cel };
+			setInfo(rememberedUser);
+		}
+	}, []);
 
 	return (
 		<div className="login">
