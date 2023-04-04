@@ -76,14 +76,16 @@ const Categories: React.FC = () => {
 		const url = "/categories";
 
 		try {
-			const response = await instance.get<ServerResponse>(url);
-			const dataCategories = await response.data;
+			const response = await instance.get<ServerResponse | null>(url);
+			let dataCategories = await response.data;
 			console.log(dataCategories);
 
 			if (!dataCategories?.err) {
 				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
+
 				setCategories(dataCategories?.success);
 				console.log(categories);
+				dataCategories = null;
 			}
 			else {
 				const message = dataCategories?.statusText;
