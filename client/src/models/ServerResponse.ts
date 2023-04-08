@@ -5,3 +5,9 @@ export interface ServerResponse {
 	status: number;
 	message?: string;
 }
+
+export const initialSereverResponse: ServerResponse = {
+	success: {},
+	err: false,
+	status: 200,
+};

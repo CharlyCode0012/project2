@@ -23,7 +23,7 @@ import { useReadLocalStorage } from "usehooks-ts";
 import Cookies from "universal-cookie";
 import { User } from "models/User";
 import { instance } from "helper/API";
-import { ServerResponse } from "models/ServerResponse";
+import { ServerResponse, initialSereverResponse } from "models/ServerResponse";
 import { DeleteProps } from "helper/DeleteProps";
 
 const rawCategories: Category[] = [];
@@ -76,8 +76,8 @@ const Categories: React.FC = () => {
 		const url = "/categories";
 
 		try {
-			const response = await instance.get<ServerResponse | null>(url);
-			let dataCategories = await response.data;
+			const response = await instance.get<ServerResponse>(url);
+			let dataCategories = await response?.data;
 			console.log(dataCategories);
 
 			if (!dataCategories?.err) {
@@ -85,7 +85,7 @@ const Categories: React.FC = () => {
 
 				setCategories(dataCategories?.success);
 				console.log(categories);
-				dataCategories = null;
+				dataCategories = initialSereverResponse;
 			}
 			else {
 				const message = dataCategories?.statusText;
