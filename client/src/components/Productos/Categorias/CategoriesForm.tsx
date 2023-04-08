@@ -23,6 +23,8 @@ interface CategoriesFormProps {
 	handleOpen: (op: boolean) => void;
 	dataToEdit?: Category;
 	endpoint: string;
+	categories?: Category[];
+	setCategories?: (data: Category[]) => void;
 }
 
 const CategoriesForm: React.FC<CategoriesFormProps> = ({
@@ -34,6 +36,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 
 	async function createCategory() {
 		try {
+			if (form.id === 0) form.id = Date.now();
 			const response = await instance.post(endpoint, form);
 			const createdCategory = await response.data;
 			console.log(createdCategory);
@@ -44,6 +47,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 	}
 
 	function handleSubmit() {
+		if (!dataToEdit) createCategory();
 		handleOpen(false);
 	}
 

@@ -59,6 +59,10 @@ const Categories: React.FC = () => {
 		setOpen(op);
 	}
 
+	function handleCategory(data: Category[]) {
+		setCategories(data);
+	}
+
 	async function createCategory() {
 		setEditCategory(undefined);
 		handleOpen(true);
@@ -92,7 +96,7 @@ const Categories: React.FC = () => {
 				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
 
 				setCategories(dataCategories?.success);
-				console.log(categories?.length);
+				console.log(categories);
 				dataCategories = initialSereverResponse;
 			}
 			else {
@@ -144,6 +148,9 @@ const Categories: React.FC = () => {
 								<CategoriesForm
 									handleOpen={handleOpen}
 									dataToEdit={editCategory}
+									endpoint={url}
+									categories={categories}
+									setCategories={handleCategory}
 								></CategoriesForm>
 							</Modal>
 						)}
