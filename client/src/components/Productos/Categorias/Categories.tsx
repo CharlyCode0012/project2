@@ -29,10 +29,14 @@ import { DeleteProps } from "helper/DeleteProps";
 const rawCategories: Category[] = [];
 
 const cookie = new Cookies();
+const url = "/categories";
 
 const Categories: React.FC = () => {
 	const [isOpen, setOpen] = useState(false);
 	const [categories, setCategories] = useState<Category[]>(rawCategories);
+	const [editCategory, setEditCategory] = useState<Category | undefined>(
+		undefined
+	);
 	const user: User =
 		useReadLocalStorage<User>("log_in") ?? cookie.get<User>("user");
 
@@ -56,6 +60,12 @@ const Categories: React.FC = () => {
 	}
 
 	async function createCategory() {
+		setEditCategory(undefined);
+		handleOpen(true);
+	}
+
+	function handleEdit(category: Category) {
+		setEditCategory(category);
 		handleOpen(true);
 	}
 
@@ -73,8 +83,6 @@ const Categories: React.FC = () => {
 	}
 
 	async function getCategories() {
-		const url = "/categories";
-
 		try {
 			const response = await instance.get<ServerResponse>(url);
 			let dataCategories = await response?.data;
@@ -84,7 +92,7 @@ const Categories: React.FC = () => {
 				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
 
 				setCategories(dataCategories?.success);
-				console.log(categories);
+				console.log(categories?.length);
 				dataCategories = initialSereverResponse;
 			}
 			else {
@@ -133,7 +141,10 @@ const Categories: React.FC = () => {
 								handleOpen={handleOpen}
 								title="Formulario Categorias"
 							>
-								<CategoriesForm handleOpen={handleOpen}></CategoriesForm>
+								<CategoriesForm
+									handleOpen={handleOpen}
+									dataToEdit={editCategory}
+								></CategoriesForm>
 							</Modal>
 						)}
 						<TableContainer
@@ -155,28 +166,34 @@ const Categories: React.FC = () => {
 								</TableHead>
 
 								<TableBody>
-									{categories.map((category) => (
-										<TableRow key={category.id}>
-											<TableCell align="left">{category.id}</TableCell>
-											<TableCell align="left">{category.name}</TableCell>
-											<TableCell align="left">
-												{category.state ? "Activada" : "Desactivada"}
-											</TableCell>
-
-											{isAdmin && (
-												<TableCell align="center">
-													<IconButton>
-														<Edit fontSize="inherit" />
-													</IconButton>
-													<IconButton
-														onClick={() => deleteCategory(category.id)}
-													>
-														<DeleteForever fontSize="inherit" />
-													</IconButton>
-												</TableCell>
-											)}
+									{!(categories?.length > 0) ? (
+										<TableRow>
+											<TableCell>Sin datos</TableCell>
 										</TableRow>
-									))}
+									) : (
+										categories?.map((category) => (
+											<TableRow key={category.id}>
+												<TableCell align="left">{category.id}</TableCell>
+												<TableCell align="left">{category.name}</TableCell>
+												<TableCell align="left">
+													{category.state ? "Activada" : "Desactivada"}
+												</TableCell>
+
+												{isAdmin && (
+													<TableCell align="center">
+														<IconButton onClick={() => handleEdit(category)}>
+															<Edit fontSize="inherit" />
+														</IconButton>
+														<IconButton
+															onClick={() => deleteCategory(category.id)}
+														>
+															<DeleteForever fontSize="inherit" />
+														</IconButton>
+													</TableCell>
+												)}
+											</TableRow>
+										))
+									)}
 								</TableBody>
 							</Table>
 						</TableContainer>
