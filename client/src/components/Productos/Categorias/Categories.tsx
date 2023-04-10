@@ -76,6 +76,11 @@ const Categories: React.FC = () => {
 		const isDelete = window.confirm(
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
+		const newCategories = categories.filter(
+			(categoryD) => categoryD.id !== deletedCategoryID
+		);
+		setCategories(newCategories);
+
 		const endpoint = `${url}/${deletedCategoryID}`;
 		if (isDelete) {
 			try {
@@ -83,11 +88,6 @@ const Categories: React.FC = () => {
 
 				const res = await instance.delete(endpoint);
 				const dataCategory = await res.data;
-
-				const newCategories = categories.filter(
-					(categoryD) => categoryD.id !== deletedCategoryID
-				);
-				setCategories(newCategories);
 
 				if (dataCategory?.err) {
 					const message = dataCategory?.statusText;
