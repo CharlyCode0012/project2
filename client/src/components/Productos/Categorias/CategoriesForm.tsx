@@ -44,7 +44,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 			if (form.id === 0) form.id = Date.now();
 			const response = await instance.post(url, form);
 			const createdCategory = await response.data;
-			setCategories([...categories, form]);
+			if (Array.isArray(categories)) setCategories([...categories, form]);
+			else setCategories(categories);
 			console.log(createdCategory);
 		}
 		catch (error) {

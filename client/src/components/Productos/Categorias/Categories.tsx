@@ -69,15 +69,40 @@ const Categories: React.FC = () => {
 		handleOpen(true);
 	}
 
-	async function deleteCategory(deletedCategoryID: number) {
+	async function deleteCategory(category: Category) {
+		const { name, id } = category;
+		const deletedCategoryID: number = id;
 		// TODO: Display loader
-
-		const newCategories = categories.filter(
-			(category) => category.id !== deletedCategoryID
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
+		const endpoint = `${url}/${deletedCategoryID}`;
+		if (isDelete) {
+			try {
+				console.log(`delete endpoint: ${endpoint}`);
 
-		// TODO: Call category deletion from DB
-		setCategories(newCategories);
+				const res = await instance.delete(endpoint);
+				const dataCategory = await res.data;
+
+				const newCategories = categories.filter(
+					(categoryD) => categoryD.id !== deletedCategoryID
+				);
+				setCategories(newCategories);
+
+				if (dataCategory?.err) {
+					const message = dataCategory?.statusText;
+					const status = dataCategory?.status;
+					throw { message, status };
+				}
+			}
+			catch (error: any) {
+				alert(
+					`Descripcion del error: ${error.message}\nEstado: ${
+						error?.status ?? 500
+					}`
+				);
+			}
+		}
 
 		// TODO: Hide loader
 	}
@@ -86,13 +111,12 @@ const Categories: React.FC = () => {
 		try {
 			const response = await instance.get<ServerResponse>(url);
 			let dataCategories = await response?.data;
-			console.log(dataCategories);
 
 			if (!dataCategories?.err) {
 				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
 
 				setCategories(dataCategories?.success);
-				console.log(categories);
+				console.log(dataCategories?.success);
 				dataCategories = initialSereverResponse;
 			}
 			else {
@@ -188,7 +212,7 @@ const Categories: React.FC = () => {
 															<Edit fontSize="inherit" />
 														</IconButton>
 														<IconButton
-															onClick={() => deleteCategory(category.id)}
+															onClick={() => deleteCategory(category)}
 														>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
