@@ -59,10 +59,6 @@ const Categories: React.FC = () => {
 		setOpen(op);
 	}
 
-	function handleCategory(data: Category[]) {
-		setCategories(data);
-	}
-
 	async function createCategory() {
 		setEditCategory(undefined);
 		handleOpen(true);
@@ -148,9 +144,9 @@ const Categories: React.FC = () => {
 								<CategoriesForm
 									handleOpen={handleOpen}
 									dataToEdit={editCategory}
-									endpoint={url}
+									url={url}
 									categories={categories}
-									setCategories={handleCategory}
+									setCategories={setCategories}
 								></CategoriesForm>
 							</Modal>
 						)}
