@@ -55,6 +55,8 @@ const Categories: React.FC = () => {
 
 	const isAdmin = true;
 
+	// TODO:
+
 	function handleOpen(op: boolean): void {
 		setOpen(op);
 	}
@@ -76,13 +78,14 @@ const Categories: React.FC = () => {
 		const isDelete = window.confirm(
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
-		const newCategories = categories.filter(
-			(categoryD) => categoryD.id !== deletedCategoryID
-		);
-		setCategories(newCategories);
 
 		const endpoint = `${url}/${deletedCategoryID}`;
 		if (isDelete) {
+			const newCategories = categories.filter(
+				(categoryD) => categoryD.id !== deletedCategoryID
+			);
+			setCategories(newCategories);
+
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
 
