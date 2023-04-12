@@ -48,13 +48,24 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	},
 }));
 
-export const SearchAppBar = () => {
-	const [order, setOrder] = useState<string | null>("ASC");
+interface SearchAppBarProps {
+	onSubmitSearch: (search: string, order: string) => Promise<void>;
+}
 
-	const handleChangeOrder = (value: string | null): void => {
+export const SearchAppBar: React.FC<SearchAppBarProps> = ({ onSubmitSearch, }) => {
+	const [order, setOrder] = useState<string>("ASC");
+	const [search, setSearch] = useState<string>("");
+	function handleChangeOrder(value: string | null): void {
 		value = value ?? "ASC";
 		setOrder(value);
-	};
+	}
+
+	function handleChangeSearch(
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	): void {
+		const { value } = e.target;
+		setSearch(value);
+	}
 
 	return (
 		<Box sx={{ flexGrow: 0, marginTop: "120px", width: "800px" }}>
@@ -66,6 +77,9 @@ export const SearchAppBar = () => {
 							<SearchIcon />
 						</SearchIconWrapper>
 						<StyledInputBase
+							name="search"
+							value={search}
+							onChange={handleChangeSearch}
 							placeholder="Search…"
 							inputProps={{ "aria-label": "search" }}
 						/>
@@ -74,7 +88,7 @@ export const SearchAppBar = () => {
 						variant="outlined"
 						sx={{ marginLeft: 15 }}
 						onClick={() => {
-							console.log(order);
+							onSubmitSearch(search, order);
 						}}
 					>
 						Buscar

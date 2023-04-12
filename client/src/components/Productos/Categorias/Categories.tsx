@@ -25,11 +25,14 @@ import { User } from "models/User";
 import { instance } from "helper/API";
 import { ServerResponse, initialSereverResponse } from "models/ServerResponse";
 import { DeleteProps } from "helper/DeleteProps";
+import { useNavigate } from "react-router-dom";
+import { Search } from "models/Search";
 
 const rawCategories: Category[] = [];
 
 const cookie = new Cookies();
 const url = "/categories";
+const path = "/productos/categorias";
 
 const Categories: React.FC = () => {
 	const [isOpen, setOpen] = useState(false);
@@ -37,6 +40,7 @@ const Categories: React.FC = () => {
 	const [editCategory, setEditCategory] = useState<Category | undefined>(
 		undefined
 	);
+	const navigate = useNavigate();
 	const user: User =
 		useReadLocalStorage<User>("log_in") ?? cookie.get<User>("user");
 
@@ -61,13 +65,13 @@ const Categories: React.FC = () => {
 		setOpen(op);
 	}
 
-	async function createCategory() {
-		setEditCategory(undefined);
+	function handleEdit(category: Category) {
+		setEditCategory(category);
 		handleOpen(true);
 	}
 
-	function handleEdit(category: Category) {
-		setEditCategory(category);
+	async function createCategory() {
+		setEditCategory(undefined);
 		handleOpen(true);
 	}
 
@@ -119,7 +123,7 @@ const Categories: React.FC = () => {
 				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
 
 				setCategories(dataCategories?.success);
-				console.log(dataCategories?.success);
+				// console.log(dataCategories?.success);
 				dataCategories = initialSereverResponse;
 			}
 			else {
@@ -135,6 +139,102 @@ const Categories: React.FC = () => {
 				}`
 			);
 		}
+	}
+
+	async function getCategoriesSearch(endpoint: string, order: string) {
+		// console.log("Url: ", endpoint);
+		try {
+			const response = await instance.get<ServerResponse>(endpoint, {
+				params: { order: order },
+			});
+			let dataCategories = await response?.data;
+
+			if (!dataCategories?.err) {
+				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
+
+				setCategories(dataCategories?.success);
+				// console.log(dataCategories?.success);
+				dataCategories = initialSereverResponse;
+			}
+			else {
+				const message = dataCategories?.statusText;
+				const status = dataCategories?.status;
+				throw { message, status };
+			}
+		}
+		catch (error: any) {
+			alert(
+				`Descripcion del error: ${error.message}\nEstado: ${
+					error?.status ?? 500
+				}`
+			);
+		}
+	}
+
+	function validationSearch(search: string, order: string): Search {
+		const regexTest: string = search ?? "";
+		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+		const optionsState = ["ACTIVADA", "ACTIVADO", "DESACTIVADA", "DESACTIVADO"];
+
+		const searchUperCase = search?.trim().toUpperCase();
+		let isActivated = false;
+
+		if (
+			searchUperCase == optionsState[0] ||
+			searchUperCase == optionsState[1]
+		) {
+			isActivated = true;
+			navigate({
+				pathname: path + "/getCategoryByState/" + search,
+				search: "?order=" + order,
+			});
+			return {
+				text: "state",
+				url: `${url}/getCategoryByState/${isActivated}`,
+			};
+		}
+		else if (
+			searchUperCase == optionsState[2] ||
+			searchUperCase == optionsState[3]
+		) {
+			isActivated = false;
+			navigate({
+				pathname: path + "/getCategoryByState/" + search,
+				search: "?order=" + order,
+			});
+			return {
+				text: "state",
+				url: `${url}/getCategoryByState/${isActivated}`,
+			};
+		}
+
+		if (regexName.test(regexTest)) {
+			navigate({
+				pathname: path + "/getCategoryByName/" + search,
+				search: "?order=" + order,
+			});
+			return {
+				text: "name",
+				url: `${url}/getCategoryByName/${search}`,
+			};
+		}
+
+		return { text: "", url: "" };
+	}
+
+	async function onSubmitSearch(search: string | null, order: string | null) {
+		const searchValue: string = search ?? "";
+		const orderValue: string = order ?? "ASC";
+		if (search === "") {
+			navigate({
+				pathname: path,
+				search: "?order=" + order,
+			});
+			return getCategories();
+		}
+
+		const typeGet: Search = validationSearch(searchValue, orderValue);
+		return getCategoriesSearch(typeGet.url, orderValue);
 	}
 
 	useEffect(() => {
@@ -160,7 +260,7 @@ const Categories: React.FC = () => {
 							gap: "10px",
 						}}
 					>
-						<SearchAppBar />
+						<SearchAppBar onSubmitSearch={onSubmitSearch} />
 						<h1>Categorias</h1>
 						{isOpen && (
 							<Modal
