@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/Navbar/Navbar";
 import { Box, Container, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
-import { PlacesDelivery } from "models/PlacesDelivery";
+import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
 import Modal from "@/Modal/Modal";
 import DeliveryPlaceForm from "./LugaresEntregaForm";
 import { useSnackbar } from "notistack";
+import { instance } from "helper/API";
 
 const LugaresEntrega = () => {
 	/**
@@ -18,13 +19,13 @@ const LugaresEntrega = () => {
 	 */
 	const tableHeaders = ["ID", "Municipio", "Calle", "Colonia", "No. Casa", "CP", "Horario"];
 
-	const rawDeliveryPlaces: PlacesDelivery[] = []; // TODO: Remove when they can be retrieved from DB
+	const rawDeliveryPlaces: DisplayedDeliveryPlace[] = []; // TODO: Remove when they can be retrieved from DB
 
 	/**
 	 * Saves the delivery places stored in the DB
 	 * and displays them in the table
 	 */
-	const [deliveryPlaces, setDeliveryPlaces] = useState<PlacesDelivery[]>(rawDeliveryPlaces);
+	const [deliveryPlaces, setDeliveryPlaces] = useState<DisplayedDeliveryPlace[]>(rawDeliveryPlaces);
 
 	/**
 	 * Determines if the place's modal will be shown
@@ -35,6 +36,36 @@ const LugaresEntrega = () => {
 	const closeFormModal = () => setShowModal(false);
 
 	/**
+	 * Al cargar, obtiene los lugares de la DB y los muestra en la tabla
+	 */
+	useEffect(() => {
+		fetchDeliveryPlaces();
+	}, []);
+
+	async function fetchDeliveryPlaces () {
+		try {
+			const { data } = await instance.get<PlacesDelivery[]>("/places");
+			setDeliveryPlaces(data.map((place) => {
+				const [colony, street, homeNumber] = place.address.split(". ");
+
+				return {
+					id: place.id,
+					township: place.name,
+					street,
+					colony,
+					homeNumber,
+					cp: place.cp,
+					schedule: `${place.open_h} a ${place.close_h}`
+				} as DisplayedDeliveryPlace;
+			}));
+		}
+
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
+		}
+	}
+
+	/**
 	 * Gets called when a place was created or edited, closes the modal,
 	 * notifies the user and refreshes the table
 	 * 
@@ -42,16 +73,15 @@ const LugaresEntrega = () => {
 	 */
 	function onPlaceSubmitted (wasAnUpdate: boolean) {
 		closeFormModal();
-		console.log("Se subio con exito :D");
 		enqueueSnackbar(wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito", { variant: "success" });
 		// TODO: Refresh table data
 	}
 
-	function editDeliveryPlace (place: PlacesDelivery) {
+	function editDeliveryPlace (place: DisplayedDeliveryPlace) {
 		// TODO: Fill body
 	}
 
-	function deleteDeliveryPlace (place: PlacesDelivery) {
+	function deleteDeliveryPlace (place: DisplayedDeliveryPlace) {
 		// TODO: Fill body
 	}
 
@@ -94,7 +124,7 @@ const LugaresEntrega = () => {
 						)}
 						
 						<TableContainer
-							sx={{ width: "800px", maxHeight: "400px" }}
+							sx={{ width: "900px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -118,11 +148,12 @@ const LugaresEntrega = () => {
 										deliveryPlaces?.map((place) => (
 											<TableRow key={place.id}>
 												<TableCell align="left">{place.id}</TableCell>
-												<TableCell align="left">{place.name}</TableCell>
-												<TableCell align="left">{place.address}</TableCell>
+												<TableCell align="left">{place.township}</TableCell>
+												<TableCell align="left">{place.street}</TableCell>
+												<TableCell align="left">{place.colony}</TableCell>
+												<TableCell align="left">{place.homeNumber}</TableCell>
 												<TableCell align="left">{place.cp}</TableCell>
-												<TableCell align="left">{place.open_h}</TableCell>
-												<TableCell align="left">{place.close_h}</TableCell>
+												<TableCell align="left">{place.schedule}</TableCell>
 
 												<TableCell align="center">
 													<IconButton onClick={() => editDeliveryPlace(place)}>

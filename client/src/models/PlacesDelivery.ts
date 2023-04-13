@@ -12,7 +12,7 @@ export interface DisplayedDeliveryPlace {
 	township: string;
 	street: string;
 	colony: string;
-	homeNumber: number;
-	cp: number;
+	homeNumber: string;
+	cp: string;
 	schedule: string;
 }
