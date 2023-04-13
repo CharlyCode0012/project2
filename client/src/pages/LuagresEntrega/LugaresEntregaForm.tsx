@@ -5,6 +5,7 @@ import {
 	TextField,
 } from "@mui/material";
 import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
+import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
 
 interface DeliveryPlaceFormProps {
@@ -16,11 +17,16 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 	placeData,
 	onSubmit,
 }) => {
+	/**
+	 * Displays notifications to the user
+	 */
+	const { enqueueSnackbar } = useSnackbar();
 
 	/**
 	 * Takes what was filled in the form and saves a new
 	 * delivery place in the DB
-	 * @param event 
+	 * 
+	 * @param event Form event that contains all of its info
 	 */
 	async function createPlaceData (event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -49,14 +55,46 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new place creation
 		}
 
-		catch (error) {
-			// TODO: Show user what happened
-			console.log(error);
+		catch {
+			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
-	function updatePlaceData () {
-		// TODO: Fill body
+	/**
+	 * Takes what was filled in the form and updates the data
+	 * from the given place in the DB
+	 * 
+	 * @param event Form event that contains all of its info
+	 */
+	async function updatePlaceData (event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		// Get place data from the form
+		const data = new FormData(event.currentTarget);
+		const township = data.get("municipio")?.toString();
+		const street = data.get("calle")?.toString();
+		const colony = data.get("colonia")?.toString();
+		const homeNumber = data.get("no-casa")?.toString();
+		const cp = data.get("cp")?.toString();
+		const openingTime = data.get("hora-abierto")?.toString();
+		const closingTime = data.get("hora-cerrado")?.toString();
+
+		// Update data to DB
+		try {
+			await instance.put(`/places/${placeData?.id}`, {
+				name: township,
+				address: `${colony}. ${street}. ${homeNumber}`,
+				cp: cp,
+				open_h: openingTime,
+				close_h: closingTime,
+			} as PlacesDelivery);
+
+			onSubmit(true); // "true" tells the submission was an update
+		}
+
+		catch {
+			enqueueSnackbar("Algo salio mal", { variant: "error" });
+		}
 	}
 
 	return (
@@ -76,7 +114,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Municipio"
 				name="municipio"
 				variant="outlined"
-				value={placeData?.township}
+				defaultValue={placeData?.township}
 				type="text"
 				required
 			/>
@@ -86,7 +124,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Calle"
 				name="calle"
 				variant="outlined"
-				value={placeData?.street}
+				defaultValue={placeData?.street}
 				type="text"
 				required
 			/>
@@ -96,7 +134,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Colonia"
 				name="colonia"
 				variant="outlined"
-				value={placeData?.colony}
+				defaultValue={placeData?.colony}
 				type="text"
 				required
 			/>
@@ -106,8 +144,8 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="No. Casa"
 				name="no-casa"
 				variant="outlined"
-				value={placeData?.homeNumber}
-				type="number"
+				defaultValue={placeData?.homeNumber}
+				type="numeric"
 				required
 			/>
 
@@ -116,8 +154,9 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="C. P."
 				name="cp"
 				variant="outlined"
-				value={placeData?.cp}
-				type="number"
+				defaultValue={placeData?.cp}
+				type="text"
+				inputProps={{ pattern: "[0-9]{5}", maxLength: 5, inputMode: "numeric" }}
 				required
 			/>
 
@@ -126,7 +165,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Hora de apertura"
 				name="hora-abierto"
 				variant="outlined"
-				value={placeData?.schedule.split(" a ")[0]}
+				defaultValue={placeData?.schedule.split(" a ")[0]}
 				type="time"
 				required
 			/>
@@ -136,7 +175,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Hora de cierre"
 				name="hora-cerrado"
 				variant="outlined"
-				value={placeData?.schedule.split(" a ")[1]}
+				defaultValue={placeData?.schedule.split(" a ")[1]}
 				type="time"
 				required
 			/>

@@ -97,11 +97,20 @@ const LugaresEntrega = () => {
 		fetchDeliveryPlaces();
 	}
 
+	/**
+	 * When called, establishes that there is nothing to edit 
+	 * (as a new one is being created) and opens the modal 
+	 */
 	function createDeliveryPlace () {
 		selectedPlaceToEdit.current = false;
 		openFormModal();
 	}
 
+	/**
+	 * When called, establishes that there is a place edit 
+	 * keeps it's reference and opens the modal so it can access
+	 * the info of the about-to-edit place 
+	 */
 	function editDeliveryPlace (place: DisplayedDeliveryPlace) {
 		selectedPlaceToEdit.current = place;
 		openFormModal();
@@ -154,11 +163,11 @@ const LugaresEntrega = () => {
 							<Modal
 								open={showFormModal}
 								handleOpen={setShowModal}
-								title="Lugares de entrega" // TODO: Change name depending on create or update
+								title={(selectedPlaceToEdit.current instanceof Object) ? "Editar un lugar" : "Crear un lugar"}
 							>
 								<DeliveryPlaceForm
 									onSubmit={onPlaceSubmitted}
-									placeData={(selectedPlaceToEdit.current instanceof Object) ? selectedPlaceToEdit.current : undefined }
+									placeData={(selectedPlaceToEdit.current instanceof Object) ? selectedPlaceToEdit.current : undefined}
 								></DeliveryPlaceForm>
 							</Modal>
 						)}
