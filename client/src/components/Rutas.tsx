@@ -8,7 +8,7 @@ import Productos from "pages/Productos/Productos";
 import Usuarios from "pages/Usuarios/Usuarios";
 import Pedidos from "pages/Pedidos/Pedidos";
 import Analisis from "pages/Analisis/Analisis";
-import LugaresEntrega from "pages/LuagresEntrega/LuagresEntrega";
+import LugaresEntrega from "pages/LugaresEntrega/LugaresEntrega";
 import MetodosPago from "pages/MetodosPago/MetodosPago";
 import Perfil from "pages/Perfil/Perfil";
 import Catalogos from "pages/Productos/Catalogos/Catalogos";
