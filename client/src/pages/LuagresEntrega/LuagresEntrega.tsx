@@ -18,14 +18,28 @@ const LugaresEntrega = () => {
 	 */
 	const tableHeaders = ["ID", "Municipio", "Calle", "Colonia", "No. Casa", "CP", "Horario"];
 
-	const rawDeliveryPlaces: PlacesDelivery[] = [];
+	const rawDeliveryPlaces: PlacesDelivery[] = []; // TODO: Remove when they can be retrieved from DB
+
+	/**
+	 * Saves the delivery places stored in the DB
+	 * and displays them in the table
+	 */
 	const [deliveryPlaces, setDeliveryPlaces] = useState<PlacesDelivery[]>(rawDeliveryPlaces);
 
+	/**
+	 * Determines if the place's modal will be shown
+	 * (only when user creates or edits a place)
+	 */
 	const [showFormModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
 	const closeFormModal = () => setShowModal(false);
 
-
+	/**
+	 * Gets called when a place was created or edited, closes the modal,
+	 * notifies the user and refreshes the table
+	 * 
+	 * @param wasAnUpdate changes the notification message depending on the action (created / edited) 
+	 */
 	function onPlaceSubmitted (wasAnUpdate: boolean) {
 		closeFormModal();
 		console.log("Se subio con exito :D");

@@ -17,6 +17,11 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 	onSubmit,
 }) => {
 
+	/**
+	 * Takes what was filled in the form and saves a new
+	 * delivery place in the DB
+	 * @param event 
+	 */
 	async function createPlaceData (event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
