@@ -21,8 +21,10 @@ const LugaresEntrega = () => {
 	const closeFormModal = () => setShowModal(false);
 
 
-	function createDeliveryPlace () {
-		openFormModal();
+	function onPlaceSubmited () {
+		closeFormModal();
+		// TODO: Show notification
+		// TODO: Refresh table data
 	}
 
 	function editDeliveryPlace (place: PlacesDelivery) {
@@ -66,10 +68,7 @@ const LugaresEntrega = () => {
 								title="Lugares de entrega" // TODO: Change name depending on create or update
 							>
 								<DeliveryPlaceForm
-									handleOpen={(op: boolean) => op}
-									url={"/lugares-de-entrega"}
-									places={deliveryPlaces}
-									setPlaces={(data: PlacesDelivery[]) => data}
+									onSubmit={closeFormModal}
 								></DeliveryPlaceForm>
 							</Modal>
 						)}
@@ -123,7 +122,7 @@ const LugaresEntrega = () => {
 						</TableContainer>
 						<IconButton
 							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-							onClick={() => createDeliveryPlace()}
+							onClick={() => openFormModal()}
 						>
 							<AddCircle fontSize="inherit" />
 						</IconButton>

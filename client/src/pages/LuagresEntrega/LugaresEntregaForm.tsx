@@ -15,81 +15,16 @@ import { instance } from "helper/API";
 // };
 
 interface DeliveryPlaceFormProps {
-	url: string;
-	places: PlacesDelivery[];
-	text?: string;
 	placeData?: PlacesDelivery;
-
-	handleOpen: (op: boolean) => void;
-	setPlaces: (data: PlacesDelivery[]) => void;
+	onSubmit: () => void;
 }
 
 const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
-	handleOpen,
 	placeData,
-	url,
-	places,
-	setPlaces,
+	onSubmit,
 }) => {
-	
-	// TODO: Determine if it is needed
-	// const { form, handleChange, handleChecked } = useForm<Category>(
-	// 	initialForm,
-	// 	dataToEdit
-	// );
 
-	// TODO: Adjust CRUD functions
-	// async function createCategory() {
-	// 	try {
-	// 		if (form.id === 0) form.id = Date.now();
-	// 		const response = await instance.post(url, form);
-	// 		const createdCategory = await response.data;
-	// 		if (Array.isArray(categories)) setCategories([...categories, form]);
-	// 		else setCategories([form]);
-
-	// 		console.log(createdCategory);
-	// 	}
-	// 	catch (error) {
-	// 		console.log(error);
-	// 	}
-	// }
-
-	// async function updateCategory() {
-	// 	const data = form;
-	// 	const endpoint = `${url}/${data.id}`;
-	// 	try {
-	// 		console.log(`update endpoint: ${endpoint}`);
-
-	// 		const res = await instance.put(endpoint, data);
-	// 		const dataCategory = await res.data;
-	// 		console.log(dataCategory);
-	// 		if (!dataCategory.err) {
-	// 			/* setDb([...db, res]); */
-	// 			const newData = categories.map((el) => (el.id === data.id ? data : el));
-	// 			setCategories(newData);
-	// 		}
-	// 		else {
-	// 			const message = dataCategory?.statusText;
-	// 			const status = dataCategory?.status;
-	// 			throw { message, status };
-	// 		}
-	// 	}
-	// 	catch (error: any) {
-	// 		alert(
-	// 			`Descripcion del error: ${error.message}\nEstado: ${
-	// 				error?.status ?? 500
-	// 			}`
-	// 		);
-	// 	}
-	// }
-
-	// function handleSubmit() {
-	// 	if (!dataToEdit) createCategory();
-	// 	else updateCategory();
-	// 	handleOpen(false);
-	// }
-
-	function createPlaceData (event: React.FormEvent<HTMLFormElement>) {
+	async function createPlaceData (event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get place data from the form
@@ -102,8 +37,24 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 		const openingTime = data.get("hora-abierto")?.toString();
 		const closingTime = data.get("hora-cerrado")?.toString();
 
-		// TODO: Remove
-		console.table({ township, street, colony, homeNumber, cp, openingTime, closingTime });
+		// Upload data to DB
+		try {
+			await instance.post("/places", {
+				id: Date.now(),
+				name: township,
+				address: `${colony}. ${street}. ${homeNumber}`,
+				cp: cp,
+				open_h: openingTime,
+				close_h: closingTime,
+			} as PlacesDelivery);
+
+			onSubmit();
+		}
+
+		catch (error) {
+			// TODO: Show user what happened
+			console.log(error);
+		}
 	}
 
 	function updatePlaceData () {
