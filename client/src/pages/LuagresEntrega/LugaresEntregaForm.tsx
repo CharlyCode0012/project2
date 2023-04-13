@@ -4,11 +4,11 @@ import {
 	Button,
 	TextField,
 } from "@mui/material";
-import { PlacesDelivery } from "models/PlacesDelivery";
+import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
 import { instance } from "helper/API";
 
 interface DeliveryPlaceFormProps {
-	placeData?: PlacesDelivery;
+	placeData?: DisplayedDeliveryPlace;
 	onSubmit: (wasAnUpdate: boolean) => void;
 }
 
@@ -76,7 +76,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Municipio"
 				name="municipio"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.township}
 				type="text"
 				required
 			/>
@@ -86,7 +86,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Calle"
 				name="calle"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.street}
 				type="text"
 				required
 			/>
@@ -96,7 +96,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Colonia"
 				name="colonia"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.colony}
 				type="text"
 				required
 			/>
@@ -106,7 +106,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="No. Casa"
 				name="no-casa"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.homeNumber}
 				type="number"
 				required
 			/>
@@ -116,7 +116,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="C. P."
 				name="cp"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.cp}
 				type="number"
 				required
 			/>
@@ -126,7 +126,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Hora de apertura"
 				name="hora-abierto"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.schedule.split(" a ")[0]}
 				type="time"
 				required
 			/>
@@ -136,7 +136,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				label="Hora de cierre"
 				name="hora-cerrado"
 				variant="outlined"
-				value={placeData?.name}
+				value={placeData?.schedule.split(" a ")[1]}
 				type="time"
 				required
 			/>

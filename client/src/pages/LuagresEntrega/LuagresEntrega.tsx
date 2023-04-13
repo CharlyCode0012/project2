@@ -1,6 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "@/Navbar/Navbar";
-import { Box, Container, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import {
+	Box,
+	Container,
+	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TableSortLabel
+} from "@mui/material";
 import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
 import Modal from "@/Modal/Modal";
@@ -19,13 +31,11 @@ const LugaresEntrega = () => {
 	 */
 	const tableHeaders = ["ID", "Municipio", "Calle", "Colonia", "No. Casa", "CP", "Horario"];
 
-	const rawDeliveryPlaces: DisplayedDeliveryPlace[] = []; // TODO: Remove when they can be retrieved from DB
-
 	/**
 	 * Saves the delivery places stored in the DB
 	 * and displays them in the table
 	 */
-	const [deliveryPlaces, setDeliveryPlaces] = useState<DisplayedDeliveryPlace[]>(rawDeliveryPlaces);
+	const [deliveryPlaces, setDeliveryPlaces] = useState<DisplayedDeliveryPlace[]>([]);
 
 	/**
 	 * Determines if the place's modal will be shown
@@ -36,12 +46,22 @@ const LugaresEntrega = () => {
 	const closeFormModal = () => setShowModal(false);
 
 	/**
-	 * Al cargar, obtiene los lugares de la DB y los muestra en la tabla
+	 * Keeps track of the place that the user wanted to
+	 * edit (stays null when user creates a new place)
+	 */
+	const selectedPlaceToEdit = useRef<DisplayedDeliveryPlace | boolean>(false);
+
+	/**
+	 * When rendered, places are obtained from DB and displayed in the table
 	 */
 	useEffect(() => {
 		fetchDeliveryPlaces();
 	}, []);
 
+	/**
+	 * Fetches the places from the DB
+	 * Shows a notification to user when something went wrong
+	 */
 	async function fetchDeliveryPlaces () {
 		try {
 			const { data } = await instance.get<PlacesDelivery[]>("/places");
@@ -74,15 +94,34 @@ const LugaresEntrega = () => {
 	function onPlaceSubmitted (wasAnUpdate: boolean) {
 		closeFormModal();
 		enqueueSnackbar(wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito", { variant: "success" });
-		// TODO: Refresh table data
+		fetchDeliveryPlaces();
+	}
+
+	function createDeliveryPlace () {
+		selectedPlaceToEdit.current = false;
+		openFormModal();
 	}
 
 	function editDeliveryPlace (place: DisplayedDeliveryPlace) {
-		// TODO: Fill body
+		selectedPlaceToEdit.current = place;
+		openFormModal();
 	}
 
-	function deleteDeliveryPlace (place: DisplayedDeliveryPlace) {
-		// TODO: Fill body
+	/**
+	 * Calls the server to delete the given place
+	 * 
+	 * @param place data from the place that will be deleted
+	 */
+	async function deleteDeliveryPlace (deletedPlace: DisplayedDeliveryPlace) {
+		try {
+			await instance.delete(`/places/${deletedPlace.id}`);
+			enqueueSnackbar("Lugar eliminado con exito", { variant: "success" });
+			setDeliveryPlaces((deliveryPlaces) => deliveryPlaces.filter((place) => place.id !== deletedPlace.id));
+		}
+
+		catch {
+			enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+		}
 	}
 
 	return (
@@ -119,6 +158,7 @@ const LugaresEntrega = () => {
 							>
 								<DeliveryPlaceForm
 									onSubmit={onPlaceSubmitted}
+									placeData={(selectedPlaceToEdit.current instanceof Object) ? selectedPlaceToEdit.current : undefined }
 								></DeliveryPlaceForm>
 							</Modal>
 						)}
@@ -173,7 +213,7 @@ const LugaresEntrega = () => {
 						</TableContainer>
 						<IconButton
 							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-							onClick={() => openFormModal()}
+							onClick={() => createDeliveryPlace()}
 						>
 							<AddCircle fontSize="inherit" />
 						</IconButton>
