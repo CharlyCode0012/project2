@@ -11,7 +11,7 @@ import { Category } from "models/Category";
 import { useForm } from "hooks/useForm";
 import { instance } from "helper/API";
 import { createDecipheriv } from "crypto";
-
+import { useSnackbar } from "notistack";
 const initialForm: Category = {
 	id: 0,
 	name: "",
@@ -38,6 +38,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 		initialForm,
 		dataToEdit
 	);
+	const { enqueueSnackbar } = useSnackbar();
 
 	async function createCategory() {
 		try {
@@ -48,8 +49,12 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 			else setCategories([form]);
 
 			console.log(createdCategory);
+			enqueueSnackbar(`Se creo exitosamente ${form.name}`, {
+				variant: "success",
+			});
 		}
-		catch (error) {
+		catch (error: any) {
+			enqueueSnackbar("Error al crear la categoría", { variant: "error" });
 			console.log(error);
 		}
 	}
@@ -57,6 +62,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 	async function updateCategory() {
 		const data = form;
 		const endpoint = `${url}/${data.id}`;
+		const { name } = data;
 		try {
 			console.log(`update endpoint: ${endpoint}`);
 
@@ -73,8 +79,12 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 				const status = dataCategory?.status;
 				throw { message, status };
 			}
+			enqueueSnackbar(`Se actualizo exitosamente ${name}`, {
+				variant: "success",
+			});
 		}
 		catch (error: any) {
+			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
 			alert(
 				`Descripcion del error: ${error.message}\nEstado: ${
 					error?.status ?? 500

@@ -7,6 +7,7 @@ import Rutas from "@/Rutas";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { LoginProvider } from "context/LoginContext";
+import { SnackbarProvider } from "notistack";
 
 const darkTheme = createTheme({
 	palette: {
@@ -20,11 +21,13 @@ const App: React.FC = () => {
 	return (
 		<ThemeProvider theme={darkTheme}>
 			<CssBaseline />
-			<Router>
-				<LoginProvider>
-					<Rutas />
-				</LoginProvider>
-			</Router>
+			<SnackbarProvider maxSnack={3}>
+				<Router>
+					<LoginProvider>
+						<Rutas />
+					</LoginProvider>
+				</Router>
+			</SnackbarProvider>
 		</ThemeProvider>
 	);
 };

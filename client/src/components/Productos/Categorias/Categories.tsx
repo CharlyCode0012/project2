@@ -27,10 +27,9 @@ import { ServerResponse, initialSereverResponse } from "models/ServerResponse";
 import { DeleteProps } from "helper/DeleteProps";
 import { useNavigate } from "react-router-dom";
 import { Search } from "models/Search";
-
+import { useSnackbar } from "notistack";
 const rawCategories: Category[] = [];
 
-const cookie = new Cookies();
 const url = "/categories";
 const path = "/productos/categorias";
 
@@ -41,8 +40,8 @@ const Categories: React.FC = () => {
 		undefined
 	);
 	const navigate = useNavigate();
-	const user: User =
-		useReadLocalStorage<User>("log_in") ?? cookie.get<User>("user");
+	const user: User | null = useReadLocalStorage<User>("log_in");
+	const { enqueueSnackbar } = useSnackbar();
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -57,8 +56,8 @@ const Categories: React.FC = () => {
 	 * displayed in the table too
 	 */
 
-	const isAdmin = true;
-
+	const isAdmin = user?.type_use === "admin" ? true : false;
+	console.log(isAdmin);
 	// TODO:
 
 	function handleOpen(op: boolean): void {
@@ -85,11 +84,6 @@ const Categories: React.FC = () => {
 
 		const endpoint = `${url}/${deletedCategoryID}`;
 		if (isDelete) {
-			const newCategories = categories.filter(
-				(categoryD) => categoryD.id !== deletedCategoryID
-			);
-			setCategories(newCategories);
-
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
 
@@ -101,8 +95,18 @@ const Categories: React.FC = () => {
 					const status = dataCategory?.status;
 					throw { message, status };
 				}
+				else {
+					const newCategories = categories.filter(
+						(categoryD) => categoryD.id !== deletedCategoryID
+					);
+					setCategories(newCategories);
+				}
+				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
+					variant: "success",
+				});
 			}
 			catch (error: any) {
+				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
 				alert(
 					`Descripcion del error: ${error.message}\nEstado: ${
 						error?.status ?? 500
@@ -145,7 +149,7 @@ const Categories: React.FC = () => {
 		// console.log("Url: ", endpoint);
 		try {
 			const response = await instance.get<ServerResponse>(endpoint, {
-				params: { order: order },
+				params: { order },
 			});
 			let dataCategories = await response?.data;
 
@@ -230,7 +234,7 @@ const Categories: React.FC = () => {
 				pathname: path,
 				search: "?order=" + order,
 			});
-			return getCategories();
+			return getCategoriesSearch(url, orderValue);
 		}
 
 		const typeGet: Search = validationSearch(searchValue, orderValue);
@@ -327,12 +331,18 @@ const Categories: React.FC = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-						<IconButton
-							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-							onClick={() => createCategory()}
-						>
-							<AddCircle fontSize="inherit" />
-						</IconButton>
+						{isAdmin && (
+							<IconButton
+								sx={{
+									alignSelf: "flex-start",
+									fontSize: "40px",
+									padding: "0px",
+								}}
+								onClick={() => createCategory()}
+							>
+								<AddCircle fontSize="inherit" />
+							</IconButton>
+						)}
 					</Box>
 				</Box>
 			</Container>

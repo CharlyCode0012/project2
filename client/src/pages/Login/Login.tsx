@@ -109,7 +109,7 @@ const Login: React.FC = () => {
 		const userLog = {
 			name: username,
 			pass: password,
-			cel: cellphone,
+			cell: cellphone,
 		};
 
 		console.table({ username, cellphone, password, userWantsToBeRemembered });
