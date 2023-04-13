@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import Navbar from "@/Navbar/Navbar";
 import { Box, Container, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from "@mui/material";
-// import { SearchAppBar } from "@/Navbar/SearchAppBar";
 import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import { PlacesDelivery } from "models/PlacesDelivery";
 import Modal from "@/Modal/Modal";
 import DeliveryPlaceForm from "./LugaresEntregaForm";
+import { useSnackbar } from "notistack";
 
 const LugaresEntrega = () => {
+	/**
+	 * Displays notifications to the user
+	 */
+	const { enqueueSnackbar } = useSnackbar();
+
 	/**
 	 * Headers that will be displayed to the table
 	 */
@@ -21,9 +26,10 @@ const LugaresEntrega = () => {
 	const closeFormModal = () => setShowModal(false);
 
 
-	function onPlaceSubmited () {
+	function onPlaceSubmitted (wasAnUpdate: boolean) {
 		closeFormModal();
-		// TODO: Show notification
+		console.log("Se subio con exito :D");
+		enqueueSnackbar(wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito", { variant: "success" });
 		// TODO: Refresh table data
 	}
 
@@ -68,7 +74,7 @@ const LugaresEntrega = () => {
 								title="Lugares de entrega" // TODO: Change name depending on create or update
 							>
 								<DeliveryPlaceForm
-									onSubmit={closeFormModal}
+									onSubmit={onPlaceSubmitted}
 								></DeliveryPlaceForm>
 							</Modal>
 						)}

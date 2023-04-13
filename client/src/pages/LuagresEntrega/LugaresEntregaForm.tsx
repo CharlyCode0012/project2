@@ -7,16 +7,9 @@ import {
 import { PlacesDelivery } from "models/PlacesDelivery";
 import { instance } from "helper/API";
 
-// TODO: Determine if it is needed
-// const initialForm: PlacesDelivery = {
-// 	id: 0,
-// 	name: "",
-// 	state: false,
-// };
-
 interface DeliveryPlaceFormProps {
 	placeData?: PlacesDelivery;
-	onSubmit: () => void;
+	onSubmit: (wasAnUpdate: boolean) => void;
 }
 
 const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
@@ -48,7 +41,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 				close_h: closingTime,
 			} as PlacesDelivery);
 
-			onSubmit();
+			onSubmit(false); // "false" tells the submission wasn't an update, it was a new place creation
 		}
 
 		catch (error) {
@@ -144,7 +137,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 			/>
 
 			<Button type="submit" variant="contained" fullWidth>
-				{ placeData ? "Crear" : "Actualizar" }
+				{ placeData ? "Actualizar" : "Crear" }
 			</Button>
 		</Box>
 	);
