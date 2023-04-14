@@ -44,11 +44,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 			await instance.post("/payment_methods", {
 				id: Date.now().toString(),
 				name: owner,
-				clabe,
+				CLABE: clabe,
 				no_card: cardNumber,
 				bank,
 				subsidary: placesToPay
-			} as PaymentMethod);
+			});
 
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new payment method creation
 		}
@@ -79,11 +79,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 		try {
 			await instance.put(`/payment_methods/${paymentMethodData?.id}`, {
 				name: owner,
-				clabe,
+				CLABE: clabe,
 				no_card: cardNumber,
 				bank,
 				subsidary: placesToPay
-			} as PaymentMethod);
+			});
 
 			onSubmit(true); // "true" tells the submission was an update
 		}
@@ -120,7 +120,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				label="CLABE"
 				name="clabe"
 				variant="outlined"
-				defaultValue={paymentMethodData?.clabe}
+				defaultValue={paymentMethodData?.CLABE}
 				type="text"
 				required
 			/>
@@ -153,7 +153,6 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				variant="outlined"
 				defaultValue={paymentMethodData?.subsidary}
 				type="text"
-				inputProps={{ pattern: "[0-9]{5}", maxLength: 5, inputMode: "numeric" }}
 				required
 			/>
 

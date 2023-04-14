@@ -65,30 +65,6 @@ const LugaresEntrega = () => {
 		fetchPaymentMethods();
 	}, []);
 
-	// TODO: Delete (might be unnecessary)
-	// /**
-	//  * Takes the meth returned by the server and converts them
-	//  * into a new structure that is used to display their data to 
-	//  * the table
-	//  *  
-	//  * @param places given by the DB 
-	//  */
-	// function formatFetchedPlacesForDisplay (places: PaymentMethod[]) {
-	// 	return places.map((place) => {
-	// 		const [colony, street, homeNumber] = place.address.split(". ");
-
-	// 		return {
-	// 			id: place.id,
-	// 			township: place.name,
-	// 			street,
-	// 			colony,
-	// 			homeNumber,
-	// 			cp: place.cp,
-	// 			schedule: `${place.open_h} a ${place.close_h}`
-	// 		} as PaymentMethod;
-	// 	});
-	// }
-
 	/**
 	 * Fetches the payment methods from the DB
 	 * Shows a notification to user when something went wrong
@@ -144,7 +120,7 @@ const LugaresEntrega = () => {
 		try {
 			await instance.delete(`/payment_methods/${deletedMethod.id}`);
 			enqueueSnackbar("Metodo de pago eliminado con exito", { variant: "success" });
-			setPaymentMethods((paymentMethods) => paymentMethods.filter((place) => place.id !== deletedMethod.id));
+			setPaymentMethods((paymentMethods) => paymentMethods.filter((method) => method.id !== deletedMethod.id));
 		}
 
 		catch {
@@ -170,11 +146,11 @@ const LugaresEntrega = () => {
 				break;
 				
 			case "Titular":
-				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByTownship", { params: { order, search } })).data;
+				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByOwner", { params: { order, search } })).data;
 				break;
 				
 			case "CLABE":
-				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByAddress", { params: { order, search } })).data;
+				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByCLABE", { params: { order, search } })).data;
 				break;
 
 			case "No. Tarjeta":
@@ -182,7 +158,7 @@ const LugaresEntrega = () => {
 				break;
 				
 			case "Banco":
-				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByCP", { params: { order, search } })).data;
+				paymentMethods = (await instance.get<PaymentMethod[]>("/payment_methods/searchByBank", { params: { order, search } })).data;
 				break;
 				
 			default:
@@ -193,7 +169,7 @@ const LugaresEntrega = () => {
 		}
 
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
+			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", { variant: "error" });
 		}
 	}
 
@@ -257,21 +233,21 @@ const LugaresEntrega = () => {
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										paymentMethods?.map((place) => (
-											<TableRow key={place.id}>
-												<TableCell align="left">{place.id}</TableCell>
-												<TableCell align="left">{place.name}</TableCell>
-												<TableCell align="left">{place.clabe}</TableCell>
-												<TableCell align="left">{place.no_card}</TableCell>
-												<TableCell align="left">{place.bank}</TableCell>
-												<TableCell align="left">{place.subsidary}</TableCell>
+										paymentMethods?.map((paymentMethod) => (
+											<TableRow key={paymentMethod.id}>
+												<TableCell align="left">{paymentMethod.id}</TableCell>
+												<TableCell align="left">{paymentMethod.name}</TableCell>
+												<TableCell align="left">{paymentMethod.CLABE}</TableCell>
+												<TableCell align="left">{paymentMethod.no_card}</TableCell>
+												<TableCell align="left">{paymentMethod.bank}</TableCell>
+												<TableCell align="left">{paymentMethod.subsidary}</TableCell>
 
 												<TableCell align="center">
-													<IconButton onClick={() => editPaymentMethod(place)}>
+													<IconButton onClick={() => editPaymentMethod(paymentMethod)}>
 														<Edit fontSize="inherit" />
 													</IconButton>
 													<IconButton
-														onClick={() => deletePaymentMethod(place)}
+														onClick={() => deletePaymentMethod(paymentMethod)}
 													>
 														<DeleteForever fontSize="inherit" />
 													</IconButton>
