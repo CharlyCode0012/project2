@@ -1,4 +1,4 @@
-export interface MetodosPagos {
+export interface PaymentMethod {
 	id: string;
 	name: string;
 	clabe: string;
