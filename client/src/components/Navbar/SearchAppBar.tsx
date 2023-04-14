@@ -6,7 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Order } from "./Order";
-import { Button } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
@@ -49,13 +49,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 interface SearchAppBarProps {
-	onSubmitSearch: (search: string, order: string) => Promise<void>;
+	searchOptions: string[];
+	onSubmitSearch: (filter: string, search: string, order: QueryOrder) => Promise<void>;
 }
 
-export const SearchAppBar: React.FC<SearchAppBarProps> = ({ onSubmitSearch, }) => {
-	const [order, setOrder] = useState<string>("ASC");
+export type QueryOrder = "ASC" | "DESC"
+
+export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSubmitSearch, }) => {
+	const [order, setOrder] = useState<QueryOrder>("ASC");
 	const [search, setSearch] = useState<string>("");
-	function handleChangeOrder(value: string | null): void {
+	const [filter, setFilter] = useState<string>("Todos");
+
+	function handleChangeOrder(value: QueryOrder | null): void {
 		value = value ?? "ASC";
 		setOrder(value);
 	}
@@ -70,8 +75,23 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ onSubmitSearch, }) =
 	return (
 		<Box sx={{ flexGrow: 0, marginTop: "120px", width: "800px" }}>
 			<AppBar position="static">
-				<Toolbar sx={{ padding: "10px" }}>
+				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
 					<Order handleChangeOrder={handleChangeOrder} value={order} />
+
+					<FormControl>
+						<InputLabel>Filtrar por</InputLabel>
+
+						<Select
+							value={"Todos"}
+							label="Filtrar por"
+							sx={{ width: "200px" }}
+							onChange={(e) => setFilter(e.target.value as string)}
+						>
+							<MenuItem value={"Todos"}>{"Todos"}</MenuItem>
+							{searchOptions.map((option, index) => <MenuItem key={index} value={option}>{option}</MenuItem>)}
+						</Select>
+					</FormControl>
+
 					<Search>
 						<SearchIconWrapper>
 							<SearchIcon />
@@ -86,9 +106,8 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ onSubmitSearch, }) =
 					</Search>
 					<Button
 						variant="outlined"
-						sx={{ marginLeft: 15 }}
 						onClick={() => {
-							onSubmitSearch(search, order);
+							onSubmitSearch(filter, search, order);
 						}}
 					>
 						Buscar

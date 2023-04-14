@@ -1,10 +1,11 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { QueryOrder } from "./SearchAppBar";
 
 interface PropsOrder {
 	value: string | null;
-	handleChangeOrder: (option: string | null) => void;
+	handleChangeOrder: (option: QueryOrder | null) => void;
 }
 
 export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
@@ -15,12 +16,12 @@ export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
 			id="combo-box-demo"
 			options={Options}
 			value={value}
-			sx={{ width: 150, marginRight: 15 }}
+			sx={{ width: 150 }}
 			onChange={(
 				event: React.SyntheticEvent<Element, Event>,
 				newValue: string | null
 			) => {
-				handleChangeOrder(newValue);
+				handleChangeOrder(newValue as QueryOrder);
 			}}
 			renderInput={(params) => <TextField {...params} label="Orden" />}
 		/>

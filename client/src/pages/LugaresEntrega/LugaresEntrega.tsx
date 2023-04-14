@@ -19,6 +19,7 @@ import Modal from "@/Modal/Modal";
 import DeliveryPlaceForm from "./LugaresEntregaForm";
 import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
+import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 
 const LugaresEntrega = () => {
 	/**
@@ -30,6 +31,12 @@ const LugaresEntrega = () => {
 	 * Headers that will be displayed to the table
 	 */
 	const tableHeaders = ["ID", "Municipio", "Calle", "Colonia", "No. Casa", "CP", "Horario"];
+
+	/**
+	 * Options that the user can select to filter the data
+	 * that is displayed in the table
+	 */
+	const searchOptions = ["ID", "Municipio", "Calle", "Colonia", "CP"];
 
 	/**
 	 * Saves the delivery places stored in the DB
@@ -59,25 +66,36 @@ const LugaresEntrega = () => {
 	}, []);
 
 	/**
+	 * Takes the places returned by the server and converts them
+	 * into a new structure that is used to display their data to 
+	 * the table
+	 *  
+	 * @param places given by the DB 
+	 */
+	function formatFetchedPlacesForDisplay (places: PlacesDelivery[]) {
+		return places.map((place) => {
+			const [colony, street, homeNumber] = place.address.split(". ");
+
+			return {
+				id: place.id,
+				township: place.name,
+				street,
+				colony,
+				homeNumber,
+				cp: place.cp,
+				schedule: `${place.open_h} a ${place.close_h}`
+			} as DisplayedDeliveryPlace;
+		});
+	}
+
+	/**
 	 * Fetches the places from the DB
 	 * Shows a notification to user when something went wrong
 	 */
 	async function fetchDeliveryPlaces () {
 		try {
-			const { data } = await instance.get<PlacesDelivery[]>("/places");
-			setDeliveryPlaces(data.map((place) => {
-				const [colony, street, homeNumber] = place.address.split(". ");
-
-				return {
-					id: place.id,
-					township: place.name,
-					street,
-					colony,
-					homeNumber,
-					cp: place.cp,
-					schedule: `${place.open_h} a ${place.close_h}`
-				} as DisplayedDeliveryPlace;
-			}));
+			const { data: places } = await instance.get<PlacesDelivery[]>("/places");
+			setDeliveryPlaces(formatFetchedPlacesForDisplay(places));
 		}
 
 		catch {
@@ -133,6 +151,30 @@ const LugaresEntrega = () => {
 		}
 	}
 
+	async function onSubmitSearch(filter: string, search: string, order: QueryOrder) {
+		try {
+			let places: PlacesDelivery[];
+
+			switch (search) {
+			// TODO: Implement cases
+			default: places = await fetchPlacesWithOrder(order);
+			}
+			fetchPlacesWithOrder(order as QueryOrder);
+		}
+
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
+		}
+	}
+
+	async function fetchPlacesWithOrder (order: QueryOrder) {
+		const { data: orderedPlaces } = await instance.get<PlacesDelivery[]>("/places", {
+			params: { order }
+		});
+
+		return orderedPlaces;
+	}
+
 	return (
 		<>
 			<Navbar />
@@ -154,8 +196,7 @@ const LugaresEntrega = () => {
 							gap: "10px",
 						}}
 					>
-						{/* TODO: Determine if this is important */}
-						{/* <SearchAppBar onSubmitSearch={onSubmitSearch} /> */}
+						<SearchAppBar searchOptions={searchOptions} onSubmitSearch={onSubmitSearch} />
 						
 						<h1>Lugares de Entrega</h1>
 						
