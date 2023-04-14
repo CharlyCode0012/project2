@@ -36,7 +36,7 @@ const LugaresEntrega = () => {
 	 * Options that the user can select to filter the data
 	 * that is displayed in the table
 	 */
-	const searchOptions = ["ID", "Municipio", "Calle", "Colonia", "CP"];
+	const searchOptions = ["ID", "Municipio", "Direccion", "CP"];
 
 	/**
 	 * Saves the delivery places stored in the DB
@@ -151,28 +151,45 @@ const LugaresEntrega = () => {
 		}
 	}
 
+	/**
+	 * Retrieves specific places from the DB, depending on the 
+	 * filter and search of the user
+	 * 
+	 * @param filter what field will be used to filter
+	 * @param search what the user is searching
+	 * @param order either ASC or DESC
+	 */
 	async function onSubmitSearch(filter: string, search: string, order: QueryOrder) {
 		try {
 			let places: PlacesDelivery[];
 
-			switch (search) {
-			// TODO: Implement cases
-			default: places = await fetchPlacesWithOrder(order);
+			switch (filter) {
+			case "ID":
+				places = (await instance.get<PlacesDelivery[]>("/places/searchByID", { params: { order, search } })).data;
+				break;
+				
+			case "Municipio":
+				places = (await instance.get<PlacesDelivery[]>("/places/searchByTownship", { params: { order, search } })).data;
+				break;
+				
+			case "Direccion":
+				places = (await instance.get<PlacesDelivery[]>("/places/searchByAddress", { params: { order, search } })).data;
+				break;
+				
+			case "CP":
+				places = (await instance.get<PlacesDelivery[]>("/places/searchByCP", { params: { order, search } })).data;
+				break;
+				
+			default:
+				places = (await instance.get<PlacesDelivery[]>("/places", { params: { order } })).data;
 			}
-			fetchPlacesWithOrder(order as QueryOrder);
+			
+			setDeliveryPlaces(formatFetchedPlacesForDisplay(places));
 		}
 
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
 		}
-	}
-
-	async function fetchPlacesWithOrder (order: QueryOrder) {
-		const { data: orderedPlaces } = await instance.get<PlacesDelivery[]>("/places", {
-			params: { order }
-		});
-
-		return orderedPlaces;
 	}
 
 	return (

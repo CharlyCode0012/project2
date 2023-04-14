@@ -82,7 +82,7 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSub
 						<InputLabel>Filtrar por</InputLabel>
 
 						<Select
-							value={"Todos"}
+							defaultValue={"Todos"}
 							label="Filtrar por"
 							sx={{ width: "200px" }}
 							onChange={(e) => setFilter(e.target.value as string)}
