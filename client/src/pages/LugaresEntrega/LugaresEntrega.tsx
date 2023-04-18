@@ -20,6 +20,7 @@ import DeliveryPlaceForm from "./LugaresEntregaForm";
 import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
+import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 
 const LugaresEntrega = () => {
 	/**
@@ -278,12 +279,23 @@ const LugaresEntrega = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-						<IconButton
-							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-							onClick={() => createDeliveryPlace()}
+
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: "10px",
+							}}
 						>
-							<AddCircle fontSize="inherit" />
-						</IconButton>
+							<IconButton
+								sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+								onClick={() => createDeliveryPlace()}
+							>
+								<AddCircle fontSize="inherit" />
+							</IconButton>
+
+							<ExcelDownloadButton apiObjective="places" />
+						</Box>
 					</Box>
 				</Box>
 			</Container>
