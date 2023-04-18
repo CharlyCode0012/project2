@@ -48,12 +48,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	},
 }));
 
+export type QueryOrder = "ASC" | "DESC"
+
 interface SearchAppBarProps {
 	searchOptions: string[];
 	onSubmitSearch: (filter: string, search: string, order: QueryOrder) => Promise<void>;
 }
-
-export type QueryOrder = "ASC" | "DESC"
 
 export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSubmitSearch, }) => {
 	const [order, setOrder] = useState<QueryOrder>("ASC");

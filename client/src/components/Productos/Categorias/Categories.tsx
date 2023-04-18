@@ -12,36 +12,34 @@ import {
 	TableSortLabel,
 	Container,
 } from "@mui/material";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import "./Categories.css";
 import { Category } from "models/Category";
 import Loading from "@/Loading/Loading";
-import { SearchAppBar } from "@/Navbar/SearchAppBar";
+import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
 import CategoriesForm from "@/Productos/Categorias/CategoriesForm";
 import { useReadLocalStorage } from "usehooks-ts";
-import Cookies from "universal-cookie";
 import { User } from "models/User";
 import { instance } from "helper/API";
-import { ServerResponse, initialSereverResponse } from "models/ServerResponse";
-import { DeleteProps } from "helper/DeleteProps";
 import { useNavigate } from "react-router-dom";
-import { Search } from "models/Search";
 import { useSnackbar } from "notistack";
-const rawCategories: Category[] = [];
-
-const url = "/categories";
-const path = "/productos/categorias";
 
 const Categories: React.FC = () => {
-	const [isOpen, setOpen] = useState(false);
-	const [categories, setCategories] = useState<Category[]>(rawCategories);
-	const [editCategory, setEditCategory] = useState<Category | undefined>(
-		undefined
-	);
-	const navigate = useNavigate();
+	const url = "/categories";
+	const path = "/productos/categorias";
 	const user: User | null = useReadLocalStorage<User>("log_in");
+
 	const { enqueueSnackbar } = useSnackbar();
+
+	const navigate = useNavigate();
+
+	const [categories, setCategories] = useState<Category[]>([]);
+	const selectedMethodToEdit = useRef<Category | boolean>(false);
+
+	const [showModal, setShowModal] = useState(false);
+	const openFormModal = () => setShowModal(true);
+	const closeFormModal = () => setShowModal(false);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -51,27 +49,51 @@ const Categories: React.FC = () => {
 
 	const tableHeaders = ["ID", "Nombre", "Estado"];
 
+	const searchOptions = ["Name", "State"];
+
 	/**
 	 * Determines if some admin action buttons will be
 	 * displayed in the table too
 	 */
-
 	const isAdmin = user?.type_use === "admin" ? true : false;
 	console.log(isAdmin);
 	// TODO:
 
+	useEffect(() => {
+		fetchCategories();
+	}, []);
+
+	async function fetchCategories() {
+		try {
+			const { data: categories } = await instance.get<Category[]>(
+				"/payment_methods"
+			);
+			setCategories(categories);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
+				variant: "error",
+			});
+		}
+	}
+
+	function onCategorySubmitted(wasUpdates: boolean) {
+		closeFormModal();
+		fetchCategories();
+	}
+
 	function handleOpen(op: boolean): void {
-		setOpen(op);
+		setShowModal(op);
 	}
 
 	function handleEdit(category: Category) {
-		setEditCategory(category);
-		handleOpen(true);
+		selectedMethodToEdit.current = category;
+		openFormModal();
 	}
 
 	async function createCategory() {
-		setEditCategory(undefined);
-		handleOpen(true);
+		selectedMethodToEdit.current = false;
+		openFormModal();
 	}
 
 	async function deleteCategory(category: Category) {
@@ -114,136 +136,58 @@ const Categories: React.FC = () => {
 				);
 			}
 		}
-
-		// TODO: Hide loader
 	}
 
-	async function getCategories() {
+	async function onSubmitSearch(
+		filter: string,
+		search: string,
+		order: QueryOrder
+	) {
 		try {
-			const response = await instance.get<ServerResponse>(url);
-			let dataCategories = await response?.data;
+			let categories: Category[];
 
-			if (!dataCategories?.err) {
-				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
+			switch (filter) {
+			case "ID":
+				categories = (
+					await instance.get<Category[]>("/categories", {
+						params: { order, search },
+					})
+				).data;
+				break;
 
-				setCategories(dataCategories?.success);
-				// console.log(dataCategories?.success);
-				dataCategories = initialSereverResponse;
+			case "Name":
+				categories = (
+					await instance.get<Category[]>("/categories/categoryByName", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
+			case "State":
+				categories = (
+					await instance.get<Category[]>("/categories/categoryByState", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
+			default:
+				categories = (
+					await instance.get<Category[]>(url, {
+						params: { order },
+					})
+				).data;
+				break;
 			}
-			else {
-				const message = dataCategories?.statusText;
-				const status = dataCategories?.status;
-				throw { message, status };
-			}
+
+			setCategories(categories);
 		}
-		catch (error: any) {
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
+				variant: "error",
+			});
 		}
 	}
-
-	async function getCategoriesSearch(endpoint: string, order: string) {
-		// console.log("Url: ", endpoint);
-		try {
-			const response = await instance.get<ServerResponse>(endpoint, {
-				params: { order },
-			});
-			let dataCategories = await response?.data;
-
-			if (!dataCategories?.err) {
-				DeleteProps(dataCategories?.success, ["createdAt", "updatedAt"]);
-
-				setCategories(dataCategories?.success);
-				// console.log(dataCategories?.success);
-				dataCategories = initialSereverResponse;
-			}
-			else {
-				const message = dataCategories?.statusText;
-				const status = dataCategories?.status;
-				throw { message, status };
-			}
-		}
-		catch (error: any) {
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
-		}
-	}
-
-	function validationSearch(search: string, order: string): Search {
-		const regexTest: string = search ?? "";
-		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
-		const optionsState = ["ACTIVADA", "ACTIVADO", "DESACTIVADA", "DESACTIVADO"];
-
-		const searchUperCase = search?.trim().toUpperCase();
-		let isActivated = false;
-
-		if (
-			searchUperCase == optionsState[0] ||
-			searchUperCase == optionsState[1]
-		) {
-			isActivated = true;
-			navigate({
-				pathname: path + "/getCategoryByState/" + search,
-				search: "?order=" + order,
-			});
-			return {
-				text: "state",
-				url: `${url}/getCategoryByState/${isActivated}`,
-			};
-		}
-		else if (
-			searchUperCase == optionsState[2] ||
-			searchUperCase == optionsState[3]
-		) {
-			isActivated = false;
-			navigate({
-				pathname: path + "/getCategoryByState/" + search,
-				search: "?order=" + order,
-			});
-			return {
-				text: "state",
-				url: `${url}/getCategoryByState/${isActivated}`,
-			};
-		}
-
-		if (regexName.test(regexTest)) {
-			navigate({
-				pathname: path + "/getCategoryByName/" + search,
-				search: "?order=" + order,
-			});
-			return {
-				text: "name",
-				url: `${url}/getCategoryByName/${search}`,
-			};
-		}
-
-		return { text: "", url: "" };
-	}
-
-	async function onSubmitSearch(search: string | null, order: string | null) {
-		const searchValue: string = search ?? "";
-		const orderValue: string = order ?? "ASC";
-		if (search === "") {
-			navigate({
-				pathname: path,
-				search: "?order=" + order,
-			});
-			return getCategoriesSearch(url, orderValue);
-		}
-
-		const typeGet: Search = validationSearch(searchValue, orderValue);
-		return getCategoriesSearch(typeGet.url, orderValue);
-	}
-
-	useEffect(() => {
-		getCategories();
-	}, []);
 
 	return (
 		<>
@@ -264,20 +208,24 @@ const Categories: React.FC = () => {
 							gap: "10px",
 						}}
 					>
-						<SearchAppBar onSubmitSearch={onSubmitSearch} />
+						<SearchAppBar
+							searchOptions={searchOptions}
+							onSubmitSearch={onSubmitSearch}
+						/>
 						<h1>Categorias</h1>
-						{isOpen && (
+						{showModal && (
 							<Modal
-								open={isOpen}
-								handleOpen={handleOpen}
+								open={showModal}
+								handleOpen={setShowModal}
 								title="Formulario Categorias"
 							>
 								<CategoriesForm
-									handleOpen={handleOpen}
-									dataToEdit={editCategory}
-									url={url}
-									categories={categories}
-									setCategories={setCategories}
+									onSubmit={onCategorySubmitted}
+									categoryData={
+										selectedMethodToEdit.current instanceof Object
+											? selectedMethodToEdit.current
+											: undefined
+									}
 								></CategoriesForm>
 							</Modal>
 						)}
