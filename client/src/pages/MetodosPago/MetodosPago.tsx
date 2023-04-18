@@ -20,6 +20,7 @@ import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import PaymentMethodForm from "./MetodosPagoForm";
+import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 
 const LugaresEntrega = () => {
 	/**
@@ -258,12 +259,22 @@ const LugaresEntrega = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-						<IconButton
-							sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-							onClick={() => createPaymentMethod()}
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: "10px",
+							}}
 						>
-							<AddCircle fontSize="inherit" />
-						</IconButton>
+							<IconButton
+								sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
+								onClick={() => createPaymentMethod()}
+							>
+								<AddCircle fontSize="inherit" />
+							</IconButton>
+
+							<ExcelDownloadButton apiObjective="payment_methods" />
+						</Box>
 					</Box>
 				</Box>
 			</Container>

@@ -24,6 +24,7 @@ import { User } from "models/User";
 import { instance } from "helper/API";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 
 const Categories: React.FC = () => {
 	const url = "/categories";
@@ -280,16 +281,26 @@ const Categories: React.FC = () => {
 							</Table>
 						</TableContainer>
 						{isAdmin && (
-							<IconButton
+							<Box
 								sx={{
-									alignSelf: "flex-start",
-									fontSize: "40px",
-									padding: "0px",
+									display: "flex",
+									flexDirection: "row",
+									gap: "10px",
 								}}
-								onClick={() => createCategory()}
 							>
-								<AddCircle fontSize="inherit" />
-							</IconButton>
+								<IconButton
+									sx={{
+										alignSelf: "flex-start",
+										fontSize: "40px",
+										padding: "0px",
+									}}
+									onClick={() => createCategory()}
+								>
+									<AddCircle fontSize="inherit" />
+								</IconButton>
+
+								<ExcelDownloadButton apiObjective="categories" />
+							</Box>
 						)}
 					</Box>
 				</Box>
