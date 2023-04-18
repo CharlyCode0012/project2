@@ -15,6 +15,7 @@ import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
 import { User } from "models/User";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { AxiosError } from "axios";
 
 interface UserFormProps {
 	userData?: User;
@@ -59,7 +60,7 @@ const UserForm: React.FC<UserFormProps> = ({
 			await instance.post("/users", {
 				id: Date.now().toString(),
 				name,
-				date_B: new Date(birthday ?? "2000-01-01"),
+				date_B: new Date(birthday ?? "01-01-2000"),
 				type_use: userType,
 				e_mail: email,
 				pass: password,
@@ -69,8 +70,12 @@ const UserForm: React.FC<UserFormProps> = ({
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new user creation
 		}
 
-		catch {
-			enqueueSnackbar("Algo salio mal", { variant: "error" });
+		catch (error) {
+			if (error instanceof AxiosError && error.response?.status === 409) 
+				enqueueSnackbar("Ya hay un usuario con ese numero, intenta otro diferente", { variant: "error" });	
+				
+			else
+				enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
@@ -106,8 +111,12 @@ const UserForm: React.FC<UserFormProps> = ({
 			onSubmit(true); // "true" tells the submission was an update
 		}
 
-		catch {
-			enqueueSnackbar("Algo salio mal", { variant: "error" });
+		catch (error) {
+			if (error instanceof AxiosError && error.response?.status === 409) 
+				enqueueSnackbar("Ya hay un usuario con ese numero, intenta otro diferente", { variant: "error" });	
+				
+			else
+				enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
@@ -191,7 +200,7 @@ const UserForm: React.FC<UserFormProps> = ({
 			<TextField
 				sx={{ width: "300px" }}
 				label="Celular"
-				name="cell"
+				name="cel"
 				variant="outlined"
 				defaultValue={userData?.pass}
 				type="text"
