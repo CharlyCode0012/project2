@@ -5,9 +5,10 @@ import { useSnackbar } from "notistack";
 
 export interface ExcelDownloadButtonProps {
 	apiObjective: string;
+	onDownload: () => void;
 }
 
-const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective }) => {
+const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective, onDownload }) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -35,6 +36,8 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective 
 			link.setAttribute("download", filename);
 			document.body.appendChild(link);
 			link.click();
+
+			onDownload(); // Enable file submission
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al descargar el archivo", { variant: "error" });

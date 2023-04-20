@@ -61,6 +61,12 @@ const LugaresEntrega = () => {
 	const selectedPlaceToEdit = useRef<DisplayedDeliveryPlace | boolean>(false);
 
 	/**
+	 * Keeps track of wether the user has or hasn't downloaded the 
+	 * excel file, if not, user cannot upload another file
+	 */
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
+
+	/**
 	 * When rendered, places are obtained from DB and displayed in the table
 	 */
 	useEffect(() => {
@@ -294,9 +300,9 @@ const LugaresEntrega = () => {
 								<AddCircle fontSize="inherit" />
 							</IconButton>
 
-							<ExcelDownloadButton apiObjective="places" />
+							<ExcelDownloadButton apiObjective="places" onDownload={() => setHasDownloadedFile(true)} />
 
-							<FileUpload apiObjective="places" onUpload={fetchDeliveryPlaces} />
+							<FileUpload apiObjective="places" onUpload={fetchDeliveryPlaces} disabled={!hasDownloadedFile} />
 						</Box>
 					</Box>
 				</Box>

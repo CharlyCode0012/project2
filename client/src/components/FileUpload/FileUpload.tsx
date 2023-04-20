@@ -5,10 +5,11 @@ import React, { useState } from "react";
 
 export interface FileUploadProps {
 	apiObjective: string;
+	disabled: boolean;
 	onUpload: () => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disabled }) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -81,6 +82,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload }) => {
 					variant="outlined"
 					color="primary"
 					component="span"
+					disabled={disabled}
 				>
 					Seleccionar un archivo excel
 				</Button>
@@ -92,6 +94,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload }) => {
 				type="submit"
 				variant="contained"
 				color="primary"
+				disabled={disabled}
 			>
 				Subir archivo
 			</Button>
