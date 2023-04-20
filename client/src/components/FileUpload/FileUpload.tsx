@@ -5,9 +5,10 @@ import React, { useState } from "react";
 
 export interface FileUploadProps {
 	apiObjective: string;
+	onUpload: () => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ apiObjective }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload }) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -47,6 +48,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective }) => {
 					"Content-Type": "multipart/form-data"
 				}
 			});
+
+			onUpload(); // Refresh table with newer table values
 		}
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });

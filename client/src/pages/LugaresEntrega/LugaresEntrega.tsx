@@ -296,7 +296,7 @@ const LugaresEntrega = () => {
 
 							<ExcelDownloadButton apiObjective="places" />
 
-							<FileUpload apiObjective="places" />
+							<FileUpload apiObjective="places" onUpload={fetchDeliveryPlaces} />
 						</Box>
 					</Box>
 				</Box>
