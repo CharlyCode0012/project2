@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Navbar from "@/Navbar/Navbar";
 import {
 	Box,
-	Button,
 	Container,
 	IconButton,
 	Paper,
