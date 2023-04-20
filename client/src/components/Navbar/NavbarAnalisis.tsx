@@ -19,11 +19,14 @@ type NavPage = {
 	admin?: boolean;
 };
 
-const pages: NavPage[] = [{ name: "Catalogos" }, { name: "Categorias" }];
+const pages: NavPage[] = [
+	{ name: "Analisis productos" },
+	{ name: "Analisis clientes" },
+];
 
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 
-const NavbarProduct = () => {
+const NavbarAnalisis = () => {
 	// These are the anchor HTML elements where the submenus display.
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -58,18 +61,17 @@ const NavbarProduct = () => {
 
 						{/* Maps each page to a <NavLink /> with an href of 'pages-name-with-dashes'. */}
 						<Box sx={{ flexGrow: 1, display: "flex" }}>
-							<NavLink
-								key={"prodcutos"}
-								to={"/productos"}
+							{/* <NavLink
+								key={"Pedidos"}
+								to={"/pedidos"}
 								style={{ textDecoration: "none" }}
 							>
-								<Button sx={{ color: "white" }}>Productos</Button>
-							</NavLink>
-
+								<Button sx={{ color: "white" }}>Pedidos</Button>
+							</NavLink> */}
 							{pages.map((page) => (
 								<NavLink
 									key={page.name}
-									to={`/productos/${page.name
+									to={`/pedidos/${page.name
 										.toLowerCase()
 										.split(/ +/)
 										.join("-")}`}
@@ -120,4 +122,4 @@ const NavbarProduct = () => {
 	);
 };
 
-export default NavbarProduct;
+export default NavbarAnalisis;

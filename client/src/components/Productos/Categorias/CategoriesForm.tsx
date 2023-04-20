@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	Box,
 	Button,
@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { Category } from "models/Category";
 import { instance } from "helper/API";
-import { createDecipheriv } from "crypto";
 import { useSnackbar } from "notistack";
 
 interface CategoriesFormProps {
@@ -29,17 +28,16 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
-		const state = data.get("state");
+		const actived = data.get("state")?.toString();
+		const state = actived ? true : false;
 		console.log("name: ", name);
 		console.log("state: ", state);
 
 		try {
 			await instance.post("/categories", {
+				id: Date.now().toString(),
 				name,
 				state,
-			});
-			enqueueSnackbar(`Se creo exitosamente ${name}`, {
-				variant: "success",
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Category creation
 		}
@@ -55,11 +53,12 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
-		const state = data.get("state");
+		const actived = data.get("state")?.toString();
+		const state = actived ? true : false;
 
 		console.log("name: ", name);
 		console.log("state: ", state);
-		const endpoint = `categories/${categoryData?.id}`;
+		const endpoint = `/categories/${categoryData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
@@ -67,9 +66,6 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 			await instance.put(endpoint, {
 				name,
 				state,
-			});
-			enqueueSnackbar(`Se actualizo exitosamente ${name}`, {
-				variant: "success",
 			});
 			onSubmit(true);
 		}

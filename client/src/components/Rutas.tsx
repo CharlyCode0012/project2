@@ -13,6 +13,10 @@ import MetodosPago from "pages/MetodosPago/MetodosPago";
 import Perfil from "pages/Perfil/Perfil";
 import Catalogos from "pages/Productos/Catalogos/Catalogos";
 import Configuracion from "pages/Configuracion/Configuracion";
+import Entregas from "pages/Pedidos/Entregas/Entregas";
+import ConfirmarPedido from "pages/Pedidos/ConfirmarPedido/ConfirmarPedido";
+import AnalisisProductos from "pages/Analisis/AnalisisProductos/AnalisisProductos";
+import AnalisisClientes from "pages/Analisis/AnalisisClientes/AnalisisClientes";
 
 const Rutas = () => {
 	const num = 0;
@@ -23,7 +27,11 @@ const Rutas = () => {
 
 				<Route path="login" element={<Login />} />
 
-				<Route path="analisis/*" element={<Analisis />} />
+				<Route path="analisis" element={<Analisis />}>
+					<Route index element={<Pedidos />} />;
+					<Route path="anilisis-productos/*" element={<AnalisisProductos />} />
+					<Route path="analisis-clientes/*" element={<AnalisisClientes />} />
+				</Route>
 
 				<Route path="configuracion/*" element={<Configuracion />} />
 
@@ -33,7 +41,11 @@ const Rutas = () => {
 
 				<Route path="metodos-de-pago/*" element={<MetodosPago />} />
 
-				<Route path="pedidos/*" element={<Pedidos />} />
+				<Route path="pedidos">
+					<Route index element={<Pedidos />} />;
+					<Route path="entregas/*" element={<Entregas />} />
+					<Route path="confirmar-pedido/*" element={<ConfirmarPedido />} />
+				</Route>
 
 				<Route path="perfil/*" element={<Perfil />} />
 
