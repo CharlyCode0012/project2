@@ -38,13 +38,13 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective }) => {
 	async function uploadFile (event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		const data = new FormData();
-		const file : File | null = data.get("excel-file") as File;
-
+		const formData = new FormData(event.currentTarget);
+		console.log(formData);
+		
 		try {
-			await instance.post(`/${apiObjective}/upload`, file, {
+			await instance.post(`/${apiObjective}/upload`, formData, {
 				headers: {
-					"Content-Type": file?.type
+					"Content-Type": `multipart/form-data; boundary=${"12345"}`
 				}
 			});
 		}
@@ -67,7 +67,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective }) => {
 		>
 			<input
 				accept=".xlsx, .xls"
-				name="excel-file"
+				name="excel_file"
 				id="file-input"
 				type="file"
 				hidden
