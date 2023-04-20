@@ -44,7 +44,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective }) => {
 		try {
 			await instance.post(`/${apiObjective}/upload`, formData, {
 				headers: {
-					"Content-Type": `multipart/form-data; boundary=${"12345"}`
+					"Content-Type": "multipart/form-data"
 				}
 			});
 		}
