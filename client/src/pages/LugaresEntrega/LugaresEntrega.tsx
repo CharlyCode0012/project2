@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Navbar from "@/Navbar/Navbar";
 import {
 	Box,
+	Button,
 	Container,
 	IconButton,
 	Paper,
@@ -21,6 +22,7 @@ import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
+import { FileUpload } from "@/FileUpload";
 
 const LugaresEntrega = () => {
 	/**
@@ -200,8 +202,6 @@ const LugaresEntrega = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
@@ -284,6 +284,7 @@ const LugaresEntrega = () => {
 							sx={{
 								display: "flex",
 								flexDirection: "row",
+								alignItems: "center",
 								gap: "10px",
 							}}
 						>
@@ -295,6 +296,8 @@ const LugaresEntrega = () => {
 							</IconButton>
 
 							<ExcelDownloadButton apiObjective="places" />
+
+							<FileUpload apiObjective="places" />
 						</Box>
 					</Box>
 				</Box>

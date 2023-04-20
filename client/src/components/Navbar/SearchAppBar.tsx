@@ -73,7 +73,7 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSub
 	}
 
 	return (
-		<Box sx={{ flexGrow: 0, marginTop: "120px", width: "800px" }}>
+		<Box sx={{ flexGrow: 0, marginTop: "40px", width: "800px" }}>
 			<AppBar position="static">
 				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
 					<Order handleChangeOrder={handleChangeOrder} value={order} />
