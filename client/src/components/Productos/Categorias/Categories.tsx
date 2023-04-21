@@ -36,7 +36,7 @@ const Categories: React.FC = () => {
 	const navigate = useNavigate();
 
 	const [categories, setCategories] = useState<Category[]>([]);
-	const selectedMethodToEdit = useRef<Category | boolean>(false);
+	const selectedCategoryToEdit = useRef<Category | boolean>(false);
 
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
@@ -57,7 +57,7 @@ const Categories: React.FC = () => {
 	 * displayed in the table too
 	 */
 	const isAdmin = user?.type_use === "admin" ? true : false;
-	console.log(isAdmin);
+	//console.log(isAdmin);
 	// TODO:
 
 	useEffect(() => {
@@ -66,13 +66,11 @@ const Categories: React.FC = () => {
 
 	async function fetchCategories() {
 		try {
-			const { data: categories } = await instance.get<Category[]>(
-				"/payment_methods"
-			);
+			const { data: categories } = await instance.get<Category[]>(url);
 			setCategories(categories);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
+			enqueueSnackbar("Hubo un error al mostrar las categorias", {
 				variant: "error",
 			});
 		}
@@ -80,20 +78,22 @@ const Categories: React.FC = () => {
 
 	function onCategorySubmitted(wasUpdates: boolean) {
 		closeFormModal();
+		enqueueSnackbar(
+			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
+			{
+				variant: "success",
+			}
+		);
 		fetchCategories();
 	}
 
-	function handleOpen(op: boolean): void {
-		setShowModal(op);
-	}
-
 	function handleEdit(category: Category) {
-		selectedMethodToEdit.current = category;
+		selectedCategoryToEdit.current = category;
 		openFormModal();
 	}
 
 	async function createCategory() {
-		selectedMethodToEdit.current = false;
+		selectedCategoryToEdit.current = false;
 		openFormModal();
 	}
 
@@ -148,27 +148,25 @@ const Categories: React.FC = () => {
 			let categories: Category[];
 
 			switch (filter) {
-			case "ID":
-				categories = (
-					await instance.get<Category[]>("/categories", {
-						params: { order, search },
-					})
-				).data;
-				break;
-
 			case "Name":
 				categories = (
-					await instance.get<Category[]>("/categories/categoryByName", {
-						params: { order, search },
-					})
+					await instance.get<Category[]>(
+						`/categories/getCategoryByName/${search}`,
+						{
+							params: { order },
+						}
+					)
 				).data;
 				break;
 
 			case "State":
 				categories = (
-					await instance.get<Category[]>("/categories/categoryByState", {
-						params: { order, search },
-					})
+					await instance.get<Category[]>(
+						`/categories/categoryByState/${search}`,
+						{
+							params: { order },
+						}
+					)
 				).data;
 				break;
 
@@ -223,8 +221,8 @@ const Categories: React.FC = () => {
 								<CategoriesForm
 									onSubmit={onCategorySubmitted}
 									categoryData={
-										selectedMethodToEdit.current instanceof Object
-											? selectedMethodToEdit.current
+										selectedCategoryToEdit.current instanceof Object
+											? selectedCategoryToEdit.current
 											: undefined
 									}
 								></CategoriesForm>

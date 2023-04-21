@@ -1,13 +1,12 @@
-import React from "react";
-import Navbar from "@/Navbar/Navbar";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Pedidos = () => {
-	const num = 0;
-	return (
-		<>
-			<Navbar />
-		</>
-	);
+	const navigate = useNavigate();
+	useEffect(() => {
+		navigate("/pedidos/confirmar-pedido");
+	}, []);
+	return <></>;
 };
 
 export default Pedidos;
