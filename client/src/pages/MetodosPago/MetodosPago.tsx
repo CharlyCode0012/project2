@@ -21,6 +21,7 @@ import { instance } from "helper/API";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import PaymentMethodForm from "./MetodosPagoForm";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
+import { FileUpload } from "@/FileUpload";
 
 const LugaresEntrega = () => {
 	/**
@@ -58,6 +59,12 @@ const LugaresEntrega = () => {
 	 * edit (stays null when user creates a new payment method)
 	 */
 	const selectedMethodToEdit = useRef<PaymentMethod | boolean>(false);
+
+	/**
+	 * Keeps track of wether the user has or hasn't downloaded the 
+	 * excel file, if not, user cannot upload another file
+	 */
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
 
 	/**
 	 * When rendered, payment methods are obtained from DB and displayed in the table
@@ -273,7 +280,9 @@ const LugaresEntrega = () => {
 								<AddCircle fontSize="inherit" />
 							</IconButton>
 
-							<ExcelDownloadButton apiObjective="payment_methods" />
+							<ExcelDownloadButton apiObjective="payment_methods" onDownload={() => setHasDownloadedFile(true)} />
+
+							<FileUpload apiObjective="payment_methods" onUpload={fetchPaymentMethods} disabled={!hasDownloadedFile} />
 						</Box>
 					</Box>
 				</Box>
