@@ -48,10 +48,10 @@ const Perfil = () => {
 
 		// Upload data to DB
 		try {
-			await instance.post("/users/updateProfile", {
+			await instance.put("/users/updateProfile", {
 				id: userData.id,
-				password,
-				cellphone
+				pass: password,
+				cel: cellphone
 			});
 
 			enqueueSnackbar("Datos actualizados con exito", { variant: "success" });
@@ -134,7 +134,7 @@ const Perfil = () => {
 								label="Contraseña"
 								name="password"
 								type={showPassword ? "text" : "password"}
-								value={userData.pass}
+								defaultValue={userData.pass}
 								disabled={!isEditing}
 								endAdornment={
 									<InputAdornment position="end">
