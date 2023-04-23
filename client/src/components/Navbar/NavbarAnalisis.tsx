@@ -71,7 +71,7 @@ const NavbarAnalisis = () => {
 							{pages.map((page) => (
 								<NavLink
 									key={page.name}
-									to={`/pedidos/${page.name
+									to={`/analisis/${page.name
 										.toLowerCase()
 										.split(/ +/)
 										.join("-")}`}
