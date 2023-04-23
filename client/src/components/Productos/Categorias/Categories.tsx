@@ -57,7 +57,7 @@ const Categories: React.FC = () => {
 	 * displayed in the table too
 	 */
 	const isAdmin = user?.type_use === "admin" ? true : false;
-	//console.log(isAdmin);
+	// console.log(isAdmin);
 	// TODO:
 
 	useEffect(() => {
