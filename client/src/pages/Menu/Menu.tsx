@@ -16,151 +16,120 @@ import {
 import { MenuData } from "models/Menu";
 import React, { useState } from "react";
 import "./Menu.css";
+import DisplayedMenu from "./DisplayedMenu";
 
-const rawMenu: MenuData[] = [
-	{
-		index: 1,
-		brief: "Comprar un producto",
-		description:
-			"Realizar la compra de uno o varios productos en nuestra tienda en línea",
-		keywords: ["comprar", "compra", "producto", "productos", "1"],
-		action: null,
-	},
-	{
-		index: 2,
-		brief: "Calificar un producto",
-		description:
-			"Dar una calificación a uno de nuestros productos para ayudar a otros clientes en su decisión de compra",
-		keywords: ["calificar", "calificación", "puntuar", "opinión", "2"],
-		action: null,
-	},
-	{
-		index: 3,
-		brief: "Agendar una cita",
-		description:
-			"Programar una cita con uno de nuestros especialistas para recibir asesoría personalizada",
-		keywords: ["agendar", "cita", "asesoría", "especialista", "3"],
-		action: null,
-	},
-	{
-		index: 4,
-		brief: "Consultar disponibilidad",
-		description:
-			"Verificar la disponibilidad de un producto antes de realizar la compra",
-		keywords: ["disponibilidad", "verificar", "consultar", "producto", "4"],
-		action: null,
-	},
-	{
-		index: 5,
-		brief: "Programar entrega",
-		description:
-			"Seleccionar una fecha y hora para la entrega de los productos comprados",
-		keywords: ["entrega", "programar", "fecha", "hora", "5"],
-		action: null,
-	},
-];
+const toyStoreMenu: MenuData = {
+	id: "1",
+	title: "Menu Principal",
+	instruction: "¿Qué acción desea realizar?",
+	options: [
+		{
+			id: "1",
+			index: 1,
+			brief: "Ver categorías de juguetes",
+			description: "Muestra un menú con las diferentes categorías de juguetes disponibles en la tienda.",
+			keywords: ["categorías", "juguetes"],
+			actionType: "menu",
+			action: {
+				id: "2",
+				title: "Categorías de juguetes",
+				instruction: "¿Qué categoría de juguetes te interesa?",
+				options: [
+					{
+						id: "1",
+						index: 1,
+						brief: "Muñecos y figuras de acción",
+						description: "Muestra una lista de muñecos y figuras de acción disponibles en la tienda.",
+						keywords: ["muñecos", "figuras", "acción"],
+						actionType: "catalog",
+						action: {
+							id: "1",
+							name: "Muñecos y figuras de acción",
+							description: "Encuentra a tus personajes favoritos de películas y series en forma de muñecos y figuras de acción.",
+							products: ["Spiderman", "Iron Man", "Batman", "Superman", "Harry Potter"]
+						}
+					},
+					{
+						id: "2",
+						index: 2,
+						brief: "Juegos de mesa",
+						description: "Muestra una lista de juegos de mesa disponibles en la tienda.",
+						keywords: ["juegos", "mesa"],
+						actionType: "catalog",
+						action: {
+							id: "2",
+							name: "Juegos de mesa",
+							description: "Diviértete en familia o con amigos con nuestra selección de juegos de mesa para todas las edades.",
+							products: ["Monopoly", "Scrabble", "Jenga", "Risk", "Catán"]
+						}
+					},
+					{
+						id: "3",
+						index: 3,
+						brief: "Peluches",
+						description: "Muestra una lista de peluches disponibles en la tienda.",
+						keywords: ["peluches"],
+						actionType: "catalog",
+						action: {
+							id: "3",
+							name: "Peluches",
+							description: "Abraza a tus personajes favoritos en forma de peluche y tenlos siempre contigo.",
+							products: ["Pikachu", "Sonic", "Minions", "Doraemon", "Mickey Mouse"]
+						}
+					}
+				]
+			}
+		},
+		{
+			id: "2",
+			index: 2,
+			brief: "Ver promociones",
+			description: "Muestra una lista de las promociones actuales en la tienda.",
+			keywords: ["promociones"],
+			actionType: "link",
+			action: "https://www.toy-store.com/promociones"
+		},
+		{
+			id: "3",
+			index: 3,
+			brief: "Ver carrito de compras",
+			description: "Muestra los productos que has añadido al carrito de compras.",
+			keywords: ["carrito", "compras"],
+			actionType: "message",
+			action: "Gracias por visitar la tienda. ¡Esperamos verte pronto de nuevo!"
+		}
+	]
+};
 
 const Menu = () => {
-	/**
-	 * Headers that will be displayed to the menu table
-	 */
-	const tableHeaders = [
-		"Indice",
-		"Opcion",
-		"Descripción",
-		"Palabras Clave",
-		"Relacion",
-	];
-
-	/**
-	 * Contains the menu info that will be displayed to the user
-	 *
-	 * // TODO: Delete "rawMenu" usage
-	 */
-	const [menu, setMenu] = useState<MenuData[]>(rawMenu);
 
 	const isAdmin = true;
-
-	async function deleteRawMenu(deletedRawMenuID: number) {
-		// TODO: Display loader
-
-		const newRawMenu = menu.filter(
-			(option) => option.index !== deletedRawMenuID
-		);
-
-		// TODO: Call Option Menu deletion from DB
-		setMenu(newRawMenu);
-		// TODO: Hide loader
-	}
 
 	return (
 		<>
 			<Navbar />
-			<Box
+
+			<Container
 				sx={{
-					height: "560px",
-					flexGrow: 1,
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					width: "600px",
+					marginTop: "20px",
+					marginBottom: "20px",
 				}}
 			>
-				<Box
+				<h1>Menu</h1>
+
+				<Paper
+					elevation={4}
 					sx={{
 						display: "flex",
 						flexDirection: "column",
-						gap: "10px",
+						padding: "20px",
+						gap: "20px",
 					}}
 				>
-					<h1>Menu</h1>
-					<TableContainer
-						sx={{ width: "800px", maxHeight: "400px" }}
-						component={Paper}
-						elevation={5}
-					>
-						<Table>
-							<TableHead>
-								<TableRow>
-									{tableHeaders.map((header) => (
-										<TableCell key={header} align="left">
-											<TableSortLabel>{header}</TableSortLabel>
-										</TableCell>
-									))}
-								</TableRow>
-							</TableHead>
-
-							<TableBody>
-								{menu.map((option) => (
-									<TableRow key={option.index}>
-										<TableCell align="left">{option.index}</TableCell>
-										<TableCell align="left">{option.brief}</TableCell>
-										<TableCell align="left">{option.description}</TableCell>
-										<TableCell align="left">
-											{option.keywords.join(", ")}
-										</TableCell>
-										<TableCell align="left">{option.action}</TableCell>
-										{isAdmin && (
-											<TableCell align="center">
-												<IconButton>
-													<Edit fontSize="inherit" />
-												</IconButton>
-												<IconButton onClick={() => deleteRawMenu(option.index)}>
-													<DeleteForever fontSize="inherit" />
-												</IconButton>
-											</TableCell>
-										)}
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</TableContainer>
-					<IconButton
-						sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-					>
-						<AddCircle fontSize="inherit" />
-					</IconButton>
-				</Box>
-			</Box>
+					<DisplayedMenu data={toyStoreMenu} />
+				</Paper>
+			</Container>
 		</>
 	);
 };
