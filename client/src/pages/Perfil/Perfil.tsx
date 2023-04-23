@@ -3,18 +3,30 @@ import React, { useState } from "react";
 import Cookies from "universal-cookie";
 
 import { useSnackbar } from "notistack";
-import { Avatar, Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, TextField } from "@mui/material";
+import {
+	Avatar,
+	Box,
+	Button,
+	Container,
+	FormControl,
+	IconButton,
+	InputAdornment,
+	InputLabel,
+	OutlinedInput,
+	Paper,
+	TextField,
+} from "@mui/material";
 import vendor from "../../assets/vendor.png";
 import helper from "../../assets/helper.png";
 import admin from "../../assets/admin.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AxiosError } from "axios";
 import { instance } from "helper/API";
+import { useReadLocalStorage } from "usehooks-ts";
 
 const Perfil = () => {
 	const cookies = new Cookies();
-	const userData = cookies.get("user");
-
+	const userData = cookies.get("user") ?? useReadLocalStorage("log_in");
 	/**
 	 * Displays notifications to the user
 	 */
@@ -35,7 +47,7 @@ const Perfil = () => {
 	/**
 	 * Updates the DB with the new password and cellphone
 	 * provided by the user
-	 * 
+	 *
 	 * @param event that contains the info of the new data
 	 */
 	async function submitNewData(event: React.FormEvent<HTMLFormElement>) {
@@ -51,18 +63,20 @@ const Perfil = () => {
 			await instance.put("/users/updateProfile", {
 				id: userData.id,
 				pass: password,
-				cel: cellphone
+				cel: cellphone,
 			});
 
 			enqueueSnackbar("Datos actualizados con exito", { variant: "success" });
+			setIsEditing(false);
 		}
-
 		catch (error) {
-			if (error instanceof AxiosError && error.response?.status === 409) 
-				enqueueSnackbar("Ya hay un usuario con ese numero, intenta otro diferente", { variant: "error" });	
-				
-			else
-				enqueueSnackbar("Algo salio mal", { variant: "error" });
+			if (error instanceof AxiosError && error.response?.status === 409) {
+				enqueueSnackbar(
+					"Ya hay un usuario con ese numero, intenta otro diferente",
+					{ variant: "error" }
+				);
+			}
+			else enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
@@ -92,12 +106,18 @@ const Perfil = () => {
 							marginBottom: "20px",
 							display: "flex",
 							alignItems: "center",
-							gap: "20px"
+							gap: "20px",
 						}}
 					>
 						<Avatar
 							alt={userData.name}
-							src={userData.type_use === "vendedor" ? vendor : (userData.type_use === "admin" ? admin : helper)}
+							src={
+								userData.type_use === "vendedor"
+									? vendor
+									: userData.type_use === "admin"
+										? admin
+										: helper
+							}
 							sx={{
 								width: "140px",
 								height: "140px",
@@ -112,11 +132,10 @@ const Perfil = () => {
 						sx={{
 							display: "flex",
 							flexDirection: "column",
-							gap: "20px"
+							gap: "20px",
 						}}
 						onSubmit={submitNewData}
 					>
-
 						<TextField
 							label="Usuario"
 							name="username"
@@ -164,27 +183,33 @@ const Perfil = () => {
 							variant="outlined"
 							defaultValue={userData.cel}
 							type="text"
-							inputProps={{ pattern: "^\\d{2}-\\d{4}-\\d{4}$", maxLength: 12, inputMode: "numeric" }}
+							inputProps={{
+								pattern: "^\\d{2}-\\d{4}-\\d{4}$",
+								maxLength: 12,
+								inputMode: "numeric",
+							}}
 							required
 							disabled={!isEditing}
 						/>
 
-						{!isEditing 
-							? <Button
+						{!isEditing ? (
+							<Button
 								variant="contained"
 								color="primary"
 								onClick={() => setIsEditing(true)}
-							>Editar</Button>
-							
-							: <></>
-						}
+							>
+								Editar
+							</Button>
+						) : (
+							<></>
+						)}
 
-						{isEditing
-							? <Box
+						{isEditing ? (
+							<Box
 								sx={{
 									display: "flex",
 									alignItems: "center",
-									justifyContent: "space-between"
+									justifyContent: "space-between",
 								}}
 							>
 								<Button
@@ -192,20 +217,23 @@ const Perfil = () => {
 									variant="contained"
 									type="submit"
 									color="warning"
-								>Actualizar datos</Button>
+								>
+									Actualizar datos
+								</Button>
 
 								<Button
 									sx={{ width: "150px" }}
 									variant="contained"
 									color="error"
 									onClick={() => setIsEditing(false)}
-								>Cancelar</Button>
-							
+								>
+									Cancelar
+								</Button>
 							</Box>
-							: <></>
-						}
+						) : (
+							<></>
+						)}
 					</Box>
-
 				</Paper>
 			</Container>
 		</>

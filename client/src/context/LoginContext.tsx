@@ -20,7 +20,7 @@ const defaultState = {
 		cel: "",
 		e_mail: "",
 		pass: "",
-		type_use: false,
+		type_use: "",
 	},
 	handleLogin: (user: User | null) => {},
 };

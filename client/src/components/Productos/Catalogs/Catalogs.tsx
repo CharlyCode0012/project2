@@ -13,11 +13,11 @@ import {
 	Container,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
-import "./Categories.css";
-import { Category } from "models/Category";
+import "./Catalogs.css";
+import { Catalog } from "models/Catalog";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
-import CategoriesForm from "@/Productos/Categorias/CategoriesForm";
+import CatalogsForm from "./CatalogsForm";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
@@ -25,17 +25,15 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 
-const Categories: React.FC = () => {
-	const url = "/categories";
-	const path = "/productos/categorias";
+const Catalogs: React.FC = () => {
+	const url = "/Catalogs";
+	const path = "/productos/catalogos";
 	const user: User | null = useReadLocalStorage<User>("log_in");
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const navigate = useNavigate();
-
-	const [categories, setCategories] = useState<Category[]>([]);
-	const selectedCategoryToEdit = useRef<Category | boolean>(false);
+	const [Catalogs, setCatalogs] = useState<Catalog[]>([]);
+	const selectedCatalogToEdit = useRef<Catalog | boolean>(false);
 
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
@@ -47,7 +45,7 @@ const Categories: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["ID", "Nombre", "Estado"];
+	const tableHeaders = ["ID", "Nombre", "Estado", "Descripcion"];
 
 	const searchOptions = ["Name", "State"];
 
@@ -60,22 +58,22 @@ const Categories: React.FC = () => {
 	// TODO:
 
 	useEffect(() => {
-		fetchCategories();
+		fetchCatalogs();
 	}, []);
 
-	async function fetchCategories() {
+	async function fetchCatalogs() {
 		try {
-			const { data: categories } = await instance.get<Category[]>(url);
-			setCategories(categories);
+			const { data: Catalogs } = await instance.get<Catalog[]>(url);
+			setCatalogs(Catalogs);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las categorias", {
+			enqueueSnackbar("Hubo un error al mostrar las catalogos", {
 				variant: "error",
 			});
 		}
 	}
 
-	function onCategorySubmitted(wasUpdates: boolean) {
+	function onCatalogSubmitted(wasUpdates: boolean) {
 		closeFormModal();
 		enqueueSnackbar(
 			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
@@ -83,45 +81,45 @@ const Categories: React.FC = () => {
 				variant: "success",
 			}
 		);
-		fetchCategories();
+		fetchCatalogs();
 	}
 
-	function handleEdit(category: Category) {
-		selectedCategoryToEdit.current = category;
+	function handleEdit(Catalog: Catalog) {
+		selectedCatalogToEdit.current = Catalog;
 		openFormModal();
 	}
 
-	async function createCategory() {
-		selectedCategoryToEdit.current = false;
+	async function createCatalog() {
+		selectedCatalogToEdit.current = false;
 		openFormModal();
 	}
 
-	async function deleteCategory(category: Category) {
-		const { name, id } = category;
-		const deletedCategoryID: number = id;
+	async function deleteCatalog(Catalog: Catalog) {
+		const { name, id } = Catalog;
+		const deletedCatalogID: number = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
 
-		const endpoint = `${url}/${deletedCategoryID}`;
+		const endpoint = `${url}/${deletedCatalogID}`;
 		if (isDelete) {
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
 
 				const res = await instance.delete(endpoint);
-				const dataCategory = await res.data;
+				const dataCatalog = await res.data;
 
-				if (dataCategory?.err) {
-					const message = dataCategory?.statusText;
-					const status = dataCategory?.status;
+				if (dataCatalog?.err) {
+					const message = dataCatalog?.statusText;
+					const status = dataCatalog?.status;
 					throw { message, status };
 				}
 				else {
-					const newCategories = categories.filter(
-						(categoryD) => categoryD.id !== deletedCategoryID
+					const newCatalogs = Catalogs.filter(
+						(CatalogD) => CatalogD.id !== deletedCatalogID
 					);
-					setCategories(newCategories);
+					setCatalogs(newCatalogs);
 				}
 				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
 					variant: "success",
@@ -144,13 +142,13 @@ const Categories: React.FC = () => {
 		order: QueryOrder
 	) {
 		try {
-			let categories: Category[];
+			let Catalogs: Catalog[];
 
 			switch (filter) {
 			case "Name":
-				categories = (
-					await instance.get<Category[]>(
-						`/categories/getCategoryByName/${search}`,
+				Catalogs = (
+					await instance.get<Catalog[]>(
+						`/catalogs/getCatalogByName/${search}`,
 						{
 							params: { order },
 						}
@@ -159,9 +157,9 @@ const Categories: React.FC = () => {
 				break;
 
 			case "State":
-				categories = (
-					await instance.get<Category[]>(
-						`/categories/categoryByState/${search}`,
+				Catalogs = (
+					await instance.get<Catalog[]>(
+						`/catalogs/CatalogByState/${search}`,
 						{
 							params: { order },
 						}
@@ -170,15 +168,15 @@ const Categories: React.FC = () => {
 				break;
 
 			default:
-				categories = (
-					await instance.get<Category[]>(url, {
+				Catalogs = (
+					await instance.get<Catalog[]>(url, {
 						params: { order },
 					})
 				).data;
 				break;
 			}
 
-			setCategories(categories);
+			setCatalogs(Catalogs);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
@@ -210,21 +208,21 @@ const Categories: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Categorias</h1>
+						<h1>catalogos</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
 								handleOpen={setShowModal}
-								title="Formulario Categorias"
+								title="Formulario catalogos"
 							>
-								<CategoriesForm
-									onSubmit={onCategorySubmitted}
-									categoryData={
-										selectedCategoryToEdit.current instanceof Object
-											? selectedCategoryToEdit.current
+								<CatalogsForm
+									onSubmit={onCatalogSubmitted}
+									CatalogData={
+										selectedCatalogToEdit.current instanceof Object
+											? selectedCatalogToEdit.current
 											: undefined
 									}
-								></CategoriesForm>
+								></CatalogsForm>
 							</Modal>
 						)}
 						<TableContainer
@@ -246,27 +244,25 @@ const Categories: React.FC = () => {
 								</TableHead>
 
 								<TableBody>
-									{!(categories?.length > 0) ? (
+									{!(Catalogs?.length > 0) ? (
 										<TableRow>
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										categories?.map((category) => (
-											<TableRow key={category.id}>
-												<TableCell align="left">{category.id}</TableCell>
-												<TableCell align="left">{category.name}</TableCell>
+										Catalogs?.map((Catalog) => (
+											<TableRow key={Catalog.id}>
+												<TableCell align="left">{Catalog.id}</TableCell>
+												<TableCell align="left">{Catalog.name}</TableCell>
 												<TableCell align="left">
-													{category.state ? "Activada" : "Desactivada"}
+													{Catalog.state ? "Activada" : "Desactivada"}
 												</TableCell>
 
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(category)}>
+														<IconButton onClick={() => handleEdit(Catalog)}>
 															<Edit fontSize="inherit" />
 														</IconButton>
-														<IconButton
-															onClick={() => deleteCategory(category)}
-														>
+														<IconButton onClick={() => deleteCatalog(Catalog)}>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
 													</TableCell>
@@ -291,12 +287,12 @@ const Categories: React.FC = () => {
 										fontSize: "40px",
 										padding: "0px",
 									}}
-									onClick={() => createCategory()}
+									onClick={() => createCatalog()}
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
 
-								<ExcelDownloadButton apiObjective="categories" />
+								<ExcelDownloadButton apiObjective="catalogs" />
 							</Box>
 						)}
 					</Box>
@@ -306,4 +302,4 @@ const Categories: React.FC = () => {
 	);
 };
 
-export default Categories;
+export default Catalogs;
