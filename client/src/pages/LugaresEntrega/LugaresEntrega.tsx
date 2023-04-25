@@ -11,7 +11,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TableSortLabel
+	TableSortLabel,
 } from "@mui/material";
 import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
@@ -22,6 +22,8 @@ import { instance } from "helper/API";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import { FileUpload } from "@/FileUpload";
+import { useReadLocalStorage } from "usehooks-ts";
+import { User } from "models/User";
 
 const LugaresEntrega = () => {
 	/**
@@ -32,7 +34,15 @@ const LugaresEntrega = () => {
 	/**
 	 * Headers that will be displayed to the table
 	 */
-	const tableHeaders = ["ID", "Municipio", "Calle", "Colonia", "No. Casa", "CP", "Horario"];
+	const tableHeaders = [
+		"ID",
+		"Municipio",
+		"Calle",
+		"Colonia",
+		"No. Casa",
+		"CP",
+		"Horario",
+	];
 
 	/**
 	 * Options that the user can select to filter the data
@@ -44,7 +54,9 @@ const LugaresEntrega = () => {
 	 * Saves the delivery places stored in the DB
 	 * and displays them in the table
 	 */
-	const [deliveryPlaces, setDeliveryPlaces] = useState<DisplayedDeliveryPlace[]>([]);
+	const [deliveryPlaces, setDeliveryPlaces] = useState<
+		DisplayedDeliveryPlace[]
+	>([]);
 
 	/**
 	 * Determines if the place's modal will be shown
@@ -61,10 +73,15 @@ const LugaresEntrega = () => {
 	const selectedPlaceToEdit = useRef<DisplayedDeliveryPlace | boolean>(false);
 
 	/**
-	 * Keeps track of wether the user has or hasn't downloaded the 
+	 * Keeps track of wether the user has or hasn't downloaded the
 	 * excel file, if not, user cannot upload another file
 	 */
 	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
+
+	const userLogin: User | null = useReadLocalStorage("log_in");
+	const typeUser: string | undefined = userLogin?.type_use;
+	const isAdmin: boolean =
+		typeUser === "admin" || typeUser === "vendedor" ? true : false;
 
 	/**
 	 * When rendered, places are obtained from DB and displayed in the table
@@ -75,12 +92,12 @@ const LugaresEntrega = () => {
 
 	/**
 	 * Takes the places returned by the server and converts them
-	 * into a new structure that is used to display their data to 
+	 * into a new structure that is used to display their data to
 	 * the table
-	 *  
-	 * @param places given by the DB 
+	 *
+	 * @param places given by the DB
 	 */
-	function formatFetchedPlacesForDisplay (places: PlacesDelivery[]) {
+	function formatFetchedPlacesForDisplay(places: PlacesDelivery[]) {
 		return places.map((place) => {
 			const [colony, street, homeNumber] = place.address.split(". ");
 
@@ -91,7 +108,7 @@ const LugaresEntrega = () => {
 				colony,
 				homeNumber,
 				cp: place.cp,
-				schedule: `${place.open_h} a ${place.close_h}`
+				schedule: `${place.open_h} a ${place.close_h}`,
 			} as DisplayedDeliveryPlace;
 		});
 	}
@@ -100,103 +117,133 @@ const LugaresEntrega = () => {
 	 * Fetches the places from the DB
 	 * Shows a notification to user when something went wrong
 	 */
-	async function fetchDeliveryPlaces () {
+	async function fetchDeliveryPlaces() {
 		try {
 			const { data: places } = await instance.get<PlacesDelivery[]>("/places");
 			setDeliveryPlaces(formatFetchedPlacesForDisplay(places));
 		}
-
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
+			enqueueSnackbar("Hubo un error al mostrar los lugares", {
+				variant: "error",
+			});
 		}
 	}
 
 	/**
 	 * Gets called when a place was created or edited, closes the modal,
 	 * notifies the user and refreshes the table
-	 * 
-	 * @param wasAnUpdate changes the notification message depending on the action (created / edited) 
+	 *
+	 * @param wasAnUpdate changes the notification message depending on the action (created / edited)
 	 */
-	function onPlaceSubmitted (wasAnUpdate: boolean) {
+	function onPlaceSubmitted(wasAnUpdate: boolean) {
 		closeFormModal();
-		enqueueSnackbar(wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito", { variant: "success" });
+		enqueueSnackbar(
+			wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito",
+			{ variant: "success" }
+		);
 		fetchDeliveryPlaces();
 	}
 
 	/**
-	 * When called, establishes that there is nothing to edit 
-	 * (as a new one is being created) and opens the modal 
+	 * When called, establishes that there is nothing to edit
+	 * (as a new one is being created) and opens the modal
 	 */
-	function createDeliveryPlace () {
+	function createDeliveryPlace() {
 		selectedPlaceToEdit.current = false;
 		openFormModal();
 	}
 
 	/**
-	 * When called, establishes that there is a place edit 
+	 * When called, establishes that there is a place edit
 	 * keeps it's reference and opens the modal so it can access
-	 * the info of the about-to-edit place 
+	 * the info of the about-to-edit place
 	 */
-	function editDeliveryPlace (place: DisplayedDeliveryPlace) {
+	function editDeliveryPlace(place: DisplayedDeliveryPlace) {
 		selectedPlaceToEdit.current = place;
 		openFormModal();
 	}
 
 	/**
 	 * Calls the server to delete the given place
-	 * 
+	 *
 	 * @param place data from the place that will be deleted
 	 */
-	async function deleteDeliveryPlace (deletedPlace: DisplayedDeliveryPlace) {
+	async function deleteDeliveryPlace(deletedPlace: DisplayedDeliveryPlace) {
 		try {
 			await instance.delete(`/places/${deletedPlace.id}`);
 			enqueueSnackbar("Lugar eliminado con exito", { variant: "success" });
-			setDeliveryPlaces((deliveryPlaces) => deliveryPlaces.filter((place) => place.id !== deletedPlace.id));
+			setDeliveryPlaces((deliveryPlaces) =>
+				deliveryPlaces.filter((place) => place.id !== deletedPlace.id)
+			);
 		}
-
 		catch {
 			enqueueSnackbar("No se pudo eliminar", { variant: "error" });
 		}
 	}
 
 	/**
-	 * Retrieves specific places from the DB, depending on the 
+	 * Retrieves specific places from the DB, depending on the
 	 * filter and search of the user
-	 * 
+	 *
 	 * @param filter what field will be used to filter
 	 * @param search what the user is searching
 	 * @param order either ASC or DESC
 	 */
-	async function onSubmitSearch(filter: string, search: string, order: QueryOrder) {
+	async function onSubmitSearch(
+		filter: string,
+		search: string,
+		order: QueryOrder
+	) {
 		try {
 			let places: PlacesDelivery[];
 
 			switch (filter) {
 			case "ID":
-				places = (await instance.get<PlacesDelivery[]>("/places/searchByID", { params: { order, search } })).data;
+				places = (
+					await instance.get<PlacesDelivery[]>("/places/searchByID", {
+						params: { order, search },
+					})
+				).data;
 				break;
-				
+
 			case "Municipio":
-				places = (await instance.get<PlacesDelivery[]>("/places/searchByTownship", { params: { order, search } })).data;
+				places = (
+					await instance.get<PlacesDelivery[]>("/places/searchByTownship", {
+						params: { order, search },
+					})
+				).data;
 				break;
-				
+
 			case "Direccion":
-				places = (await instance.get<PlacesDelivery[]>("/places/searchByAddress", { params: { order, search } })).data;
+				places = (
+					await instance.get<PlacesDelivery[]>("/places/searchByAddress", {
+						params: { order, search },
+					})
+				).data;
 				break;
-				
+
 			case "CP":
-				places = (await instance.get<PlacesDelivery[]>("/places/searchByCP", { params: { order, search } })).data;
+				places = (
+					await instance.get<PlacesDelivery[]>("/places/searchByCP", {
+						params: { order, search },
+					})
+				).data;
 				break;
-				
+
 			default:
-				places = (await instance.get<PlacesDelivery[]>("/places", { params: { order } })).data;
+				places = (
+					await instance.get<PlacesDelivery[]>("/places", {
+						params: { order },
+					})
+				).data;
 			}
-			
+
 			setDeliveryPlaces(formatFetchedPlacesForDisplay(places));
 		}
-
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los lugares", { variant: "error" });
+			enqueueSnackbar("Hubo un error al mostrar los lugares", {
+				variant: "error",
+			});
 		}
 	}
 
@@ -219,23 +266,34 @@ const LugaresEntrega = () => {
 							gap: "10px",
 						}}
 					>
-						<SearchAppBar searchOptions={searchOptions} onSubmitSearch={onSubmitSearch} />
-						
+						<SearchAppBar
+							searchOptions={searchOptions}
+							onSubmitSearch={onSubmitSearch}
+						/>
+
 						<h1>Lugares de Entrega</h1>
-						
+
 						{showFormModal && (
 							<Modal
 								open={showFormModal}
 								handleOpen={setShowModal}
-								title={(selectedPlaceToEdit.current instanceof Object) ? "Editar un lugar" : "Crear un lugar"}
+								title={
+									selectedPlaceToEdit.current instanceof Object
+										? "Editar un lugar"
+										: "Crear un lugar"
+								}
 							>
 								<DeliveryPlaceForm
 									onSubmit={onPlaceSubmitted}
-									placeData={(selectedPlaceToEdit.current instanceof Object) ? selectedPlaceToEdit.current : undefined}
+									placeData={
+										selectedPlaceToEdit.current instanceof Object
+											? selectedPlaceToEdit.current
+											: undefined
+									}
 								></DeliveryPlaceForm>
 							</Modal>
 						)}
-						
+
 						<TableContainer
 							sx={{ width: "900px", maxHeight: "400px" }}
 							component={Paper}
@@ -267,43 +325,57 @@ const LugaresEntrega = () => {
 												<TableCell align="left">{place.homeNumber}</TableCell>
 												<TableCell align="left">{place.cp}</TableCell>
 												<TableCell align="left">{place.schedule}</TableCell>
-
-												<TableCell align="center">
-													<IconButton onClick={() => editDeliveryPlace(place)}>
-														<Edit fontSize="inherit" />
-													</IconButton>
-													<IconButton
-														onClick={() => deleteDeliveryPlace(place)}
-													>
-														<DeleteForever fontSize="inherit" />
-													</IconButton>
-												</TableCell>
+												{isAdmin && (
+													<TableCell align="center">
+														<IconButton
+															onClick={() => editDeliveryPlace(place)}
+														>
+															<Edit fontSize="inherit" />
+														</IconButton>
+														<IconButton
+															onClick={() => deleteDeliveryPlace(place)}
+														>
+															<DeleteForever fontSize="inherit" />
+														</IconButton>
+													</TableCell>
+												)}
 											</TableRow>
 										))
 									)}
 								</TableBody>
 							</Table>
 						</TableContainer>
-
-						<Box
-							sx={{
-								display: "flex",
-								flexDirection: "row",
-								alignItems: "center",
-								gap: "10px",
-							}}
-						>
-							<IconButton
-								sx={{ alignSelf: "flex-start", fontSize: "40px", padding: "0px" }}
-								onClick={() => createDeliveryPlace()}
+						{isAdmin && (
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+									gap: "10px",
+								}}
 							>
-								<AddCircle fontSize="inherit" />
-							</IconButton>
-
-							<ExcelDownloadButton apiObjective="places" onDownload={() => setHasDownloadedFile(true)} />
-
-							<FileUpload apiObjective="places" onUpload={fetchDeliveryPlaces} disabled={!hasDownloadedFile} />
-						</Box>
+								<IconButton
+									sx={{
+										alignSelf: "flex-start",
+										fontSize: "40px",
+										padding: "0px",
+									}}
+									onClick={() => createDeliveryPlace()}
+								>
+									<AddCircle fontSize="inherit" />
+								</IconButton>
+								;
+								<ExcelDownloadButton
+									apiObjective="places"
+									onDownload={() => setHasDownloadedFile(true)}
+								/>
+								<FileUpload
+									apiObjective="places"
+									onUpload={fetchDeliveryPlaces}
+									disabled={!hasDownloadedFile}
+								/>
+							</Box>
+						)}
 					</Box>
 				</Box>
 			</Container>

@@ -28,7 +28,6 @@ import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 const Categories: React.FC = () => {
 	const url = "/categories";
 	const path = "/productos/categorias";
-	const user: User | null = useReadLocalStorage<User>("log_in");
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -55,7 +54,11 @@ const Categories: React.FC = () => {
 	 * Determines if some admin action buttons will be
 	 * displayed in the table too
 	 */
-	const isAdmin = user?.type_use === "admin" ? true : false;
+	const userLogin: User | null = useReadLocalStorage("log_in");
+	const typeUser: string | undefined = userLogin?.type_use;
+	const isAdmin: boolean =
+		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+
 	// console.log(isAdmin);
 	// TODO:
 

@@ -23,10 +23,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { AxiosError } from "axios";
 import { instance } from "helper/API";
 import { useReadLocalStorage } from "usehooks-ts";
+import { User } from "models/User";
 
 const Perfil = () => {
-	const cookies = new Cookies();
-	const userData = cookies.get("user") ?? useReadLocalStorage("log_in");
+	const userData: User | null = useReadLocalStorage("log_in");
 	/**
 	 * Displays notifications to the user
 	 */
@@ -61,7 +61,7 @@ const Perfil = () => {
 		// Upload data to DB
 		try {
 			await instance.put("/users/updateProfile", {
-				id: userData.id,
+				id: userData?.id,
 				pass: password,
 				cel: cellphone,
 			});
@@ -110,11 +110,11 @@ const Perfil = () => {
 						}}
 					>
 						<Avatar
-							alt={userData.name}
+							alt={userData?.name}
 							src={
-								userData.type_use === "vendedor"
+								userData?.type_use === "vendedor"
 									? vendor
-									: userData.type_use === "admin"
+									: userData?.type_use === "admin"
 										? admin
 										: helper
 							}
@@ -124,7 +124,7 @@ const Perfil = () => {
 							}}
 						/>
 
-						<h2 style={{ flexGrow: 1, fontSize: "30px" }}>{userData.name}</h2>
+						<h2 style={{ flexGrow: 1, fontSize: "30px" }}>{userData?.name}</h2>
 					</Box>
 
 					<Box
@@ -140,7 +140,7 @@ const Perfil = () => {
 							label="Usuario"
 							name="username"
 							variant="outlined"
-							defaultValue={userData.name}
+							defaultValue={userData?.name}
 							type="text"
 							required
 							disabled
@@ -153,7 +153,7 @@ const Perfil = () => {
 								label="Contraseña"
 								name="password"
 								type={showPassword ? "text" : "password"}
-								defaultValue={userData.pass}
+								defaultValue={userData?.pass}
 								disabled={!isEditing}
 								endAdornment={
 									<InputAdornment position="end">
@@ -171,7 +171,7 @@ const Perfil = () => {
 						<TextField
 							label="Tipo"
 							variant="filled"
-							value={userData.type_use}
+							value={userData?.type_use}
 							type="text"
 							disabled
 						/>
@@ -181,7 +181,7 @@ const Perfil = () => {
 							id="cell"
 							name="cellphone"
 							variant="outlined"
-							defaultValue={userData.cel}
+							defaultValue={userData?.cel}
 							type="text"
 							inputProps={{
 								pattern: "^\\d{2}-\\d{4}-\\d{4}$",
