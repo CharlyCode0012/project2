@@ -21,13 +21,11 @@ import CatalogsForm from "./CatalogsForm";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 
 const Catalogs: React.FC = () => {
-	const url = "/Catalogs";
-	const path = "/productos/catalogos";
+	const url = "/catalogs";
 	const user: User | null = useReadLocalStorage<User>("log_in");
 
 	const { enqueueSnackbar } = useSnackbar();
@@ -147,19 +145,16 @@ const Catalogs: React.FC = () => {
 			switch (filter) {
 			case "Name":
 				Catalogs = (
-					await instance.get<Catalog[]>(
-						`/catalogs/getCatalogByName/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Catalog[]>(`/catalogs/catalogByName/${search}`, {
+						params: { order },
+					})
 				).data;
 				break;
 
 			case "State":
 				Catalogs = (
 					await instance.get<Catalog[]>(
-						`/catalogs/CatalogByState/${search}`,
+						`/catalogs/catalogByState/${search}`,
 						{
 							params: { order },
 						}

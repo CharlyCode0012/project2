@@ -10,6 +10,7 @@ import {
 import { Catalog } from "models/Catalog";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
+import { Textarea } from "@mui/joy";
 
 interface CatalogsFormProps {
 	onSubmit: (op: boolean) => void;
@@ -106,6 +107,12 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 					label="Estado"
 				/>
 			</FormGroup>
+			<Textarea
+				name="description"
+				placeholder="Descripcion"
+				variant="outlined"
+			/>
+
 			<Button type="submit" variant="contained" fullWidth>
 				Enviar
 			</Button>

@@ -150,7 +150,7 @@ const Categories: React.FC = () => {
 			case "Name":
 				categories = (
 					await instance.get<Category[]>(
-						`/categories/getCategoryByName/${search}`,
+						`/categories/categoryByName/${search}`,
 						{
 							params: { order },
 						}
