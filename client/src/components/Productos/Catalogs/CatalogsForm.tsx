@@ -10,7 +10,6 @@ import {
 import { Catalog } from "models/Catalog";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
-import { Textarea } from "@mui/joy";
 
 interface CatalogsFormProps {
 	onSubmit: (op: boolean) => void;
@@ -29,21 +28,23 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 		console.log("name: ", name);
 		console.log("state: ", state);
 
 		try {
-			await instance.post("/Catalogs", {
+			await instance.post("/catalogs", {
 				id: Date.now().toString(),
 				name,
 				state,
+				description,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Catalog creation
 		}
 		catch (error: any) {
-			enqueueSnackbar("Error al crear la categoría", { variant: "error" });
+			enqueueSnackbar("Error al crear el catalogo", { variant: "error" });
 			console.log(error);
 		}
 	}
@@ -54,12 +55,13 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 
 		console.log("name: ", name);
 		console.log("state: ", state);
-		const endpoint = `/Catalogs/${CatalogData?.id}`;
+		const endpoint = `/catalogs/${CatalogData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
@@ -67,6 +69,7 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 			await instance.put(endpoint, {
 				name,
 				state,
+				description,
 			});
 			onSubmit(true);
 		}
@@ -101,17 +104,22 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 				type="text"
 				required
 			/>
+			<TextField
+				sx={{ width: "300px" }}
+				name="description"
+				label="Descripcion"
+				placeholder="Placeholder"
+				multiline
+				variant="outlined"
+				color="primary"
+				required
+			/>
 			<FormGroup>
 				<FormControlLabel
 					control={<Switch name="state" defaultChecked={CatalogData?.state} />}
 					label="Estado"
 				/>
 			</FormGroup>
-			<Textarea
-				name="description"
-				placeholder="Descripcion"
-				variant="outlined"
-			/>
 
 			<Button type="submit" variant="contained" fullWidth>
 				Enviar

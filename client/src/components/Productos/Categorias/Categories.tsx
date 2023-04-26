@@ -184,7 +184,7 @@ const Categories: React.FC = () => {
 			setCategories(categories);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
+			enqueueSnackbar("Hubo un error al mostrar las categorias", {
 				variant: "error",
 			});
 		}

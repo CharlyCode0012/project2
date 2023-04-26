@@ -364,7 +364,7 @@ const LugaresEntrega = () => {
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
-								;
+
 								<ExcelDownloadButton
 									apiObjective="places"
 									onDownload={() => setHasDownloadedFile(true)}

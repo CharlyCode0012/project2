@@ -42,7 +42,7 @@ const Catalogs: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["ID", "Nombre", "Estado", "Descripcion"];
+	const tableHeaders = ["ID", "Nombre", "Descripcion", "Estado"];
 
 	const searchOptions = ["Name", "State"];
 
@@ -177,7 +177,7 @@ const Catalogs: React.FC = () => {
 			setCatalogs(Catalogs);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los metodos de pago", {
+			enqueueSnackbar("Hubo un error al mostrar los catalogos", {
 				variant: "error",
 			});
 		}
@@ -252,9 +252,11 @@ const Catalogs: React.FC = () => {
 												<TableCell align="left">{Catalog.id}</TableCell>
 												<TableCell align="left">{Catalog.name}</TableCell>
 												<TableCell align="left">
+													{Catalog.description}
+												</TableCell>
+												<TableCell align="left">
 													{Catalog.state ? "Activada" : "Desactivada"}
 												</TableCell>
-
 												{isAdmin && (
 													<TableCell align="center">
 														<IconButton onClick={() => handleEdit(Catalog)}>
