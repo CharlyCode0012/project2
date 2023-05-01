@@ -6,7 +6,14 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Order } from "./Order";
-import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+	Button,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	useTheme,
+} from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
@@ -48,17 +55,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	},
 }));
 
-export type QueryOrder = "ASC" | "DESC"
+export type QueryOrder = "ASC" | "DESC";
 
 interface SearchAppBarProps {
 	searchOptions: string[];
-	onSubmitSearch: (filter: string, search: string, order: QueryOrder) => Promise<void>;
+	onSubmitSearch: (
+		filter: string,
+		search: string,
+		order: QueryOrder
+	) => Promise<void>;
 }
 
-export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSubmitSearch, }) => {
+export const SearchAppBar: React.FC<SearchAppBarProps> = ({
+	searchOptions,
+	onSubmitSearch,
+}) => {
 	const [order, setOrder] = useState<QueryOrder>("ASC");
 	const [search, setSearch] = useState<string>("");
 	const [filter, setFilter] = useState<string>("Todos");
+
+	const theme = useTheme();
 
 	function handleChangeOrder(value: QueryOrder | null): void {
 		value = value ?? "ASC";
@@ -73,7 +89,11 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSub
 	}
 
 	return (
-		<Box sx={{ flexGrow: 0, marginTop: "40px", width: "800px" }}>
+		<Box
+			sx={{ flexGrow: 0, marginTop: "40px", width: "800px" }}
+			color="inherit"
+			bgcolor={theme.palette.primary.light}
+		>
 			<AppBar position="static">
 				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
 					<Order handleChangeOrder={handleChangeOrder} value={order} />
@@ -88,7 +108,11 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSub
 							onChange={(e) => setFilter(e.target.value as string)}
 						>
 							<MenuItem value={"Todos"}>{"Todos"}</MenuItem>
-							{searchOptions.map((option, index) => <MenuItem key={index} value={option}>{option}</MenuItem>)}
+							{searchOptions.map((option, index) => (
+								<MenuItem key={index} value={option}>
+									{option}
+								</MenuItem>
+							))}
 						</Select>
 					</FormControl>
 
@@ -105,10 +129,12 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({ searchOptions, onSub
 						/>
 					</Search>
 					<Button
-						variant="outlined"
+						variant="contained"
 						onClick={() => {
 							onSubmitSearch(filter, search, order);
 						}}
+						color={theme.palette.mode === "dark" ? "primary" : "success"}
+						sx={{ color: "text.primary" }}
 					>
 						Buscar
 					</Button>

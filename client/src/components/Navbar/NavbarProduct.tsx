@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { AccountCircle, ArrowDropDown, Home } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
+import { ButtonTheme } from "@/Theme/ButtonTheme";
 
 type NavPage = {
 	name: string;
@@ -55,7 +56,6 @@ const NavbarProduct = () => {
 								<Home sx={{ color: "white" }} />
 							</IconButton>
 						</NavLink>
-
 						{/* Maps each page to a <NavLink /> with an href of 'pages-name-with-dashes'. */}
 						<Box sx={{ flexGrow: 1, display: "flex" }}>
 							<NavLink
@@ -79,7 +79,6 @@ const NavbarProduct = () => {
 								</NavLink>
 							))}
 						</Box>
-
 						{/* Mapping each page in the user's submenu. */}
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Mas Opciones">
@@ -113,6 +112,7 @@ const NavbarProduct = () => {
 								))}
 							</Menu>
 						</Box>
+						<ButtonTheme />
 					</Toolbar>
 				</Container>
 			</AppBar>
