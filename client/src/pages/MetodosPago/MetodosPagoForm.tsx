@@ -2,6 +2,10 @@ import React from "react";
 import {
 	Box,
 	Button,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
 	TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -25,10 +29,10 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 	/**
 	 * Takes what was filled in the form and saves a new
 	 * payment method in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function createPaymentMethod (event: React.FormEvent<HTMLFormElement>) {
+	async function createPaymentMethod(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get payment method data from the form
@@ -47,12 +51,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				CLABE: clabe,
 				no_card: cardNumber,
 				bank,
-				subsidary: placesToPay
+				subsidary: placesToPay,
 			});
 
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new payment method creation
 		}
-
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -61,10 +64,10 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 	/**
 	 * Takes what was filled in the form and updates the data
 	 * from the given payment method in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function updatePaymentMethod (event: React.FormEvent<HTMLFormElement>) {
+	async function updatePaymentMethod(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get payment method data from the form
@@ -82,12 +85,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				CLABE: clabe,
 				no_card: cardNumber,
 				bank,
-				subsidary: placesToPay
+				subsidary: placesToPay,
 			});
 
 			onSubmit(true); // "true" tells the submission was an update
 		}
-
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -114,7 +116,6 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				type="text"
 				required
 			/>
-
 			<TextField
 				sx={{ width: "300px" }}
 				label="CLABE"
@@ -124,7 +125,6 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				type="text"
 				required
 			/>
-
 			<TextField
 				sx={{ width: "300px" }}
 				label="No. Tarjeta"
@@ -132,20 +132,30 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				variant="outlined"
 				defaultValue={paymentMethodData?.no_card}
 				type="text"
-				inputProps={{ pattern: "[0-9]{16}", maxLength: 16, inputMode: "numeric" }}
+				inputProps={{
+					pattern: "[0-9]{16}",
+					maxLength: 16,
+					inputMode: "numeric",
+				}}
 				required
 			/>
+			<FormControl>
+				<InputLabel>Filtrar por</InputLabel>
 
-			<TextField
-				sx={{ width: "300px" }}
-				label="Banco"
-				name="banco"
-				variant="outlined"
-				defaultValue={paymentMethodData?.bank}
-				type="text"
-				required
-			/>
-
+				<Select
+					defaultValue={"Santander"}
+					label="Filtrar por"
+					sx={{ width: "300px" }}
+					name="banco"
+				>
+					<MenuItem value={"Santander"}>{"Santander"}</MenuItem>
+					<MenuItem value={"BBVA Bancomer"}>{"BBVA Bancomer"}</MenuItem>
+					<MenuItem value={"Citianamex"}>{"Citibabnamex"}</MenuItem>
+					<MenuItem value={"Banorte"}>{"Banorte"}</MenuItem>
+					<MenuItem value={"Scotiabank"}>{"Scotiabank"}</MenuItem>
+					<MenuItem value={"HSBC"}>{"HSBC"}</MenuItem>
+				</Select>
+			</FormControl>
 			<TextField
 				sx={{ width: "300px" }}
 				label="Lugares para pagar"
@@ -155,9 +165,8 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				type="text"
 				required
 			/>
-
 			<Button type="submit" variant="contained" fullWidth>
-				{ paymentMethodData ? "Actualizar" : "Crear" }
+				{paymentMethodData ? "Actualizar" : "Crear"}
 			</Button>
 		</Box>
 	);

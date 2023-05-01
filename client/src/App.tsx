@@ -8,27 +8,42 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { LoginProvider } from "context/LoginContext";
 import { SnackbarProvider } from "notistack";
-
-const darkTheme = createTheme({
-	palette: {
-		mode: "dark",
-	},
-});
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 const App: React.FC = () => {
-	const avoidError = 0;
+	const [mode, setMode] = React.useState<"light" | "dark">("light");
+	const colorMode = React.useMemo(
+		() => ({
+			toggleColorMode: () => {
+				setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+			},
+		}),
+		[]
+	);
+
+	const theme = React.useMemo(
+		() =>
+			createTheme({
+				palette: {
+					mode,
+				},
+			}),
+		[mode]
+	);
 
 	return (
-		<ThemeProvider theme={darkTheme}>
-			<CssBaseline />
-			<SnackbarProvider maxSnack={3}>
-				<Router>
-					<LoginProvider>
-						<Rutas />
-					</LoginProvider>
-				</Router>
-			</SnackbarProvider>
-		</ThemeProvider>
+		<ColorModeContext.Provider value={colorMode}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				<SnackbarProvider maxSnack={3}>
+					<Router>
+						<LoginProvider>
+							<Rutas />
+						</LoginProvider>
+					</Router>
+				</SnackbarProvider>
+			</ThemeProvider>
+		</ColorModeContext.Provider>
 	);
 };
 

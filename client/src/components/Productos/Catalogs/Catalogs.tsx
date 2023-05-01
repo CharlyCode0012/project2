@@ -44,7 +44,7 @@ const Catalogs: React.FC = () => {
 
 	const tableHeaders = ["ID", "Nombre", "Descripcion", "Estado"];
 
-	const searchOptions = ["Name", "State"];
+	const searchOptions = ["Nombre", "Estado"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -146,7 +146,7 @@ const Catalogs: React.FC = () => {
 			let Catalogs: Catalog[];
 
 			switch (filter) {
-			case "Name":
+			case "Nombre":
 				Catalogs = (
 					await instance.get<Catalog[]>(`/catalogs/catalogByName/${search}`, {
 						params: { order },
@@ -154,7 +154,7 @@ const Catalogs: React.FC = () => {
 				).data;
 				break;
 
-			case "State":
+			case "Estado":
 				Catalogs = (
 					await instance.get<Catalog[]>(
 						`/catalogs/catalogByState/${search}`,
