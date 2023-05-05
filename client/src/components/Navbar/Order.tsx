@@ -12,7 +12,7 @@ export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
 	const num = 0;
 	return (
 		<Autocomplete
-			color="primary"
+			color="secondary"
 			disablePortal
 			id="combo-box-demo"
 			options={Options}

@@ -3,8 +3,9 @@ export interface Order {
 	folio: string;
 	date_order: Date;
 	total: number;
+	amount: number;
 	state: string;
-	id_client: string;
-	id_place: string;
-	id_payment_method: string;
+	cel_client: string;
+	place: string;
+	payment_method: string;
 }

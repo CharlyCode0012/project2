@@ -1,10 +1,298 @@
+import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
+import {
+	Box,
+	IconButton,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TableSortLabel,
+	Container,
+} from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
+import "./Orders.css";
+import { Order } from "models/Order";
+import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
+import Modal from "@/Modal/Modal";
+import OrdersForm from "./OrdersForm";
+import { useReadLocalStorage } from "usehooks-ts";
+import { User } from "models/User";
+import { instance } from "helper/API";
+import { useSnackbar } from "notistack";
+import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarOrders from "@/Navbar/NavbarOrders";
-import React from "react";
 
-const ConfirmarPedido = () => (
-	<>
-		<NavbarOrders />
-	</>
-);
+const orders: React.FC = () => {
+	const url = "/orders";
 
-export default ConfirmarPedido;
+	const { enqueueSnackbar } = useSnackbar();
+
+	const [confirmOrders, setConfirmOrders] = useState<Order[]>([]);
+	const selectedOrderToEdit = useRef<Order | boolean>(false);
+
+	const [showModal, setShowModal] = useState(false);
+	const openFormModal = () => setShowModal(true);
+	const closeFormModal = () => setShowModal(false);
+
+	/**
+	 * Headers that will be displayed to the table, not
+	 * counting the last one which will be for admin
+	 * purposes
+	 */
+
+	const tableHeaders = [
+		"Folio",
+		"Fecha Orden",
+		"Total",
+		"Monto Pagado",
+		"Cliente",
+		"Lugar",
+		"Banco",
+		"Estado",
+	];
+
+	const searchOptions = ["Lugar", "Fecha"];
+
+	/**
+	 * Determines if some admin action buttons will be
+	 * displayed in the table too
+	 */
+	const userLogin: User | null = useReadLocalStorage("log_in");
+	const typeUser: string | undefined = userLogin?.type_use;
+	const isAdmin: boolean =
+		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+
+	// console.log(isAdmin);
+	// TODO:
+
+	useEffect(() => {
+		// fetchCatalogs();
+	}, []);
+
+	async function fetchCatalogs() {
+		try {
+			const { data: orders } = await instance.get<Order[]>(url);
+			setConfirmOrders(orders);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar las catalogos", {
+				variant: "error",
+			});
+		}
+	}
+
+	function onCatalogSubmitted(wasUpdates: boolean) {
+		closeFormModal();
+		enqueueSnackbar(
+			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
+			{
+				variant: "success",
+			}
+		);
+		fetchCatalogs();
+	}
+
+	function handleEdit(Order: Order) {
+		selectedOrderToEdit.current = Order;
+		openFormModal();
+	}
+
+	async function deleteOrder(Order: Order) {
+		const { folio, id } = Order;
+		const deletedCatalogID: number = id;
+		// TODO: Display loader
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar a: ${name}`
+		);
+
+		const endpoint = `${url}/${deletedCatalogID}`;
+		if (isDelete) {
+			try {
+				console.log(`delete endpoint: ${endpoint}`);
+
+				const res = await instance.delete(endpoint);
+				const dataCatalog = await res.data;
+
+				if (dataCatalog?.err) {
+					const message = dataCatalog?.statusText;
+					const status = dataCatalog?.status;
+					throw { message, status };
+				}
+				else {
+					const newOrders = confirmOrders.filter(
+						(order) => order.id !== deletedCatalogID
+					);
+					setConfirmOrders(newOrders);
+				}
+				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
+					variant: "success",
+				});
+			}
+			catch (error: any) {
+				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
+				alert(
+					`Descripcion del error: ${error.message}\nEstado: ${
+						error?.status ?? 500
+					}`
+				);
+			}
+		}
+	}
+
+	async function onSubmitSearch(
+		filter: string,
+		search: string,
+		order: QueryOrder
+	) {
+		try {
+			let orders: Order[];
+
+			switch (filter) {
+			case "Nombre":
+				orders = (
+					await instance.get<Order[]>(`/orders/catalogByName/${search}`, {
+						params: { order },
+					})
+				).data;
+				break;
+
+			case "Estado":
+				orders = (
+					await instance.get<Order[]>(`/orders/catalogByState/${search}`, {
+						params: { order },
+					})
+				).data;
+				break;
+
+			default:
+				orders = (
+					await instance.get<Order[]>(url, {
+						params: { order },
+					})
+				).data;
+				break;
+			}
+
+			setConfirmOrders(orders);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los catalogos", {
+				variant: "error",
+			});
+		}
+	}
+
+	return (
+		<>
+			<NavbarOrders />
+			<Container maxWidth="sm">
+				<Box
+					sx={{
+						height: "560px",
+						flexGrow: 1,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+				>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: "10px",
+						}}
+					>
+						<SearchAppBar
+							searchOptions={searchOptions}
+							onSubmitSearch={onSubmitSearch}
+						/>
+						<h1>catalogos</h1>
+						{showModal && (
+							<Modal
+								open={showModal}
+								handleOpen={setShowModal}
+								title="Formulario catalogos"
+							>
+								<OrdersForm
+									onSubmit={onCatalogSubmitted}
+									OrderData={
+										selectedOrderToEdit.current instanceof Object
+											? selectedOrderToEdit.current
+											: undefined
+									}
+								></OrdersForm>
+							</Modal>
+						)}
+						<TableContainer
+							sx={{ width: "800px", maxHeight: "400px" }}
+							component={Paper}
+							elevation={5}
+						>
+							<Table>
+								<TableHead>
+									<TableRow>
+										{tableHeaders.map((header) => (
+											<TableCell key={header} align="left">
+												<TableSortLabel>{header}</TableSortLabel>
+											</TableCell>
+										))}
+
+										{isAdmin && <TableCell />}
+									</TableRow>
+								</TableHead>
+
+								<TableBody>
+									{!(confirmOrders?.length > 0) ? (
+										<TableRow>
+											<TableCell>Sin datos</TableCell>
+										</TableRow>
+									) : (
+										confirmOrders?.map((Order) => (
+											<TableRow key={Order.id}>
+												<TableCell align="left">{Order.folio}</TableCell>
+												<TableCell align="left">
+													{Order.date_order.toString()}
+												</TableCell>
+												<TableCell align="left">{Order.total}</TableCell>
+												<TableCell align="left">{Order.amount}</TableCell>;
+												<TableCell align="left">{Order.cel_client}</TableCell>
+												<TableCell align="left">{Order.place}</TableCell>
+												<TableCell align="left">
+													{Order.payment_method}
+												</TableCell>
+												<TableCell align="left">{Order.state}</TableCell>
+												{isAdmin && (
+													<TableCell align="center">
+														<IconButton onClick={() => handleEdit(Order)}>
+															<Edit fontSize="inherit" />
+														</IconButton>
+													</TableCell>
+												)}
+											</TableRow>
+										))
+									)}
+								</TableBody>
+							</Table>
+						</TableContainer>
+						{isAdmin && (
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "row",
+									gap: "10px",
+								}}
+							>
+								<ExcelDownloadButton apiObjective="orders" />
+							</Box>
+						)}
+					</Box>
+				</Box>
+			</Container>
+		</>
+	);
+};
+
+export default orders;

@@ -8,7 +8,10 @@ export interface ExcelDownloadButtonProps {
 	onDownload: () => void;
 }
 
-const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective, onDownload }) => {
+const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({
+	apiObjective,
+	onDownload,
+}) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -21,13 +24,17 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective,
 	async function downloadFile() {
 		try {
 			const response = await instance.get(`/${apiObjective}/download`, {
-				responseType: "blob"
+				responseType: "blob",
 			});
-			
+
 			// Get the Excel filename returned by the server
-			const contentDispositionHeader = response.headers["content-disposition"] as string;
+			const contentDispositionHeader = response.headers[
+				"content-disposition"
+			] as string;
 			const filenameMatches = contentDispositionHeader.match(/"[^"]*"/g);
-			const filename = filenameMatches ? filenameMatches[0].slice(1, -1) : "Informacion.xlsx";
+			const filename = filenameMatches
+				? filenameMatches[0].slice(1, -1)
+				: "Informacion.xlsx";
 
 			// Download the file using an anchor tag element as the way-to-achieve-it
 			const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -40,13 +47,19 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({ apiObjective,
 			onDownload(); // Enable file submission
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al descargar el archivo", { variant: "error" });
+			enqueueSnackbar("Hubo un error al descargar el archivo", {
+				variant: "error",
+			});
 		}
 	}
 
-	return <>
-		<Button color="success" variant="contained" onClick={downloadFile}>Descargar</Button>
-	</>;
+	return (
+		<>
+			<Button color="secondary" variant="contained" onClick={downloadFile}>
+				Descargar
+			</Button>
+		</>
+	);
 };
 
 export default ExcelDownloadButton;

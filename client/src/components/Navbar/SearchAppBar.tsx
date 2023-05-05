@@ -92,7 +92,6 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 		<Box
 			sx={{ flexGrow: 0, marginTop: "40px", width: "800px" }}
 			color="inherit"
-			bgcolor={theme.palette.primary.light}
 		>
 			<AppBar position="static">
 				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
@@ -133,8 +132,7 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 						onClick={() => {
 							onSubmitSearch(filter, search, order);
 						}}
-						color={theme.palette.mode === "dark" ? "primary" : "success"}
-						sx={{ color: "text.primary" }}
+						color={theme.palette.mode === "dark" ? "primary" : "secondary"}
 					>
 						Buscar
 					</Button>
