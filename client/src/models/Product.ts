@@ -4,5 +4,6 @@ export interface Product {
 	key_word: string;
 	price: number;
 	stock: number;
+	description: string;
 	img: string;
 }

@@ -17,6 +17,8 @@ import Entregas from "pages/Pedidos/Entregas/Entregas";
 import ConfirmarPedido from "pages/Pedidos/ConfirmarPedido/ConfirmarPedido";
 import AnalisisProductos from "pages/Analisis/AnalisisProductos/AnalisisProductos";
 import AnalisisClientes from "pages/Analisis/AnalisisClientes/AnalisisClientes";
+import ComprasCliente from "pages/Analisis/AnalisisClientes/ComprasCliente";
+import { Dudas } from "pages/Productos/Dudas/Dudas";
 
 const Rutas = () => {
 	const num = 0;
@@ -30,7 +32,9 @@ const Rutas = () => {
 				<Route path="analisis">
 					<Route index element={<Analisis />} />;
 					<Route path="analisis-productos/*" element={<AnalisisProductos />} />
-					<Route path="analisis-clientes/*" element={<AnalisisClientes />} />
+					<Route path="analisis-clientes/" element={<AnalisisClientes />}>
+						<Route path="client/*" element={<ComprasCliente />} />
+					</Route>
 				</Route>
 
 				<Route path="configuracion/*" element={<Configuracion />} />
@@ -53,6 +57,7 @@ const Rutas = () => {
 					<Route index element={<Productos />} />
 					<Route path="categorias/*" element={<Categorias />} />
 					<Route path="catalogos/*" element={<Catalogos />} />
+					<Route path="dudas/*" element={<Dudas />} />;
 				</Route>
 
 				<Route path="usuarios/*" element={<Usuarios />} />

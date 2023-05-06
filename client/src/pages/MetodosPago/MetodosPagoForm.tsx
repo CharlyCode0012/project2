@@ -150,7 +150,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				>
 					<MenuItem value={"Santander"}>{"Santander"}</MenuItem>
 					<MenuItem value={"BBVA Bancomer"}>{"BBVA Bancomer"}</MenuItem>
-					<MenuItem value={"Citianamex"}>{"Citibabnamex"}</MenuItem>
+					<MenuItem value={"Citibanamex"}>{"Citibanamex"}</MenuItem>
 					<MenuItem value={"Banorte"}>{"Banorte"}</MenuItem>
 					<MenuItem value={"Scotiabank"}>{"Scotiabank"}</MenuItem>
 					<MenuItem value={"HSBC"}>{"HSBC"}</MenuItem>

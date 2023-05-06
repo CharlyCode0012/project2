@@ -20,7 +20,7 @@ type NavPage = {
 	admin?: boolean;
 };
 
-const pages: NavPage[] = [{ name: "Catalogos" }, { name: "Categorias" }];
+const pages: NavPage[] = [{ name: "Catalogos" }, { name: "Categorias" }, { name: "Dudas" }];
 
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 

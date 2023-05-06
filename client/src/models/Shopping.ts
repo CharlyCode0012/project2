@@ -1,6 +1,6 @@
-export interface Shooping {
+export interface Shopping {
 	id: number;
-	quaintity: number;
+	quantity: number;
 	date_purchase: Date;
 	id_product: string;
 	id_client: string;

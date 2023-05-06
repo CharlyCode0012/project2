@@ -30,7 +30,7 @@ const Products: React.FC = () => {
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [Products, setCatalogs] = useState<Product[]>([]);
+	const [products, setProducts] = useState<Product[]>([]);
 	const selectedProductToEdit = useRef<Product | boolean>(false);
 
 	const [showModal, setShowModal] = useState(false);
@@ -72,8 +72,8 @@ const Products: React.FC = () => {
 
 	async function fetchProducts() {
 		try {
-			const { data: Products } = await instance.get<Product[]>(url);
-			setCatalogs(Products);
+			const { data: products } = await instance.get<Product[]>(url);
+			setProducts(products);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar las productos", {
@@ -93,8 +93,8 @@ const Products: React.FC = () => {
 		fetchProducts();
 	}
 
-	function handleEdit(Product: Product) {
-		selectedProductToEdit.current = Product;
+	function handleEdit(product: Product) {
+		selectedProductToEdit.current = product;
 		openFormModal();
 	}
 
@@ -103,8 +103,8 @@ const Products: React.FC = () => {
 		openFormModal();
 	}
 
-	async function deleteProduct(Product: Product) {
-		const { name, id } = Product;
+	async function deleteProduct(product: Product) {
+		const { name, id } = product;
 		const deletedProductID: string = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
@@ -125,10 +125,10 @@ const Products: React.FC = () => {
 					throw { message, status };
 				}
 				else {
-					const newCatalogs = Products.filter(
-						(CatalogD) => CatalogD.id !== deletedProductID
+					const newCatalogs = products.filter(
+						(ProductD) => ProductD.id !== deletedProductID
 					);
-					setCatalogs(newCatalogs);
+					setProducts(newCatalogs);
 				}
 				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
 					variant: "success",
@@ -179,7 +179,7 @@ const Products: React.FC = () => {
 				break;
 			}
 
-			setCatalogs(Products);
+			setProducts(Products);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los productos", {
@@ -248,26 +248,26 @@ const Products: React.FC = () => {
 								</TableHead>
 
 								<TableBody>
-									{!(Products?.length > 0) ? (
+									{!(products?.length > 0) ? (
 										<TableRow>
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										Products?.map((Product) => (
-											<TableRow key={Product.id}>
-												<TableCell align="left">{Product.id}</TableCell>
-												<TableCell align="left">{Product.name}</TableCell>
-												<TableCell align="left">{Product.key_word}</TableCell>
-												<TableCell align="left">{Product.price}</TableCell>
-												<TableCell align="left">{Product.stock}</TableCell>
-												<TableCell align="left">{Product.img}</TableCell>
+										products?.map((product) => (
+											<TableRow key={product.id}>
+												<TableCell align="left">{product.id}</TableCell>
+												<TableCell align="left">{product.name}</TableCell>
+												<TableCell align="left">{product.key_word}</TableCell>
+												<TableCell align="left">{product.price}</TableCell>
+												<TableCell align="left">{product.stock}</TableCell>
+												<TableCell align="left">{product.img}</TableCell>
 
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(Product)}>
+														<IconButton onClick={() => handleEdit(product)}>
 															<Edit fontSize="inherit" />
 														</IconButton>
-														<IconButton onClick={() => deleteProduct(Product)}>
+														<IconButton onClick={() => deleteProduct(product)}>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
 													</TableCell>
