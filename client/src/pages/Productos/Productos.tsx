@@ -11,6 +11,10 @@ import {
 	TableRow,
 	TableSortLabel,
 	Container,
+	Autocomplete,
+	TextField,
+	Select,
+	MenuItem,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import "./Products.css";
@@ -24,12 +28,14 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarProduct from "@/Navbar/NavbarProduct";
+import { Catalog } from "models/Menu";
 
 const Products: React.FC = () => {
 	const url = "/products";
 
 	const { enqueueSnackbar } = useSnackbar();
 
+	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const selectedProductToEdit = useRef<Product | boolean>(false);
 
@@ -68,15 +74,27 @@ const Products: React.FC = () => {
 
 	useEffect(() => {
 		// fetchProducts();
+		fetchCatalogs();
 	}, []);
 
+	async function fetchCatalogs() {
+		try {
+			const { data: Catalogs } = await instance.get<Catalog[]>(url);
+			setCatalogs(Catalogs);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al traer los catalogos", {
+				variant: "error",
+			});
+		}
+	}
 	async function fetchProducts() {
 		try {
 			const { data: products } = await instance.get<Product[]>(url);
 			setProducts(products);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las productos", {
+			enqueueSnackbar("Hubo un error al mostrar los productos", {
 				variant: "error",
 			});
 		}
@@ -296,8 +314,23 @@ const Products: React.FC = () => {
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
-
 								<ExcelDownloadButton apiObjective="products" />
+								<Select
+									defaultValue={"Catalog"}
+									label="Filtrar por"
+									sx={{ width: "300px" }}
+									name="banco"
+								>
+									{catalogs?.length > 0 ? (
+										catalogs?.map((catalog) => (
+											<MenuItem key={catalog.id} value={catalog.id}>
+												{catalog.name}
+											</MenuItem>
+										))
+									) : (
+										<MenuItem value=""> Sin catalogos</MenuItem>
+									)}
+								</Select>
 							</Box>
 						)}
 					</Box>

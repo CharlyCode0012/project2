@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	Box,
 	Button,
@@ -10,6 +10,7 @@ import {
 import { Product } from "models/Product";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
+import { Category } from "models/Category";
 
 interface ProductsFormProps {
 	onSubmit: (op: boolean) => void;
@@ -21,6 +22,7 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 	ProductData,
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
+	const [categories, setCategories] = useState<Category[]>([]);
 
 	async function createProduct(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();

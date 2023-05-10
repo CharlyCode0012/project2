@@ -68,7 +68,7 @@ const Catalogs: React.FC = () => {
 			setCatalogs(Catalogs);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las catalogos", {
+			enqueueSnackbar("Hubo un error al mostrar los catalogos", {
 				variant: "error",
 			});
 		}
