@@ -11,7 +11,8 @@ import {
 	TableRow,
 	TableSortLabel,
 	Container,
-	Autocomplete,
+	InputLabel,
+	FormControl,
 	TextField,
 	Select,
 	MenuItem,
@@ -79,7 +80,7 @@ const Products: React.FC = () => {
 
 	async function fetchCatalogs() {
 		try {
-			const { data: Catalogs } = await instance.get<Catalog[]>(url);
+			const { data: Catalogs } = await instance.get<Catalog[]>("/catalogs");
 			setCatalogs(Catalogs);
 		}
 		catch {
@@ -206,6 +207,30 @@ const Products: React.FC = () => {
 		}
 	}
 
+	async function handleCatalogChange(
+		event: React.ChangeEvent<{ value: unknown }>
+	) {
+		const idCatalog = event.target.value as string;
+
+		if (idCatalog) {
+			try {
+				let Products: Product[];
+
+				Products = (
+					await instance.get<Product[]>("/products", {
+						params: { order: "ASC", idCatalog },
+					})
+				).data;
+				setProducts(Products);
+			}
+			catch (error) {
+				enqueueSnackbar("Hubo un error al mostrar los productos", {
+					variant: "error",
+				});
+			}
+		}
+	}
+
 	return (
 		<>
 			<NavbarProduct />
@@ -315,22 +340,26 @@ const Products: React.FC = () => {
 									<AddCircle fontSize="inherit" />
 								</IconButton>
 								<ExcelDownloadButton apiObjective="products" />
-								<Select
-									defaultValue={"Catalog"}
-									label="Filtrar por"
-									sx={{ width: "300px" }}
-									name="banco"
-								>
-									{catalogs?.length > 0 ? (
-										catalogs?.map((catalog) => (
-											<MenuItem key={catalog.id} value={catalog.id}>
-												{catalog.name}
-											</MenuItem>
-										))
-									) : (
-										<MenuItem value=""> Sin catalogos</MenuItem>
-									)}
-								</Select>
+
+								<FormControl>
+									<InputLabel>Catalogo</InputLabel>
+									<Select
+										label="Catalogo"
+										sx={{ width: "300px", color: "inherit" }}
+										name="catalog"
+										onChange={handleCatalogChange}
+									>
+										{catalogs?.length > 0 ? (
+											catalogs?.map((catalog) => (
+												<MenuItem key={catalog.id} value={catalog.id}>
+													{catalog.name}
+												</MenuItem>
+											))
+										) : (
+											<MenuItem value=""> Sin catalogos</MenuItem>
+										)}
+									</Select>
+								</FormControl>
 							</Box>
 						)}
 					</Box>
