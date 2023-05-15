@@ -13,12 +13,11 @@ import {
 	Container,
 	InputLabel,
 	FormControl,
-	TextField,
 	Select,
 	MenuItem,
+	SelectChangeEvent,
 } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
-import "./Products.css";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import { Product } from "models/Product";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
@@ -36,6 +35,7 @@ const Products: React.FC = () => {
 
 	const { enqueueSnackbar } = useSnackbar();
 
+	const catalogId = useRef<string>("");
 	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const selectedProductToEdit = useRef<Product | boolean>(false);
@@ -51,7 +51,6 @@ const Products: React.FC = () => {
 	 */
 
 	const tableHeaders = [
-		"ID",
 		"Nombre",
 		"Palabra Clave",
 		"Precio",
@@ -90,8 +89,11 @@ const Products: React.FC = () => {
 		}
 	}
 	async function fetchProducts() {
+		const cId = catalogId.current;
 		try {
-			const { data: products } = await instance.get<Product[]>(url);
+			const { data: products } = await instance.get<Product[]>(url, {
+				params: { order: "ASC", catalogId: cId },
+			});
 			setProducts(products);
 		}
 		catch {
@@ -145,7 +147,7 @@ const Products: React.FC = () => {
 				}
 				else {
 					const newCatalogs = products.filter(
-						(ProductD) => ProductD.id !== deletedProductID
+						(ProductD: Product) => ProductD.id !== deletedProductID
 					);
 					setProducts(newCatalogs);
 				}
@@ -207,28 +209,13 @@ const Products: React.FC = () => {
 		}
 	}
 
-	async function handleCatalogChange(
-		event: React.ChangeEvent<{ value: unknown }>
-	) {
-		const idCatalog = event.target.value as string;
+	function handleCatalogChange(
+		event: SelectChangeEvent<string>,
+		child: ReactNode
+	): void {
+		catalogId.current = event.target.value as string;
 
-		if (idCatalog) {
-			try {
-				let Products: Product[];
-
-				Products = (
-					await instance.get<Product[]>("/products", {
-						params: { order: "ASC", idCatalog },
-					})
-				).data;
-				setProducts(Products);
-			}
-			catch (error) {
-				enqueueSnackbar("Hubo un error al mostrar los productos", {
-					variant: "error",
-				});
-			}
-		}
+		if (catalogId.current) fetchProducts();
 	}
 
 	return (
@@ -237,8 +224,6 @@ const Products: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
@@ -273,7 +258,7 @@ const Products: React.FC = () => {
 							</Modal>
 						)}
 						<TableContainer
-							sx={{ width: "800px", maxHeight: "400px" }}
+							sx={{ width: "900px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -296,9 +281,8 @@ const Products: React.FC = () => {
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										products?.map((product) => (
+										products?.map((product: Product) => (
 											<TableRow key={product.id}>
-												<TableCell align="left">{product.id}</TableCell>
 												<TableCell align="left">{product.name}</TableCell>
 												<TableCell align="left">{product.key_word}</TableCell>
 												<TableCell align="left">{product.price}</TableCell>
@@ -321,14 +305,15 @@ const Products: React.FC = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-						{isAdmin && (
-							<Box
-								sx={{
-									display: "flex",
-									flexDirection: "row",
-									gap: "10px",
-								}}
-							>
+
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: "10px",
+							}}
+						>
+							{isAdmin && (
 								<IconButton
 									sx={{
 										alignSelf: "flex-start",
@@ -339,29 +324,28 @@ const Products: React.FC = () => {
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
-								<ExcelDownloadButton apiObjective="products" />
+							)}
+							<ExcelDownloadButton apiObjective="products" />
 
-								<FormControl>
-									<InputLabel>Catalogo</InputLabel>
-									<Select
-										label="Catalogo"
-										sx={{ width: "300px", color: "inherit" }}
-										name="catalog"
-										onChange={handleCatalogChange}
-									>
-										{catalogs?.length > 0 ? (
-											catalogs?.map((catalog) => (
-												<MenuItem key={catalog.id} value={catalog.id}>
-													{catalog.name}
-												</MenuItem>
-											))
-										) : (
-											<MenuItem value=""> Sin catalogos</MenuItem>
-										)}
-									</Select>
-								</FormControl>
-							</Box>
-						)}
+							<FormControl>
+								<InputLabel>Catalogo</InputLabel>
+								<Select
+									label="Catalogo"
+									sx={{ width: "300px", color: "inherit" }}
+									onChange={handleCatalogChange}
+								>
+									{catalogs?.length > 0 ? (
+										catalogs?.map((catalog: Catalog) => (
+											<MenuItem key={catalog.id} value={catalog.id}>
+												{catalog.name}
+											</MenuItem>
+										))
+									) : (
+										<MenuItem value=""> Sin catalogos</MenuItem>
+									)}
+								</Select>
+							</FormControl>
+						</Box>
 					</Box>
 				</Box>
 			</Container>

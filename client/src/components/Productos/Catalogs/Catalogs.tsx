@@ -13,7 +13,6 @@ import {
 	Container,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
-import "./Catalogs.css";
 import { Catalog } from "models/Catalog";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
@@ -95,44 +94,26 @@ const Catalogs: React.FC = () => {
 		openFormModal();
 	}
 
-	async function deleteCatalog(Catalog: Catalog) {
-		const { name, id } = Catalog;
-		const deletedCatalogID: number = id;
+	async function deleteCatalog(deleteCatalog: Catalog) {
+		const { name, id } = deleteCatalog;
 		// TODO: Display loader
 		const isDelete = window.confirm(
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
 
-		const endpoint = `${url}/${deletedCatalogID}`;
+		const endpoint = `${url}/${id}`;
 		if (isDelete) {
 			try {
-				console.log(`delete endpoint: ${endpoint}`);
-
-				const res = await instance.delete(endpoint);
-				const dataCatalog = await res.data;
-
-				if (dataCatalog?.err) {
-					const message = dataCatalog?.statusText;
-					const status = dataCatalog?.status;
-					throw { message, status };
-				}
-				else {
-					const newCatalogs = Catalogs.filter(
-						(CatalogD) => CatalogD.id !== deletedCatalogID
-					);
-					setCatalogs(newCatalogs);
-				}
+				await instance.delete(endpoint);
 				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
 					variant: "success",
 				});
+				setCatalogs((catalogs) =>
+					catalogs.filter((catalog) => catalog.id !== deleteCatalog.id)
+				);
 			}
 			catch (error: any) {
 				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-				alert(
-					`Descripcion del error: ${error.message}\nEstado: ${
-						error?.status ?? 500
-					}`
-				);
 			}
 		}
 	}
@@ -188,8 +169,6 @@ const Catalogs: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",

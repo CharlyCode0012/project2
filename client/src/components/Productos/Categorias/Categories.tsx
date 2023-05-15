@@ -13,7 +13,6 @@ import {
 	Container,
 } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
-import "./Categories.css";
 import { Category } from "models/Category";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
@@ -195,8 +194,6 @@ const Categories: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",

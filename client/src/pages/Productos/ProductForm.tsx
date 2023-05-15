@@ -108,15 +108,46 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 			/>
 			<TextField
 				sx={{ width: "300px" }}
-				name="description"
-				label="Descripcion"
+				name="keyWord"
+				label="Palabra Clave"
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"
 				color="primary"
 				required
 			/>
-
+			<TextField
+				sx={{ width: "300px" }}
+				name="keyWord"
+				label="Palabra Clave"
+				placeholder="Placeholder"
+				multiline
+				variant="outlined"
+				color="primary"
+				required
+			/>
+			<TextField
+				sx={{ width: "300px" }}
+				name="price"
+				label="Precio"
+				placeholder="Placeholder"
+				multiline
+				variant="outlined"
+				color="primary"
+				required
+			/>
+			<TextField
+				sx={{ width: "300px" }}
+				name="stock"
+				label="Cantidad"
+				placeholder="Placeholder"
+				multiline
+				variant="outlined"
+				color="primary"
+				required
+			/>
+		
+			
 			<Button type="submit" variant="contained" fullWidth>
 				Enviar
 			</Button>

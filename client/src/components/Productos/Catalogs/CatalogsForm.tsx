@@ -31,8 +31,6 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 		const description = data.get("description")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
-		console.log("name: ", name);
-		console.log("state: ", state);
 
 		try {
 			await instance.post("/catalogs", {
@@ -59,13 +57,9 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 
-		console.log("name: ", name);
-		console.log("state: ", state);
 		const endpoint = `/catalogs/${CatalogData?.id}`;
 
 		try {
-			console.log(`update endpoint: ${endpoint}`);
-
 			await instance.put(endpoint, {
 				name,
 				state,
@@ -112,6 +106,7 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 				multiline
 				variant="outlined"
 				color="primary"
+				defaultValue={CatalogData?.description}
 				required
 			/>
 			<FormGroup>

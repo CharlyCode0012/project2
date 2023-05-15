@@ -197,8 +197,6 @@ const Usuarios = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
