@@ -96,7 +96,7 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 				label="Nombre"
 				name="name"
 				variant="outlined"
-				defaultValue={categoryData?.name}
+				defaultValue={categoryData?.category_name}
 				type="text"
 				required
 			/>

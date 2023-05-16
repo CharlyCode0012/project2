@@ -35,10 +35,10 @@ const Products: React.FC = () => {
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const catalogId = useRef<string>("");
 	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
 	const [products, setProducts] = useState<Product[]>([]);
 	const selectedProductToEdit = useRef<Product | boolean>(false);
+	const catalogId = useRef<string>("");
 
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
@@ -52,6 +52,8 @@ const Products: React.FC = () => {
 
 	const tableHeaders = [
 		"Nombre",
+		"Descripcion",
+		"Categoria",
 		"Palabra Clave",
 		"Precio",
 		"Cantidad",
@@ -95,6 +97,9 @@ const Products: React.FC = () => {
 				params: { order: "ASC", catalogId: cId },
 			});
 			setProducts(products);
+			enqueueSnackbar("Se mostraron los productos con extio", {
+				variant: "success",
+			});
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los productos", {
@@ -240,7 +245,7 @@ const Products: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>productos</h1>
+						<h1>Productos</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
@@ -258,7 +263,7 @@ const Products: React.FC = () => {
 							</Modal>
 						)}
 						<TableContainer
-							sx={{ width: "900px", maxHeight: "400px" }}
+							sx={{ width: "1100px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -283,12 +288,15 @@ const Products: React.FC = () => {
 									) : (
 										products?.map((product: Product) => (
 											<TableRow key={product.id}>
-												<TableCell align="left">{product.name}</TableCell>
+												<TableCell align="left">
+													{product.product_name}
+												</TableCell>
+												<TableCell align="left">Descripcion</TableCell>;
+												<TableCell align="left">Categoría</TableCell>;
 												<TableCell align="left">{product.key_word}</TableCell>
 												<TableCell align="left">{product.price}</TableCell>
 												<TableCell align="left">{product.stock}</TableCell>
 												<TableCell align="left">{product.img}</TableCell>
-
 												{isAdmin && (
 													<TableCell align="center">
 														<IconButton onClick={() => handleEdit(product)}>

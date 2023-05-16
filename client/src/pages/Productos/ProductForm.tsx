@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState, useRef, useEffect } from "react";
 import {
 	Box,
 	Button,
+	FormControl,
 	FormControlLabel,
 	FormGroup,
+	InputLabel,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
 	Switch,
 	TextField,
 } from "@mui/material";
@@ -23,6 +28,25 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [categories, setCategories] = useState<Category[]>([]);
+	const categoryId = useRef<string>("");
+
+	useEffect(() => {
+		fetchCategories();
+	}, []);
+
+	async function fetchCategories() {
+		try {
+			const { data: Categories } = await instance.get<Category[]>(
+				"/categories"
+			);
+			setCategories(Categories);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al traer las categorias", {
+				variant: "error",
+			});
+		}
+	}
 
 	async function createProduct(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -30,18 +54,17 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
-		const actived = data.get("state")?.toString();
-		const state = actived ? true : false;
-		console.log("name: ", name);
-		console.log("state: ", state);
+		const key_word = data.get("keyWord")?.toString();
+		const price = data.get("price")?.toString();
+		const stock = data.get("stock")?.toString();
 
 		try {
 			await instance.post("/products", {
 				id: Date.now().toString(),
 				name,
-				state,
-				description,
+				key_word,
+				price,
+				stock,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Product creation
 		}
@@ -57,12 +80,10 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
 		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
-		const actived = data.get("state")?.toString();
-		const state = actived ? true : false;
+		const key_word = data.get("keyWord")?.toString();
+		const price = data.get("price")?.toString();
+		const stock = data.get("stock")?.toString();
 
-		console.log("name: ", name);
-		console.log("state: ", state);
 		const endpoint = `/products/${ProductData?.id}`;
 
 		try {
@@ -70,8 +91,9 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 
 			await instance.put(endpoint, {
 				name,
-				state,
-				description,
+				key_word,
+				price,
+				stock,
 			});
 			onSubmit(true);
 		}
@@ -83,6 +105,13 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				}`
 			);
 		}
+	}
+
+	function handleCategoryChange(
+		event: SelectChangeEvent<string>,
+		child: ReactNode
+	): void {
+		categoryId.current = event.target.value as string;
 	}
 
 	return (
@@ -102,7 +131,7 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				label="Nombre"
 				name="name"
 				variant="outlined"
-				defaultValue={ProductData?.name}
+				defaultValue={ProductData?.product_name}
 				type="text"
 				required
 			/>
@@ -116,16 +145,24 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				color="primary"
 				required
 			/>
-			<TextField
-				sx={{ width: "300px" }}
-				name="keyWord"
-				label="Palabra Clave"
-				placeholder="Placeholder"
-				multiline
-				variant="outlined"
-				color="primary"
-				required
-			/>
+			<FormControl>
+				<InputLabel>Categoría</InputLabel>
+				<Select
+					label="Categoría"
+					sx={{ width: "300px", color: "inherit" }}
+					onChange={handleCategoryChange}
+				>
+					{categories?.length > 0 ? (
+						categories?.map((categorie: Category) => (
+							<MenuItem key={categorie.id} value={categorie.id}>
+								{categorie.category_name}
+							</MenuItem>
+						))
+					) : (
+						<MenuItem value=""> Sin categorias</MenuItem>
+					)}
+				</Select>
+			</FormControl>
 			<TextField
 				sx={{ width: "300px" }}
 				name="price"
@@ -146,8 +183,6 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				color="primary"
 				required
 			/>
-		
-			
 			<Button type="submit" variant="contained" fullWidth>
 				Enviar
 			</Button>

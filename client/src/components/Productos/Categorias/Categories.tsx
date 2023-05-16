@@ -254,7 +254,9 @@ const Categories: React.FC = () => {
 										categories?.map((category) => (
 											<TableRow key={category.id}>
 												<TableCell align="left">{category.id}</TableCell>
-												<TableCell align="left">{category.name}</TableCell>
+												<TableCell align="left">
+													{category.category_name}
+												</TableCell>
 												<TableCell align="left">
 													{category.state ? "Activada" : "Desactivada"}
 												</TableCell>
