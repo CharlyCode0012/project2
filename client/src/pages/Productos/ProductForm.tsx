@@ -53,7 +53,8 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
+		const product_name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const key_word = data.get("keyWord")?.toString();
 		const price = data.get("price")?.toString();
 		const stock = data.get("stock")?.toString();
@@ -61,7 +62,8 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 		try {
 			await instance.post("/products", {
 				id: Date.now().toString(),
-				name,
+				product_name,
+				description,
 				key_word,
 				price,
 				stock,
@@ -137,11 +139,12 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 			/>
 			<TextField
 				sx={{ width: "300px" }}
-				name="keyWord"
-				label="Palabra Clave"
+				name="description"
+				label="Descripcion"
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"
+				defaultValue={ProductData?.description}
 				color="primary"
 				required
 			/>
@@ -151,11 +154,12 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 					label="Categoría"
 					sx={{ width: "300px", color: "inherit" }}
 					onChange={handleCategoryChange}
+					defaultValue={ProductData?.id_category}
 				>
 					{categories?.length > 0 ? (
-						categories?.map((categorie: Category) => (
-							<MenuItem key={categorie.id} value={categorie.id}>
-								{categorie.category_name}
+						categories?.map((category: Category) => (
+							<MenuItem key={category.id} value={category.id}>
+								{category.category_name}
 							</MenuItem>
 						))
 					) : (
@@ -165,11 +169,23 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 			</FormControl>
 			<TextField
 				sx={{ width: "300px" }}
+				name="keyWord"
+				label="Palabra Clave"
+				placeholder="Placeholder"
+				multiline
+				variant="outlined"
+				defaultValue={ProductData?.key_word}
+				color="primary"
+				required
+			/>
+			<TextField
+				sx={{ width: "300px" }}
 				name="price"
 				label="Precio"
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"
+				defaultValue={ProductData?.price}
 				color="primary"
 				required
 			/>
@@ -180,6 +196,7 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"
+				defaultValue={ProductData?.stock}
 				color="primary"
 				required
 			/>

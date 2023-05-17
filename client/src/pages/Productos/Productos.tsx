@@ -30,6 +30,8 @@ import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarProduct from "@/Navbar/NavbarProduct";
 import { Catalog } from "models/Menu";
 
+const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
+
 const Products: React.FC = () => {
 	const url = "/products";
 
@@ -130,7 +132,7 @@ const Products: React.FC = () => {
 	}
 
 	async function deleteProduct(product: Product) {
-		const { name, id } = product;
+		const { product_name, id } = product;
 		const deletedProductID: string = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
@@ -291,12 +293,21 @@ const Products: React.FC = () => {
 												<TableCell align="left">
 													{product.product_name}
 												</TableCell>
-												<TableCell align="left">Descripcion</TableCell>;
-												<TableCell align="left">Categoría</TableCell>;
+												<TableCell align="left">
+													{product.description}
+												</TableCell>
+												<TableCell align="left">
+													{product.category_name}
+												</TableCell>
 												<TableCell align="left">{product.key_word}</TableCell>
 												<TableCell align="left">{product.price}</TableCell>
 												<TableCell align="left">{product.stock}</TableCell>
-												<TableCell align="left">{product.img}</TableCell>
+												<TableCell align="left">
+													<img
+														src={`${URL_IMAGE}${product.id}`}
+														alt={`Imagen ${product.id}`}
+													></img>
+												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
 														<IconButton onClick={() => handleEdit(product)}>
