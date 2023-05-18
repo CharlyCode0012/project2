@@ -18,7 +18,8 @@ import ConfirmarPedido from "pages/Pedidos/ConfirmarPedido/ConfirmarPedido";
 import AnalisisProductos from "pages/Analisis/AnalisisProductos/AnalisisProductos";
 import AnalisisClientes from "pages/Analisis/AnalisisClientes/AnalisisClientes";
 import ComprasCliente from "pages/Analisis/AnalisisClientes/ComprasCliente";
-import { Dudas } from "pages/Productos/Dudas/Dudas";
+import Dudas from "pages/Productos/Dudas/Dudas";
+import ProductImage from "pages/Productos/ProductImage";
 
 const Rutas = () => {
 	const num = 0;
@@ -55,6 +56,7 @@ const Rutas = () => {
 
 				<Route path="productos">
 					<Route index element={<Productos />} />
+					<Route path="imagen/*" element={<ProductImage />} />
 					<Route path="categorias/*" element={<Categorias />} />
 					<Route path="catalogos/*" element={<Catalogos />} />
 					<Route path="dudas/*" element={<Dudas />} />;

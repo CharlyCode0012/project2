@@ -92,6 +92,7 @@ const Products: React.FC = () => {
 			});
 		}
 	}
+
 	async function fetchProducts() {
 		const cId = catalogId.current;
 		try {
@@ -136,34 +137,25 @@ const Products: React.FC = () => {
 		const deletedProductID: string = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
-			`¿Estás seguro que quieres eliminar a: ${name}`
+			`¿Estás seguro que quieres eliminar a: ${product_name}`
 		);
 
 		const endpoint = `${url}/${deletedProductID}`;
 		if (isDelete) {
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
-
-				const res = await instance.delete(endpoint);
-				const dataCatalog = await res.data;
-
-				if (dataCatalog?.err) {
-					const message = dataCatalog?.statusText;
-					const status = dataCatalog?.status;
-					throw { message, status };
-				}
-				else {
-					const newCatalogs = products.filter(
-						(ProductD: Product) => ProductD.id !== deletedProductID
-					);
-					setProducts(newCatalogs);
-				}
-				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
+				await instance.delete(endpoint);
+				enqueueSnackbar(`Se elimino exitosamente ${product_name}`, {
 					variant: "success",
 				});
+				setProducts((products) =>
+					products.filter((product) => product.id !== deletedProductID)
+				);
 			}
 			catch (error: any) {
-				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
+				enqueueSnackbar(`Error al eliminar la ${product_name}`, {
+					variant: "error",
+				});
 				alert(
 					`Descripcion del error: ${error.message}\nEstado: ${
 						error?.status ?? 500

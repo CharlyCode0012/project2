@@ -20,7 +20,11 @@ type NavPage = {
 	admin?: boolean;
 };
 
-const pages: NavPage[] = [{ name: "Catalogos" }, { name: "Categorias" }, { name: "Dudas" }];
+const pages: NavPage[] = [
+	{ name: "Catalogos" },
+	{ name: "Categorias" },
+	{ name: "Dudas" },
+];
 
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 
@@ -58,14 +62,39 @@ const NavbarProduct = () => {
 						</NavLink>
 						{/* Maps each page to a <NavLink /> with an href of 'pages-name-with-dashes'. */}
 						<Box sx={{ flexGrow: 1, display: "flex" }}>
-							<NavLink
-								key={"prodcutos"}
-								to={"/productos"}
-								style={{ textDecoration: "none" }}
-							>
-								<Button sx={{ color: "white" }}>Productos</Button>
-							</NavLink>
-
+							<Box>
+								<Button onClick={handleOpenNavMenu} sx={{ color: "white" }}>
+									Otros
+									<ArrowDropDown />
+								</Button>
+								<Menu
+									sx={{ mt: "45px" }}
+									id="menu-nav"
+									anchorEl={anchorElNav}
+									anchorOrigin={{ vertical: "top", horizontal: "right" }}
+									keepMounted
+									transformOrigin={{ vertical: "top", horizontal: "right" }}
+									open={Boolean(anchorElNav)}
+									onClose={handleCloseNavMenu}
+								>
+									<MenuItem key="productos" onClick={handleCloseUserMenu}>
+										<NavLink
+											to="/productos"
+											style={{ color: "inherit", textDecoration: "none" }}
+										>
+											<Typography textAlign="center">Productos</Typography>
+										</NavLink>
+									</MenuItem>
+									<MenuItem key="imagen" onClick={handleCloseUserMenu}>
+										<NavLink
+											to="/productos/imagen"
+											style={{ color: "inherit", textDecoration: "none" }}
+										>
+											<Typography textAlign="center">Imagen</Typography>
+										</NavLink>
+									</MenuItem>
+								</Menu>
+							</Box>
 							{pages.map((page) => (
 								<NavLink
 									key={page.name}
