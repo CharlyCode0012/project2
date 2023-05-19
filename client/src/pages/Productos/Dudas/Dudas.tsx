@@ -1,4 +1,4 @@
-import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import {
 	Box,
 	IconButton,
@@ -11,13 +11,8 @@ import {
 	TableRow,
 	TableSortLabel,
 	Container,
-	InputLabel,
-	FormControl,
-	Select,
-	MenuItem,
-	SelectChangeEvent,
 } from "@mui/material";
-import React, { useState, useEffect, useRef, ReactNode } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Question } from "models/Question";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
@@ -26,11 +21,7 @@ import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
-import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarProduct from "@/Navbar/NavbarProduct";
-import { Catalog } from "models/Menu";
-
-const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
 
 const Dudas: React.FC = () => {
 	const url = "/questions";
@@ -68,28 +59,24 @@ const Dudas: React.FC = () => {
 	// TODO:
 
 	useEffect(() => {
-		// fetchQuestion();
+		fetchQuestion();
 	}, []);
 
 	async function fetchQuestion() {
-		const cId = catalogId.current;
 		try {
 			const { data: questions } = await instance.get<Question[]>(url, {
-				params: { order: "ASC", catalogId: cId },
+				params: { order: "ASC" },
 			});
 			setQuestions(questions);
-			enqueueSnackbar("Se mostraron los productos con extio", {
-				variant: "success",
-			});
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los productos", {
+			enqueueSnackbar("Hubo un error al mostrar las dudas", {
 				variant: "error",
 			});
 		}
 	}
 
-	function onProductSubmitted(wasUpdates: boolean) {
+	function onQuestionSubmitted(wasUpdates: boolean) {
 		closeFormModal();
 		enqueueSnackbar(
 			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
@@ -105,41 +92,22 @@ const Dudas: React.FC = () => {
 		openFormModal();
 	}
 
-	async function deleteProduct(question: Question) {
+	async function deleteQuestion(question: Question) {
 		const { id } = question;
-		const deletedProductID: number = id;
+		const deletedQuestionID: number = id;
 		// TODO: Display loader
 
-		const endpoint = `${url}/${deletedProductID}`;
+		const endpoint = `${url}/${deletedQuestionID}`;
 
 		try {
 			console.log(`delete endpoint: ${endpoint}`);
-
-			const res = await instance.delete(endpoint);
-			const dataCatalog = await res.data;
-
-			if (dataCatalog?.err) {
-				const message = dataCatalog?.statusText;
-				const status = dataCatalog?.status;
-				throw { message, status };
-			}
-			else {
-				const newCatalogs = questions.filter(
-					(QuestionD: Question) => QuestionD.id !== deletedProductID
-				);
-				setQuestions(newCatalogs);
-			}
-			enqueueSnackbar(`Se elimino exitosamente ${name}`, {
-				variant: "success",
-			});
+			await instance.delete(endpoint);
+			setQuestions((questions) =>
+				questions.filter((question) => question.id !== deletedQuestionID)
+			);
 		}
 		catch (error: any) {
-			enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
+			console.log(error);
 		}
 	}
 
@@ -183,7 +151,7 @@ const Dudas: React.FC = () => {
 			setQuestions(Dudas);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los productos", {
+			enqueueSnackbar("Hubo un error al mostrar las dudas", {
 				variant: "error",
 			});
 		}
@@ -216,10 +184,10 @@ const Dudas: React.FC = () => {
 							<Modal
 								open={showModal}
 								handleOpen={setShowModal}
-								title="Formulario productos"
+								title="Formulario dudas"
 							>
 								<DudasForm
-									onSubmit={onProductSubmitted}
+									onSubmit={onQuestionSubmitted}
 									questionData={
 										selectedQuestionToAnswer.current instanceof Object
 											? selectedQuestionToAnswer.current
@@ -229,7 +197,7 @@ const Dudas: React.FC = () => {
 							</Modal>
 						)}
 						<TableContainer
-							sx={{ width: "1100px", maxHeight: "400px" }}
+							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>

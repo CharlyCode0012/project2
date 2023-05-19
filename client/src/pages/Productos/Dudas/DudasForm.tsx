@@ -1,12 +1,5 @@
 import React from "react";
-import {
-	Box,
-	Button,
-	FormControlLabel,
-	FormGroup,
-	Switch,
-	TextField,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { Question } from "models/Question";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
@@ -19,26 +12,30 @@ interface DudasFormProps {
 const DudasForm: React.FC<DudasFormProps> = ({ onSubmit, questionData }) => {
 	const { enqueueSnackbar } = useSnackbar();
 
-	async function updateCategory(event: React.FormEvent<HTMLFormElement>) {
+	async function updateQuestion(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
-		const actived = data.get("state")?.toString();
-		const state = actived ? true : false;
+		const answer = data.get("answer")?.toString();
+		const state = answer ? true : false;
 
-		console.log("name: ", name);
+		console.log("answer: ", answer);
 		console.log("state: ", state);
-		const endpoint = `/categories/${questionData?.id}`;
+		const endpoint = `/question/${questionData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
 
-			await instance.put(endpoint, {
-				name,
-				state,
-			});
+			await instance.put(
+				endpoint,
+				{
+					state,
+				},
+				{
+					params: { answer },
+				}
+			);
 			onSubmit(true);
 		}
 		catch (error: any) {
@@ -61,12 +58,13 @@ const DudasForm: React.FC<DudasFormProps> = ({ onSubmit, questionData }) => {
 				gap: "1rem",
 				padding: 2,
 			}}
-			onSubmit={updateCategory}
+			onSubmit={updateQuestion}
 		>
 			<TextField
 				sx={{ width: "300px" }}
 				label="Responder"
 				name="answer"
+				multiline
 				variant="outlined"
 				type="text"
 				required

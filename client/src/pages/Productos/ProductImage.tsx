@@ -32,6 +32,7 @@ const ProductImage = () => {
 	// images/id_product
 	const [filename, setFilename] = useState("");
 
+	const [productId, setProductId] = useState<string>("");
 	const [products, setProducts] = useState<Product[]>([]);
 	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
@@ -121,6 +122,7 @@ const ProductImage = () => {
 	): void {
 		catalogId.current = event.target.value as string;
 		setImageUrl("default");
+		setProductId("");
 		if (catalogId.current) fetchProducts();
 	}
 
@@ -128,7 +130,9 @@ const ProductImage = () => {
 		event: SelectChangeEvent<string>,
 		child: ReactNode
 	): void {
-		setImageUrl(event.target.value as string);
+		const id = event.target.value as string;
+		setProductId(id);
+		setImageUrl(id);
 	}
 
 	return (
@@ -184,6 +188,7 @@ const ProductImage = () => {
 									>
 										<InputLabel sx={{ color: "inherit" }}>Producto</InputLabel>
 										<Select
+											value={productId}
 											label="Catalogo"
 											sx={{ width: "300px", color: "inherit" }}
 											onChange={handleProductChange}
