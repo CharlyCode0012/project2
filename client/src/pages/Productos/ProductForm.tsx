@@ -20,15 +20,17 @@ import { Category } from "models/Category";
 interface ProductsFormProps {
 	onSubmit: (op: boolean) => void;
 	ProductData?: Product;
+	catalogId: React.MutableRefObject<string>;
 }
 
 const CatalogsForm: React.FC<ProductsFormProps> = ({
 	onSubmit,
 	ProductData,
+	catalogId,
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [categories, setCategories] = useState<Category[]>([]);
-	const categoryId = useRef<string>("");
+	const categoryId = useRef<string>(ProductData?.id_category ?? "");
 
 	useEffect(() => {
 		fetchCategories();
@@ -60,14 +62,23 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 		const stock = data.get("stock")?.toString();
 
 		try {
-			await instance.post("/products", {
-				id: Date.now().toString(),
-				product_name,
-				description,
-				key_word,
-				price,
-				stock,
-			});
+			await instance.post(
+				"/products",
+				{
+					id: Date.now().toString(),
+					product_name,
+					description,
+					key_word,
+					price,
+					stock,
+				},
+				{
+					params: {
+						catalogId: catalogId.current,
+						categoryId: categoryId.current,
+					},
+				}
+			);
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Product creation
 		}
 		catch (error: any) {
@@ -81,26 +92,47 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
+		const product_name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const key_word = data.get("keyWord")?.toString();
 		const price = data.get("price")?.toString();
 		const stock = data.get("stock")?.toString();
+		const productEdit = {
+			product_name,
+			description,
+			key_word,
+			price,
+			stock,
+			categoryId: categoryId.current,
+			catalogId: catalogId.current,
+		};
+
+		console.log(productEdit);
 
 		const endpoint = `/products/${ProductData?.id}`;
 
 		try {
-			console.log(`update endpoint: ${endpoint}`);
-
-			await instance.put(endpoint, {
-				name,
-				key_word,
-				price,
-				stock,
-			});
+			await instance.put(
+				endpoint,
+				{
+					product_name,
+					description,
+					key_word,
+					price,
+					stock,
+				},
+				{
+					params: {
+						categoryId: categoryId.current,
+					},
+				}
+			);
 			onSubmit(true);
 		}
 		catch (error: any) {
-			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
+			enqueueSnackbar(`Error al actualizar ${product_name}`, {
+				variant: "error",
+			});
 			alert(
 				`Descripcion del error: ${error.message}\nEstado: ${
 					error?.status ?? 500

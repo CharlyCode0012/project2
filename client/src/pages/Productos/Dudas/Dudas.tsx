@@ -211,7 +211,7 @@ const Dudas: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Productos</h1>
+						<h1>Dudas</h1>
 						{showModal && (
 							<Modal
 								open={showModal}

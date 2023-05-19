@@ -1,32 +1,43 @@
-import * as React from "react";
+import React, { ReactNode } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { QueryOrder } from "./SearchAppBar";
+import {
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
+	useTheme,
+} from "@mui/material";
 
 interface PropsOrder {
 	value: string | null;
-	handleChangeOrder: (option: QueryOrder | null) => void;
+	handleChangeOrder: (
+		event: SelectChangeEvent<string>,
+		child: ReactNode
+	) => void;
 }
 
 export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
-	const num = 0;
+	const theme = useTheme();
+
 	return (
-		<Autocomplete
-			color="secondary"
-			disablePortal
-			id="combo-box-demo"
-			options={Options}
-			value={value}
-			sx={{ width: 150 }}
-			onChange={(
-				event: React.SyntheticEvent<Element, Event>,
-				newValue: string | null
-			) => {
-				handleChangeOrder(newValue as QueryOrder);
-			}}
-			renderInput={(params) => <TextField {...params} label="Orden" />}
-		/>
+		<FormControl
+			sx={{ marginRight: "40px" }}
+			color={theme.palette.mode === "dark" ? "secondary" : "warning"}
+		>
+			<InputLabel sx={{ color: "inherit" }}>Filtrar por</InputLabel>
+
+			<Select
+				defaultValue="ASC"
+				label="Filtrar por"
+				sx={{ width: "200px", color: "inherit" }}
+				onChange={handleChangeOrder}
+			>
+				<MenuItem value={"ASC"}>ASC</MenuItem>
+				<MenuItem value={"DESC"}>DESC</MenuItem>;
+			</Select>
+		</FormControl>
 	);
 };
-
-const Options = ["ASC", "DESC"];

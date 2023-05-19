@@ -100,9 +100,6 @@ const Products: React.FC = () => {
 				params: { order: "ASC", catalogId: cId },
 			});
 			setProducts(products);
-			enqueueSnackbar("Se mostraron los productos con extio", {
-				variant: "success",
-			});
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los productos", {
@@ -253,6 +250,7 @@ const Products: React.FC = () => {
 											? selectedProductToEdit.current
 											: undefined
 									}
+									catalogId={catalogId}
 								></ProductForm>
 							</Modal>
 						)}
@@ -296,6 +294,7 @@ const Products: React.FC = () => {
 												<TableCell align="left">{product.stock}</TableCell>
 												<TableCell align="left">
 													<img
+														style={{ width: "160px", height: "160px" }}
 														src={`${URL_IMAGE}${product.id}`}
 														alt={`Imagen ${product.id}`}
 													></img>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ReactNode } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -12,8 +12,10 @@ import {
 	InputLabel,
 	MenuItem,
 	Select,
+	SelectChangeEvent,
 	useTheme,
 } from "@mui/material";
+import "./StyledSearchApp.css";
 
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
@@ -76,9 +78,11 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 
 	const theme = useTheme();
 
-	function handleChangeOrder(value: QueryOrder | null): void {
-		value = value ?? "ASC";
-		setOrder(value);
+	function handleChangeOrder(
+		event: SelectChangeEvent<string>,
+		child: ReactNode
+	): void {
+		setOrder(event.target.value as QueryOrder);
 	}
 
 	function handleChangeSearch(
@@ -90,20 +94,27 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 
 	return (
 		<Box
-			sx={{ flexGrow: 0, marginTop: "40px", width: "800px" }}
-			color="inherit"
+			sx={{
+				flexGrow: 0,
+				marginTop: "40px",
+				width: "800px",
+			}}
+			className="searchApp"
 		>
 			<AppBar position="static">
 				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
 					<Order handleChangeOrder={handleChangeOrder} value={order} />
 
-					<FormControl>
-						<InputLabel>Filtrar por</InputLabel>
+					<FormControl
+						sx={{ marginLeft: "2opx", marginRight: "20px" }}
+						color={theme.palette.mode === "dark" ? "secondary" : "warning"}
+					>
+						<InputLabel sx={{ color: "inherit" }}>Filtrar por</InputLabel>
 
 						<Select
 							defaultValue={"Todos"}
 							label="Filtrar por"
-							sx={{ width: "200px" }}
+							sx={{ width: "200px", color: "inherit" }}
 							onChange={(e) => setFilter(e.target.value as string)}
 						>
 							<MenuItem value={"Todos"}>{"Todos"}</MenuItem>
@@ -132,7 +143,7 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 						onClick={() => {
 							onSubmitSearch(filter, search, order);
 						}}
-						color={theme.palette.mode === "dark" ? "primary" : "secondary"}
+						color={theme.palette.mode === "dark" ? "secondary" : "warning"}
 					>
 						Buscar
 					</Button>

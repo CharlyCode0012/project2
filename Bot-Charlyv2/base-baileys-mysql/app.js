@@ -24,49 +24,38 @@ const MYSQL_DB_PORT = '3306'
  *
  * Primero declaras los submenus 1.1 y 2.1, luego el 1 y 2 y al final el principal.
  */
+const flowCatalogos = addKeyword(['1', 'Catalogo']).addAnswer(['Esoty obteniendo el cataloog, por favor espere...']);
 
-const flowSecundario = addKeyword(['2', 'siguiente']).addAnswer(['📄 Aquí tenemos el flujo secundario'])
+const flowSecundario = addKeyword(['2', 'Contactar', 'humano']).addAnswer(['Estamos contactando con alguien']);
 
-const flowDocs = addKeyword(['doc', 'documentacion', 'documentación']).addAnswer(
+/* const flowButton =  addKeyword(['4', 'Botones']).addAnswer('Este mensaje envia tres botones', {
+    buttons: [{ body: 'Boton 1' }, { body: 'Boton 2' }, { body: 'Boton 3' }],
+});
+ */
+const flowDocs = addKeyword(['3', 'documentacion', 'doc']).addAnswer(
     [
         '📄 Aquí encontras las documentación: ',
         'https://bot-whatsapp.netlify.app/',
-        '\n*2* Para siguiente paso.',
     ],
     null,
     null,
     [flowSecundario]
 )
 
-const flowCatalog = addKeyword(['Catalogo']).addAnswer(['Ahora te envío los catalogos'], null, (ctx, {flowDinamyc}) => {
-
-}).addAnswer()
 
 
 const flowGracias = addKeyword(['gracias', 'grac']).addAnswer(
     [
         'Muchas gracias por tu preferencia', 'Tenga un excelente día'
-    ],
-    null,
-    null,
-    [flowSecundario]
+    ]
 )
 
 
 
-const flowPrincipal = addKeyword(['hola', 'ole', 'alo'], {
-        buttons: [
-            {
-                body: 'Imagen'
-            },
-            {
-                bodu: 'Catalogo'
-            }
-        ]
-    },
-    null,
-    [flowDocs, flowGracias, flowCatalog]
-);
+const flowPrincipal = addKeyword(['hola', 'ole', 'alo'])
+.addAnswer(['Hola buenas tardes, este es un bot de una tienda', '¿En que puedo ayudarte?'])
+.addAnswer(['*1* Catalogo', '*2* Contactar con un humano', '*3* Documentacion'], null, null, 
+[flowCatalogos, flowSecundario, flowDocs]);
 
 const main = async () => {
     const adapterDB = new MySQLAdapter({

@@ -13,6 +13,7 @@ import {
 	SelectChangeEvent,
 	TableContainer,
 	Toolbar,
+	useTheme,
 } from "@mui/material";
 import React, {
 	ChangeEvent,
@@ -36,6 +37,7 @@ const ProductImage = () => {
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
 	const [imageUrl, setImageUrl] = useState<string>();
 	const catalogId = useRef<string>("");
+	const theme = useTheme();
 
 	useEffect(() => {
 		// fetchProducts();
@@ -153,8 +155,12 @@ const ProductImage = () => {
 						>
 							<AppBar position="static">
 								<Toolbar sx={{ padding: "10px", gap: "10px" }}>
-									<FormControl>
-										<InputLabel>Catalogo</InputLabel>
+									<FormControl
+										color={
+											theme.palette.mode === "dark" ? "secondary" : "warning"
+										}
+									>
+										<InputLabel sx={{ color: "inherit" }}>Catalogo</InputLabel>
 										<Select
 											label="Catalogo"
 											sx={{ width: "300px", color: "inherit" }}
@@ -171,8 +177,12 @@ const ProductImage = () => {
 											)}
 										</Select>
 									</FormControl>
-									<FormControl>
-										<InputLabel>Producto</InputLabel>
+									<FormControl
+										color={
+											theme.palette.mode === "dark" ? "secondary" : "warning"
+										}
+									>
+										<InputLabel sx={{ color: "inherit" }}>Producto</InputLabel>
 										<Select
 											label="Catalogo"
 											sx={{ width: "300px", color: "inherit" }}

@@ -7,11 +7,10 @@ const MySQLAdapter = require('@bot-whatsapp/database/mysql')
 /**
  * Declaramos las conexiones de MySQL
  */
-
 const MYSQL_DB_HOST = 'localhost'
-const MYSQL_DB_USER = 'user'
-const MYSQL_DB_PASSWORD = 'pass'
-const MYSQL_DB_NAME = 'bot'
+const MYSQL_DB_USER = 'root'
+const MYSQL_DB_PASSWORD = '0906Gean.0906'
+const MYSQL_DB_NAME = 'data_bot'
 const MYSQL_DB_PORT = '3306'
 
 /**
@@ -26,30 +25,38 @@ const MYSQL_DB_PORT = '3306'
  * Primero declaras los submenus 1.1 y 2.1, luego el 1 y 2 y al final el principal.
  */
 
-const flowSecundario = addKeyword(['2', 'siguiente']).addAnswer(['📄 Aquí tenemos el flujo secundario'])
+const flowCatalogos = addKeyword(['1', 'Catalogo']).addAnswer(['Esoty obteniendo el cataloog, por favor espere...']);
 
-const flowDocs = addKeyword(['doc', 'documentacion', 'documentación']).addAnswer(
+const flowSecundario = addKeyword(['2', 'Contactar', 'humano']).addAnswer(['Estamos contactando con alguien']);
+
+/* const flowButton =  addKeyword(['4', 'Botones']).addAnswer('Este mensaje envia tres botones', {
+    buttons: [{ body: 'Boton 1' }, { body: 'Boton 2' }, { body: 'Boton 3' }],
+});
+ */
+const flowDocs = addKeyword(['3', 'documentacion', 'doc']).addAnswer(
     [
-        '📄 Aquí encontras las documentación recuerda que puedes mejorarla',
+        '📄 Aquí encontras las documentación: ',
         'https://bot-whatsapp.netlify.app/',
-        '\n*2* Para siguiente paso.',
     ],
     null,
     null,
     [flowSecundario]
 )
 
+
+
+const flowGracias = addKeyword(['gracias', 'grac']).addAnswer(
+    [
+        'Muchas gracias por tu preferencia', 'Tenga un excelente día'
+    ]
+)
+
+
+
 const flowPrincipal = addKeyword(['hola', 'ole', 'alo'])
-    .addAnswer(['Hola, bienvenido a mi tienda', '¿Como puedo ayudarte?'])
-    .addAnswer(
-        [
-            'Link para leer sobre este bot Zurdo',
-            '👉 *doc* para ver la documentación',
-        ], 
-        null, 
-        null, 
-        [flowDocs]
-    );
+.addAnswer(['Hola buenas tardes, este es un bot de una tienda', '¿En que puedo ayudarte?'])
+.addAnswer(['*1* Catalogo', '*2* Contactar con un humano', '*3* Documentacion'], null, null, 
+[flowCatalogos, flowSecundario, flowDocs]);
 
 const main = async () => {
     const adapterDB = new MySQLAdapter({
@@ -59,7 +66,7 @@ const main = async () => {
         password: MYSQL_DB_PASSWORD,
         port: MYSQL_DB_PORT,
     })
-    const adapterFlow = createFlow([flowPrincipal])
+    const adapterFlow = createFlow([flowPrincipal, flowGracias])
     const adapterProvider = createProvider(WebWhatsappProvider)
     createBot({
         flow: adapterFlow,
