@@ -3,5 +3,6 @@ export interface Question {
 	question: string;
 	state: boolean;
 	id_client: string;
-	id_prodcut: string;
+	id_product: string;
+	product_name: string;
 }

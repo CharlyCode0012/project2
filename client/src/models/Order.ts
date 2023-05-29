@@ -5,7 +5,7 @@ export interface Order {
 	total: number;
 	amount: number;
 	state: string;
-	cel_client: string;
+	id_client: string;
 	place: string;
-	payment_method: string;
+	payment: string;
 }

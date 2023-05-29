@@ -4,6 +4,9 @@ import {
 	Button,
 	FormControlLabel,
 	FormGroup,
+	InputLabel,
+	MenuItem,
+	Select,
 	Switch,
 	TextField,
 } from "@mui/material";
@@ -16,27 +19,35 @@ interface OrdersFormProps {
 	OrderData?: Order;
 }
 
+const orderSate = ["Pagado", "Abonado", "NA"];
+
 const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 	const { enqueueSnackbar } = useSnackbar();
+
+	const isNumeric = (value: string) => {
+		const num = 0;
+		// Utiliza una expresión regular para verificar si el valor es numérico
+		return /^\d*(\.\d{1})?\d{0,1}$/.test(value);
+	};
 
 	async function createOrder(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
-		const actived = data.get("state")?.toString();
-		const state = actived ? true : false;
-		console.log("name: ", name);
+		const amount = data.get("amount")?.toString();
+		const state = data.get("state")?.toString();
+
 		console.log("state: ", state);
 
+		if (!isNumeric(amount ?? ""))
+			return enqueueSnackbar("El precio no es numerico", { variant: "error" });
+
 		try {
-			await instance.post("/orders", {
+			await instance.post("/order", {
 				id: Date.now().toString(),
-				name,
 				state,
-				description,
+				amount,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Order creation
 		}
@@ -51,27 +62,29 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
-		const actived = data.get("state")?.toString();
-		const state = actived ? true : false;
+		const folio = OrderData?.folio;
+		const amount = data.get("amount")?.toString();
+		const state = data.get("state")?.toString();
 
-		console.log("name: ", name);
-		console.log("state: ", state);
-		const endpoint = `/orders/${OrderData?.id}`;
+		console.log("state: ", state, "folio: ", folio);
+		const endpoint = `/order/${OrderData?.id}`;
+
+		if (!isNumeric(amount ?? ""))
+			return enqueueSnackbar("El precio no es numerico", { variant: "error" });
 
 		try {
-			console.log(`update endpoint: ${endpoint}`);
-
-			await instance.put(endpoint, {
-				name,
-				state,
-				description,
-			});
+			await instance.put(
+				endpoint,
+				{
+					state,
+					amount,
+				},
+				{ params: { folio } }
+			);
 			onSubmit(true);
 		}
 		catch (error: any) {
-			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
+			enqueueSnackbar("Error al actualizar el pedido", { variant: "error" });
 			alert(
 				`Descripcion del error: ${error.message}\nEstado: ${
 					error?.status ?? 500
@@ -104,19 +117,28 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 			/>
 			<TextField
 				sx={{ width: "300px" }}
-				name="description"
-				label="Descripcion"
+				name="amount"
+				label="Cantidad Pagada"
 				placeholder="Placeholder"
-				multiline
+				inputProps={{ inputMode: "numeric", pattern: "[0-9].*" }}
+				defaultValue={OrderData?.amount}
 				variant="outlined"
-				color="primary"
 				required
 			/>
 			<FormGroup>
-				<FormControlLabel
-					control={<Switch name="state" defaultChecked={OrderData?.state} />}
+				<InputLabel>Estado</InputLabel>
+				<Select
 					label="Estado"
-				/>
+					sx={{ width: "300px", color: "inherit" }}
+					defaultValue={OrderData?.state ?? "NA"}
+					name="state"
+				>
+					{orderSate?.map((order) => (
+						<MenuItem key={order} value={order}>
+							{order}
+						</MenuItem>
+					))}
+				</Select>
 			</FormGroup>
 
 			<Button type="submit" variant="contained" fullWidth>

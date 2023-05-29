@@ -5,5 +5,6 @@ export interface Delivery {
 	state: boolean;
 	id_client: string;
 	place: string;
-	folio: number;
+	folio: string;
+	order_state: string;
 }

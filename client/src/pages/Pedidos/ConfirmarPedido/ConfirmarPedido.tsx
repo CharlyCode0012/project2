@@ -50,11 +50,11 @@ const orders: React.FC = () => {
 		"Monto Pagado",
 		"Cliente",
 		"Lugar",
-		"Banco",
+		"Tarjeta",
 		"Estado",
 	];
 
-	const searchOptions = ["Lugar", "Fecha"];
+	const searchOptions = ["Lugar", "Fecha", "Estado"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -69,16 +69,18 @@ const orders: React.FC = () => {
 	// TODO:
 
 	useEffect(() => {
-		// fetchCatalogs();
+		fetchOrders();
 	}, []);
 
-	async function fetchCatalogs() {
+	async function fetchOrders() {
 		try {
-			const { data: orders } = await instance.get<Order[]>(url);
+			const { data: orders } = await instance.get<Order[]>(url, {
+				params: { order: "ASC" },
+			});
 			setConfirmOrders(orders);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las catalogos", {
+			enqueueSnackbar("Hubo un error al mostrar las ordenes", {
 				variant: "error",
 			});
 		}
@@ -92,7 +94,7 @@ const orders: React.FC = () => {
 				variant: "success",
 			}
 		);
-		fetchCatalogs();
+		fetchOrders();
 	}
 
 	function handleEdit(Order: Order) {
@@ -151,18 +153,25 @@ const orders: React.FC = () => {
 			let orders: Order[];
 
 			switch (filter) {
-			case "Nombre":
+			case "Lugar":
 				orders = (
-					await instance.get<Order[]>(`/orders/catalogByName/${search}`, {
-						params: { order },
+					await instance.get<Order[]>("/orders/searchByPlace", {
+						params: { order, search },
 					})
 				).data;
 				break;
 
 			case "Estado":
 				orders = (
-					await instance.get<Order[]>(`/orders/catalogByState/${search}`, {
-						params: { order },
+					await instance.get<Order[]>("/orders/searchByState", {
+						params: { order, search },
+					})
+				).data;
+				break;
+			case "Fecha":
+				orders = (
+					await instance.get<Order[]>("/orders/searchByDate", {
+						params: { order, search },
 					})
 				).data;
 				break;
@@ -191,8 +200,6 @@ const orders: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
@@ -209,12 +216,12 @@ const orders: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>catalogos</h1>
+						<h1>Pedidos</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
 								handleOpen={setShowModal}
-								title="Formulario catalogos"
+								title="Formulario pedidos"
 							>
 								<OrdersForm
 									onSubmit={onCatalogSubmitted}
@@ -227,7 +234,7 @@ const orders: React.FC = () => {
 							</Modal>
 						)}
 						<TableContainer
-							sx={{ width: "800px", maxHeight: "400px" }}
+							sx={{ width: "1100px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -257,12 +264,10 @@ const orders: React.FC = () => {
 													{Order.date_order.toString()}
 												</TableCell>
 												<TableCell align="left">{Order.total}</TableCell>
-												<TableCell align="left">{Order.amount}</TableCell>;
-												<TableCell align="left">{Order.cel_client}</TableCell>
+												<TableCell align="left">{Order.amount}</TableCell>
+												<TableCell align="left">{Order.id_client}</TableCell>
 												<TableCell align="left">{Order.place}</TableCell>
-												<TableCell align="left">
-													{Order.payment_method}
-												</TableCell>
+												<TableCell align="left">{Order.payment}</TableCell>
 												<TableCell align="left">{Order.state}</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
@@ -284,9 +289,7 @@ const orders: React.FC = () => {
 									flexDirection: "row",
 									gap: "10px",
 								}}
-							>
-								<ExcelDownloadButton apiObjective="orders" />
-							</Box>
+							></Box>
 						)}
 					</Box>
 				</Box>

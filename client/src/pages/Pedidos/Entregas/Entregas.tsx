@@ -46,10 +46,11 @@ const deliveries: React.FC = () => {
 	const tableHeaders = [
 		"Folio",
 		"Cliente",
+		"Estado de Pago",
 		"Pendiente a pagar",
 		"Lugar",
 		"Fecha",
-		"Estado",
+		"Entregado",
 	];
 
 	const searchOptions = ["Lugar", "Fecha", "Estado"];
@@ -67,10 +68,10 @@ const deliveries: React.FC = () => {
 	// TODO:
 
 	useEffect(() => {
-		// fetchOrders();
+		fetchDeliveries();
 	}, []);
 
-	async function fetchOrders() {
+	async function fetchDeliveries() {
 		try {
 			const { data: deliveries } = await instance.get<Delivery[]>(url);
 			setConfirmDeliveries(deliveries);
@@ -90,7 +91,7 @@ const deliveries: React.FC = () => {
 				variant: "success",
 			}
 		);
-		fetchOrders();
+		fetchDeliveries();
 	}
 
 	function handleEdit(Delivery: Delivery) {
@@ -149,10 +150,10 @@ const deliveries: React.FC = () => {
 			let deliveries: Delivery[];
 
 			switch (filter) {
-			case "Nombre":
+			case "Lugar":
 				deliveries = (
 					await instance.get<Delivery[]>(
-						`/deliveries/catalogByName/${search}`,
+						`/deliveries/searchByPlace/${search}`,
 						{
 							params: { order },
 						}
@@ -163,12 +164,24 @@ const deliveries: React.FC = () => {
 			case "Estado":
 				deliveries = (
 					await instance.get<Delivery[]>(
-						`/deliveries/catalogByState/${search}`,
+						`/deliveries/searchByState/${search}`,
 						{
 							params: { order },
 						}
 					)
 				).data;
+				break;
+
+			case "Fecha":
+				deliveries = (
+					await instance.get<Delivery[]>(
+						`/deliveries/searchByDate/${search}`,
+						{
+							params: { order },
+						}
+					)
+				).data;
+
 				break;
 
 			default:
@@ -213,16 +226,16 @@ const deliveries: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>catalogos</h1>
+						<h1>Entregas</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
 								handleOpen={setShowModal}
-								title="Formulario catalogos"
+								title="Formulario entregas"
 							>
 								<EntregasForm
 									onSubmit={onCatalogSubmitted}
-									OrderData={
+									DeliveryData={
 										selectedDeliveryToEdit.current instanceof Object
 											? selectedDeliveryToEdit.current
 											: undefined
@@ -231,7 +244,7 @@ const deliveries: React.FC = () => {
 							</Modal>
 						)}
 						<TableContainer
-							sx={{ width: "800px", maxHeight: "400px" }}
+							sx={{ width: "1000px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
@@ -258,10 +271,15 @@ const deliveries: React.FC = () => {
 											<TableRow key={Delivery.id}>
 												<TableCell align="left">{Delivery.folio}</TableCell>
 												<TableCell align="left">{Delivery.id_client}</TableCell>
-												<TableCell align="left">{Delivery.rest}</TableCell>;
+												<TableCell align="left">
+													{Delivery.order_state}
+												</TableCell>
+												<TableCell align="left">{Delivery.rest}</TableCell>
 												<TableCell align="left">{Delivery.place}</TableCell>
 												<TableCell align="left">
-													{Delivery.date_delivery.toString()}
+													{Delivery.date_delivery
+														? Delivery.date_delivery.toString()
+														: ""}
 												</TableCell>
 												<TableCell align="left">
 													{Delivery.state ? "Entregado" : "Sin Entregar"}

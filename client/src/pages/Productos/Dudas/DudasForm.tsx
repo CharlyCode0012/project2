@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, TextField } from "@mui/material";
 import { Question } from "models/Question";
-import { instance } from "helper/API";
+import { instance, instanceBot } from "helper/API";
 import { useSnackbar } from "notistack";
 
 interface DudasFormProps {
@@ -22,20 +22,23 @@ const DudasForm: React.FC<DudasFormProps> = ({ onSubmit, questionData }) => {
 
 		console.log("answer: ", answer);
 		console.log("state: ", state);
-		const endpoint = `/question/${questionData?.id}`;
+		const endpoint = `/questions/${questionData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
 
-			await instance.put(
-				endpoint,
-				{
-					state,
-				},
-				{
-					params: { answer },
-				}
-			);
+			await instance.put(endpoint, {
+				state,
+				answer,
+				to: questionData?.id_client ?? "",
+			});
+
+			await instanceBot.post("/send", {
+				product: questionData?.product_name,
+				answer,
+				to: questionData?.id_client ?? "",
+			});
+
 			onSubmit(true);
 		}
 		catch (error: any) {

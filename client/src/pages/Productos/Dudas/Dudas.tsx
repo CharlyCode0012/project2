@@ -29,12 +29,12 @@ const Dudas: React.FC = () => {
 	const { enqueueSnackbar } = useSnackbar();
 
 	const [questions, setQuestions] = useState<Question[]>([]);
-	const selectedQuestionToAnswer = useRef<Question | boolean>(false);
-	const catalogId = useRef<string>("");
 
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
 	const closeFormModal = () => setShowModal(false);
+
+	const selectedQuestionToAnswer = useRef<Question | boolean>(false);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -42,7 +42,7 @@ const Dudas: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["ID", "Cliente", "Pregunta"];
+	const tableHeaders = ["ID", "Cliente", "Producto ID", "Producto", "Pregunta"];
 
 	const searchOptions = ["Id", "Cliente"];
 
@@ -224,6 +224,12 @@ const Dudas: React.FC = () => {
 											<TableRow key={question.id}>
 												<TableCell align="left">{question.id}</TableCell>
 												<TableCell align="left">{question.id_client}</TableCell>
+												<TableCell align="left">
+													{question.id_product}
+												</TableCell>
+												<TableCell align="left">
+													{question.product_name}
+												</TableCell>
 												<TableCell align="left">{question.question}</TableCell>
 												{isAdmin && (
 													<TableCell align="center">

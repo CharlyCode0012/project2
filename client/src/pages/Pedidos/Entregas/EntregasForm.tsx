@@ -7,16 +7,16 @@ import {
 	Switch,
 	TextField,
 } from "@mui/material";
-import { Order } from "models/Order";
+import { Delivery } from "models/Delivery";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 
 interface OrdersFormProps {
 	onSubmit: (op: boolean) => void;
-	OrderData?: Order;
+	DeliveryData?: Delivery;
 }
 
-const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
+const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 	const { enqueueSnackbar } = useSnackbar();
 
 	async function createOrder(event: React.FormEvent<HTMLFormElement>) {
@@ -38,7 +38,7 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 				state,
 				description,
 			});
-			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Order creation
+			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Delivery creation
 		}
 		catch (error: any) {
 			enqueueSnackbar("Error al crear el catalogo", { variant: "error" });
@@ -58,7 +58,7 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 
 		console.log("name: ", name);
 		console.log("state: ", state);
-		const endpoint = `/orders/${OrderData?.id}`;
+		const endpoint = `/orders/${DeliveryData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
@@ -90,22 +90,22 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 				gap: "1rem",
 				padding: 2,
 			}}
-			onSubmit={OrderData ? updateOrder : createOrder}
+			onSubmit={DeliveryData ? updateOrder : createOrder}
 		>
 			<TextField
 				sx={{ width: "300px" }}
 				label="Folio"
 				name="folio"
 				variant="outlined"
-				defaultValue={OrderData?.folio}
+				defaultValue={DeliveryData?.folio}
 				type="text"
 				required
 				disabled
 			/>
 			<TextField
 				sx={{ width: "300px" }}
-				name="description"
-				label="Descripcion"
+				name=""
+				label=""
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"
@@ -114,7 +114,7 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 			/>
 			<FormGroup>
 				<FormControlLabel
-					control={<Switch name="state" defaultChecked={OrderData?.state} />}
+					control={<Switch name="state" defaultChecked={DeliveryData?.state} />}
 					label="Estado"
 				/>
 			</FormGroup>

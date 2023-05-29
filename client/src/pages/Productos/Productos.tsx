@@ -95,6 +95,7 @@ const Products: React.FC = () => {
 
 	async function fetchProducts() {
 		const cId = catalogId.current;
+		setProducts([]);
 		try {
 			const { data: products } = await instance.get<Product[]>(url, {
 				params: { order: "ASC", catalogId: cId },
