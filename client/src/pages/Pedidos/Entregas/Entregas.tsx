@@ -48,6 +48,7 @@ const deliveries: React.FC = () => {
 		"Cliente",
 		"Estado de Pago",
 		"Pendiente a pagar",
+		"Producto(s)",
 		"Lugar",
 		"Fecha",
 		"Entregado",
@@ -267,26 +268,27 @@ const deliveries: React.FC = () => {
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										confirmDeliveries?.map((Delivery) => (
-											<TableRow key={Delivery.id}>
-												<TableCell align="left">{Delivery.folio}</TableCell>
-												<TableCell align="left">{Delivery.id_client}</TableCell>
+										confirmDeliveries?.map((delivery) => (
+											<TableRow key={delivery.id}>
+												<TableCell align="left">{delivery.folio}</TableCell>
+												<TableCell align="left">{delivery.id_client}</TableCell>
 												<TableCell align="left">
-													{Delivery.order_state}
+													{delivery.order_state}
 												</TableCell>
-												<TableCell align="left">{Delivery.rest}</TableCell>
-												<TableCell align="left">{Delivery.place}</TableCell>
+												<TableCell align="left">{delivery.rest}</TableCell>
+												<TableCell align="left">{delivery.key_word}</TableCell>
+												<TableCell align="left">{delivery.place}</TableCell>
 												<TableCell align="left">
-													{Delivery.date_delivery
-														? Delivery.date_delivery.toString()
+													{delivery.date_delivery
+														? delivery.date_delivery.toString()
 														: ""}
 												</TableCell>
 												<TableCell align="left">
-													{Delivery.state ? "Entregado" : "Sin Entregar"}
+													{delivery.state ? "Entregado" : "Sin Entregar"}
 												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(Delivery)}>
+														<IconButton onClick={() => handleEdit(delivery)}>
 															<Edit fontSize="inherit" />
 														</IconButton>
 													</TableCell>

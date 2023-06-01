@@ -2,16 +2,14 @@ import React from "react";
 import {
 	Box,
 	Button,
-	FormControlLabel,
 	FormGroup,
 	InputLabel,
 	MenuItem,
 	Select,
-	Switch,
 	TextField,
 } from "@mui/material";
 import { Order } from "models/Order";
-import { instance } from "helper/API";
+import { instance, instanceBot } from "helper/API";
 import { useSnackbar } from "notistack";
 
 interface OrdersFormProps {
@@ -24,37 +22,9 @@ const orderSate = ["Pagado", "Abonado", "NA"];
 const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 	const { enqueueSnackbar } = useSnackbar();
 
-	const isNumeric = (value: string) => {
-		const num = 0;
+	function isNumeric(value: string): boolean {
 		// Utiliza una expresión regular para verificar si el valor es numérico
 		return /^\d*(\.\d{1})?\d{0,1}$/.test(value);
-	};
-
-	async function createOrder(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-
-		// Get payment method data from the form
-		const data = new FormData(event.currentTarget);
-		const amount = data.get("amount")?.toString();
-		const state = data.get("state")?.toString();
-
-		console.log("state: ", state);
-
-		if (!isNumeric(amount ?? ""))
-			return enqueueSnackbar("El precio no es numerico", { variant: "error" });
-
-		try {
-			await instance.post("/order", {
-				id: Date.now().toString(),
-				state,
-				amount,
-			});
-			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Order creation
-		}
-		catch (error: any) {
-			enqueueSnackbar("Error al crear el catalogo", { variant: "error" });
-			console.log(error);
-		}
 	}
 
 	async function updateOrder(event: React.FormEvent<HTMLFormElement>) {
@@ -67,7 +37,7 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 		const state = data.get("state")?.toString();
 
 		console.log("state: ", state, "folio: ", folio);
-		const endpoint = `/order/${OrderData?.id}`;
+		const endpoint = `/orders/${OrderData?.id}`;
 
 		if (!isNumeric(amount ?? ""))
 			return enqueueSnackbar("El precio no es numerico", { variant: "error" });
@@ -81,6 +51,14 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 				},
 				{ params: { folio } }
 			);
+			if (state !== "NA") {
+				instanceBot.post("/sendConfirmDate", {
+					folio,
+					message: "Se ha aprobado tu pedido",
+					to: OrderData?.id_client,
+				});
+			}
+
 			onSubmit(true);
 		}
 		catch (error: any) {
@@ -103,7 +81,7 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, OrderData }) => {
 				gap: "1rem",
 				padding: 2,
 			}}
-			onSubmit={OrderData ? updateOrder : createOrder}
+			onSubmit={updateOrder}
 		>
 			<TextField
 				sx={{ width: "300px" }}

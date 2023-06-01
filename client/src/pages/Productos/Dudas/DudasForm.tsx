@@ -33,7 +33,14 @@ const DudasForm: React.FC<DudasFormProps> = ({ onSubmit, questionData }) => {
 				to: questionData?.id_client ?? "",
 			});
 
-			await instanceBot.post("/send", {
+			/* await instanceBot.post("/sendAnswer", {
+				product: questionData?.product_name,
+				answer,
+				to: questionData?.id_client ?? "",
+			}); */
+
+			await instanceBot.post("/sendAnswer", {
+				question: questionData?.question,
 				product: questionData?.product_name,
 				answer,
 				to: questionData?.id_client ?? "",

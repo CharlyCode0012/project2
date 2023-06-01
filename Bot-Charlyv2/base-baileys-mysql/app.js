@@ -11,11 +11,13 @@ const MySQLAdapter = require("@bot-whatsapp/database/mysql");
 
 const cors = require("cors");
 const express = require("express");
+const app = express();
 const router = require("express").Router();
 const bodyParser = require("body-parser");
-
-const app = express();
 require("dotenv").config();
+
+const adapterProvider = createProvider(BaileysProvider);
+
 
 /**
  * Declaramos las conexiones de MySQL
@@ -25,6 +27,49 @@ const MYSQL_DB_USER = process.env.DB_USER;
 const MYSQL_DB_PASSWORD = process.env.DB_PASSWORD;
 const MYSQL_DB_NAME = process.env.DB_DATABASE;
 const MYSQL_DB_PORT = process.env.DB_PORT;
+
+/**
+ * Aqui van las funciones para las peticiones del bot
+ */
+
+async function sendAnswer(to, answer, question, product){
+  const message = `Duda que solicitaste: ${question}\n\n` +
+  `Producto: *${product}*\n\n` + `Respuesta: ${answer}`;
+
+    try {
+      
+      const modProvider = await adapterProvider.getInstance();
+      await modProvider.sendMessage(`521${to}@s.whatsapp.net`, { text: message });
+
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+}
+
+ //TO DO validate that the date_order withthe folio not exists
+  /**TO DO remove the numbers 521 from sendMessage, because the ctx of addAnswer contains a property
+   * named 'from' that contains the cellphone number the client in the form:S '521XXXXXXXXXX'.
+  */
+
+async function sendConfirmDate(to, text, folio){
+  const message = `${text}\n` +
+  `El folio es: *${folio}*\n\n` + 
+  `Para ver sus productos mande *folio*\n`+ 
+  `Para agendar una fecha de entrega envíe *agendar*`;
+
+    try {
+      
+      const modProvider = await adapterProvider.getInstance();
+      await modProvider.sendMessage(`521${to}@s.whatsapp.net`, { text: message });
+
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+}
+
+
 
 /**
  * Aqui declaramos los flujos hijos, los flujos se declaran de atras para adelante, es decir que si tienes un flujo de este tipo:
@@ -37,6 +82,19 @@ const MYSQL_DB_PORT = process.env.DB_PORT;
  *
  * Primero declaras los submenus 1.1 y 2.1, luego el 1 y 2 y al final el principal.
  */
+const flowScheduleDate = addKeyword(["Agendar", "Agendar fecha", "Agenda"]).addAnswer(
+  [
+    "Ingrese una fecha en el formato",
+    "*AAAA-MM-DD*\n",
+    "Ingrese la fecha:"
+  ],
+  {capture: true},
+  (ctx, {flowDynamic}) =>{
+    console.log(ctx);
+  }
+);
+
+
 const flowCatalogos = addKeyword(["1", "Catalogo"]).addAnswer([
   "Esoty obteniendo el cataloog, por favor espere...",
 ]);
@@ -88,8 +146,8 @@ const main = async () => {
     port: MYSQL_DB_PORT,
   });
 
-  const adapterFlow = createFlow([flowPrincipal]);
-  const adapterProvider = createProvider(BaileysProvider);
+  const adapterFlow = createFlow([flowPrincipal, flowScheduleDate]);
+ 
 
   createBot({
     flow: adapterFlow,
@@ -99,21 +157,24 @@ const main = async () => {
 
   QRPortalWeb();
 
-  router.post("/send", async (req, res) => {
-    const { answer, to, product } = req.body ?? "Hola";
-    console.log("answer: ", answer, "Cliente:", to);
-    const message = ` Respuesta a la duda que solicitaste\n *${product}:* ${answer}`;
-
-    if (typeof answer !== 'string') {
-      answer = answer.toString();
-    }
-
+  router.post("/sendAnswer", async (req, res) => {
+    const { question,answer, to, product } = req.body;
     try {
       
-      const modProvider = await adapterProvider.getInstance();
-      await modProvider.sendMessage(`521${to}@s.whatsapp.net`, { text: message });
+      await sendAnswer(to, answer, question, product);
       res.status(220).send("Se envio mensaje");
-      console.log("sen envio");
+    } catch (error) {
+      res.send(error);
+      console.log(error);
+    }
+  });
+
+  router.post("/sendConfirmDate", async (req, res) => {
+    const { folio, message, to} = req.body;
+    try {
+      
+      await sendConfirmDate(to, message, folio);
+      res.status(220).send("Se envio mensaje");
     } catch (error) {
       res.send(error);
       console.log(error);
@@ -123,13 +184,15 @@ const main = async () => {
   app.use(cors({ origin: "*" }));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(router);
+  
 
   //Router logger, remove later
   app.use((req, res, next) => {
     console.log("\x1b[33m%s\x1b[0m", `=> ${req.url}`);
     next();
   });
+
+  app.use(router);
 
   app.listen(process.env.PORT, () => {
     console.log("=========================");
@@ -140,4 +203,5 @@ const main = async () => {
 };
 
 main();
+
 
