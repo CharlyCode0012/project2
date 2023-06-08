@@ -47,7 +47,7 @@ const Categories: React.FC = () => {
 
 	const tableHeaders = ["ID", "Nombre", "Estado"];
 
-	const searchOptions = ["Name", "State"];
+	const searchOptions = ["Estado", "Nombre"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -99,7 +99,7 @@ const Categories: React.FC = () => {
 	}
 
 	async function deleteCategory(category: Category) {
-		const { name, id } = category;
+		const { category_name, id } = category;
 		const deletedCategoryID: number = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
@@ -125,12 +125,14 @@ const Categories: React.FC = () => {
 					);
 					setCategories(newCategories);
 				}
-				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
+				enqueueSnackbar(`Se elimino exitosamente ${category_name}`, {
 					variant: "success",
 				});
 			}
 			catch (error: any) {
-				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
+				enqueueSnackbar(`Error al eliminar la ${category_name}`, {
+					variant: "error",
+				});
 				alert(
 					`Descripcion del error: ${error.message}\nEstado: ${
 						error?.status ?? 500
@@ -149,7 +151,7 @@ const Categories: React.FC = () => {
 			let categories: Category[];
 
 			switch (filter) {
-			case "Name":
+			case "Nombre":
 				categories = (
 					await instance.get<Category[]>(
 						`/categories/categoryByName/${search}`,
@@ -160,7 +162,7 @@ const Categories: React.FC = () => {
 				).data;
 				break;
 
-			case "State":
+			case "Estado":
 				categories = (
 					await instance.get<Category[]>(
 						`/categories/categoryByState/${search}`,

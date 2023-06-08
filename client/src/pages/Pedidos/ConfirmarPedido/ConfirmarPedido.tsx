@@ -54,7 +54,7 @@ const orders: React.FC = () => {
 		"Estado",
 	];
 
-	const searchOptions = ["Lugar", "Fecha", "Estado"];
+	const searchOptions = ["Estado", "Fecha", "Folio", "Lugar"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -80,7 +80,7 @@ const orders: React.FC = () => {
 			setConfirmOrders(orders);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las ordenes", {
+			enqueueSnackbar("Hubo un error al mostrar los pedidos", {
 				variant: "error",
 			});
 		}
@@ -176,6 +176,14 @@ const orders: React.FC = () => {
 				).data;
 				break;
 
+			case "Folio":
+				orders = (
+					await instance.get<Order[]>("/orders/searchByFolio", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
 			default:
 				orders = (
 					await instance.get<Order[]>(url, {
@@ -188,7 +196,7 @@ const orders: React.FC = () => {
 			setConfirmOrders(orders);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los catalogos", {
+			enqueueSnackbar("Hubo un error al mostrar los pedidos", {
 				variant: "error",
 			});
 		}

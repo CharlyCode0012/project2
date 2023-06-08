@@ -125,24 +125,22 @@ const Catalogs: React.FC = () => {
 	) {
 		try {
 			let Catalogs: Catalog[];
-
+			let state;
 			switch (filter) {
 			case "Nombre":
 				Catalogs = (
-					await instance.get<Catalog[]>(`/catalogs/catalogByName/${search}`, {
-						params: { order },
+					await instance.get<Catalog[]>("/catalogs/searchByName", {
+						params: { order, search },
 					})
 				).data;
 				break;
 
 			case "Estado":
+				state = search.toLowerCase() === "activada" ? 1 : 0;
 				Catalogs = (
-					await instance.get<Catalog[]>(
-						`/catalogs/catalogByState/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Catalog[]>("/catalogs/searchByState", {
+						params: { order, search: state },
+					})
 				).data;
 				break;
 

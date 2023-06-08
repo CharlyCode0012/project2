@@ -44,7 +44,7 @@ const Dudas: React.FC = () => {
 
 	const tableHeaders = ["ID", "Cliente", "Producto ID", "Producto", "Pregunta"];
 
-	const searchOptions = ["Id", "Cliente"];
+	const searchOptions = ["Cliente", "Producto"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -120,21 +120,18 @@ const Dudas: React.FC = () => {
 			let Dudas: Question[];
 
 			switch (filter) {
-			case "Nombre":
+			case "Cliente":
 				Dudas = (
-					await instance.get<Question[]>(
-						`/questions/productByName/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Question[]>("/questions/searchByClientID", {
+						params: { order, search },
+					})
 				).data;
 				break;
 
-			case "Estado":
+			case "Producto":
 				Dudas = (
-					await instance.get<Question[]>(`/questions/productBy/${search}`, {
-						params: { order },
+					await instance.get<Question[]>("/questions/searchByProduct", {
+						params: { order, search },
 					})
 				).data;
 				break;

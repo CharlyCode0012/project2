@@ -54,7 +54,7 @@ const deliveries: React.FC = () => {
 		"Entregado",
 	];
 
-	const searchOptions = ["Lugar", "Fecha", "Estado"];
+	const searchOptions = ["Estado", "Fecha", "Folio", "Lugar"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -78,7 +78,7 @@ const deliveries: React.FC = () => {
 			setConfirmDeliveries(deliveries);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar las catalogos", {
+			enqueueSnackbar("Hubo un error al mostrar las entregas", {
 				variant: "error",
 			});
 		}
@@ -151,38 +151,38 @@ const deliveries: React.FC = () => {
 			let deliveries: Delivery[];
 
 			switch (filter) {
-			case "Lugar":
-				deliveries = (
-					await instance.get<Delivery[]>(
-						`/deliveries/searchByPlace/${search}`,
-						{
-							params: { order },
-						}
-					)
-				).data;
-				break;
-
 			case "Estado":
 				deliveries = (
-					await instance.get<Delivery[]>(
-						`/deliveries/searchByState/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Delivery[]>("/deliveries/searchByState", {
+						params: { order, search },
+					})
 				).data;
 				break;
 
 			case "Fecha":
 				deliveries = (
-					await instance.get<Delivery[]>(
-						`/deliveries/searchByDate/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Delivery[]>("/deliveries/searchByDate", {
+						params: { order, search },
+					})
 				).data;
 
+				break;
+
+			case "Folio":
+				deliveries = (
+					await instance.get<Delivery[]>("/deliveries/searchByFolio", {
+						params: { order, search },
+					})
+				).data;
+
+				break;
+
+			case "Lugar":
+				deliveries = (
+					await instance.get<Delivery[]>("/deliveries/searchByPlace", {
+						params: { order, search },
+					})
+				).data;
 				break;
 
 			default:
@@ -197,7 +197,7 @@ const deliveries: React.FC = () => {
 			setConfirmDeliveries(deliveries);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los catalogos", {
+			enqueueSnackbar("Hubo un error al mostrar las entregas", {
 				variant: "error",
 			});
 		}

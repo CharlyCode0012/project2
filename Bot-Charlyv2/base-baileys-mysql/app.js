@@ -18,7 +18,8 @@ require("dotenv").config();
 
 const adapterProvider = createProvider(BaileysProvider);
 
-
+const instance = require('./src/request/instance.js');
+const regexDate = /^(?:(?:(?:0?[1-9]|1\d|2[0-8])[/](?:0?[1-9]|1[0-2])|(?:29|30)[/](?:0?[13-9]|1[0-2])|31[/](?:0?[13578]|1[02]))[/](?:0{2,3}[1-9]|0{1,2}[1-9]\d|0?[1-9]\d{2}|[1-9]\d{3})|29[/]0?2[/](?:\d{1,2}(?:0[48]|[2468][048]|[13579][26])|(?:0?[48]|[13579][26]|[2468][048])00))$/;
 /**
  * Declaramos las conexiones de MySQL
  */
@@ -31,6 +32,8 @@ const MYSQL_DB_PORT = process.env.DB_PORT;
 /**
  * Aqui van las funciones para las peticiones del bot
  */
+
+let folio, date_delivery;
 
 async function sendAnswer(to, answer, question, product){
   const message = `Duda que solicitaste: ${question}\n\n` +
@@ -84,13 +87,35 @@ async function sendConfirmDate(to, text, folio){
  */
 const flowScheduleDate = addKeyword(["Agendar", "Agendar fecha", "Agenda"]).addAnswer(
   [
-    "Ingrese una fecha en el formato",
-    "*AAAA-MM-DD*\n",
-    "Ingrese la fecha:"
-  ],
+    "Ingrese el folio para agendar cita: ",
+  ], 
   {capture: true},
-  (ctx, {flowDynamic}) =>{
-    console.log(ctx);
+  async (ctx, {fallBack, flowDynamic}) => {
+    const getFolio = async () => {
+      try {
+        const isFolio = await instance.get('/deliveries/searchByFolio', {params: {search: ctx.body}});
+        if(isFolio)
+          folio = ctx.body;
+        else
+          return fallBack();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    await flowDynamic(getFolio());
+  }
+).addAnswer(["Ingrese la fecha en formato *DD/MM/AAAA*:"],
+  {capture: true},
+  async (ctx, {fallBack, flowDynamic}) => {
+    date_delivery = ctx.body;
+    if(!regexDate.test(date_delivery))
+      return fallBack();
+    try {
+      await instance.put(`/deliveries/folio/${folio}`, {date_delivery});
+    } catch (error) {
+      console.error(error);
+    }
   }
 );
 

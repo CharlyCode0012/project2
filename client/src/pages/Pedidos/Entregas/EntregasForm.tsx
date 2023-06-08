@@ -24,24 +24,20 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
+		const folio = data.get("folio")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
-		console.log("name: ", name);
-		console.log("state: ", state);
 
 		try {
-			await instance.post("/orders", {
+			await instance.post("/deliveries", {
 				id: Date.now().toString(),
-				name,
+				folio,
 				state,
-				description,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Delivery creation
 		}
 		catch (error: any) {
-			enqueueSnackbar("Error al crear el catalogo", { variant: "error" });
+			enqueueSnackbar("Error al crear la entrega", { variant: "error" });
 			console.log(error);
 		}
 	}
@@ -51,27 +47,24 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
+		const folio = data.get("folio")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 
-		console.log("name: ", name);
 		console.log("state: ", state);
-		const endpoint = `/orders/${DeliveryData?.id}`;
+		const endpoint = `/deliveries/id/${DeliveryData?.id}`;
 
 		try {
 			console.log(`update endpoint: ${endpoint}`);
 
 			await instance.put(endpoint, {
-				name,
+				folio,
 				state,
-				description,
 			});
 			onSubmit(true);
 		}
 		catch (error: any) {
-			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
+			enqueueSnackbar("Error al actualizar la entrega", { variant: "error" });
 			alert(
 				`Descripcion del error: ${error.message}\nEstado: ${
 					error?.status ?? 500
@@ -101,16 +94,6 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 				type="text"
 				required
 				disabled
-			/>
-			<TextField
-				sx={{ width: "300px" }}
-				name=""
-				label=""
-				placeholder="Placeholder"
-				multiline
-				variant="outlined"
-				color="primary"
-				required
 			/>
 			<FormGroup>
 				<FormControlLabel

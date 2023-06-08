@@ -62,7 +62,7 @@ const Products: React.FC = () => {
 		"Imagen",
 	];
 
-	const searchOptions = ["Nombre", "Precio", "Cantidad"];
+	const searchOptions = ["Cantidad", "Nombre", "Palabra clave", "Precio"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -172,18 +172,34 @@ const Products: React.FC = () => {
 			let Products: Product[];
 
 			switch (filter) {
-			case "Nombre":
+			case "Cantidad":
 				Products = (
-					await instance.get<Product[]>(`/products/productByName/${search}`, {
-						params: { order },
+					await instance.get<Product[]>("/products/searchByStock", {
+						params: { order, search },
 					})
 				).data;
 				break;
 
-			case "Estado":
+			case "Nombre":
 				Products = (
-					await instance.get<Product[]>(`/products/productBy/${search}`, {
-						params: { order },
+					await instance.get<Product[]>("/products/searchByName", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
+			case "Palabra clave":
+				Products = (
+					await instance.get<Product[]>("/products/searchByKeyWord", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
+			case "Precio":
+				Products = (
+					await instance.get<Product[]>("/products/searchByPrice", {
+						params: { order, search },
 					})
 				).data;
 				break;
@@ -338,7 +354,7 @@ const Products: React.FC = () => {
 							)}
 							<ExcelDownloadButton apiObjective="products" />
 
-							<FormControl>
+							<FormControl sx={{ justifyContent: "flex-end" }}>
 								<InputLabel>Catalogo</InputLabel>
 								<Select
 									label="Catalogo"

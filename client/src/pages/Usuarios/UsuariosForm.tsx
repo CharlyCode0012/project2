@@ -22,10 +22,7 @@ interface UserFormProps {
 	onSubmit: (wasAnUpdate: boolean) => void;
 }
 
-const UserForm: React.FC<UserFormProps> = ({
-	userData,
-	onSubmit,
-}) => {
+const UserForm: React.FC<UserFormProps> = ({ userData, onSubmit }) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -37,13 +34,27 @@ const UserForm: React.FC<UserFormProps> = ({
 	 */
 	const [showPassword, setShowPassword] = useState(false);
 
+	const generateRandomPassword = () => {
+		const length = 10; // Longitud de la contraseña
+		const characters =
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		let newPassword = "";
+
+		for (let i = 0; i < length; i++) {
+			const randomIndex = Math.floor(Math.random() * characters.length);
+			newPassword += characters[randomIndex];
+		}
+
+		return newPassword;
+	};
+
 	/**
 	 * Takes what was filled in the form and saves a new
 	 * user in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function createUser (event: React.FormEvent<HTMLFormElement>) {
+	async function createUser(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get user data from the form
@@ -64,28 +75,29 @@ const UserForm: React.FC<UserFormProps> = ({
 				type_use: userType,
 				e_mail: email,
 				pass: password,
-				cel: cellphone
+				cel: cellphone,
 			} as User);
 
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new user creation
 		}
-
 		catch (error) {
-			if (error instanceof AxiosError && error.response?.status === 409) 
-				enqueueSnackbar("Ya hay un usuario con ese numero, intenta otro diferente", { variant: "error" });	
-				
-			else
-				enqueueSnackbar("Algo salio mal", { variant: "error" });
+			if (error instanceof AxiosError && error.response?.status === 409) {
+				enqueueSnackbar(
+					"Ya hay un usuario con ese numero, intenta otro diferente",
+					{ variant: "error" }
+				); 
+			}
+			else enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
 	/**
 	 * Takes what was filled in the form and updates the data
 	 * from the given user in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function updateUser (event: React.FormEvent<HTMLFormElement>) {
+	async function updateUser(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get user data from the form
@@ -105,18 +117,19 @@ const UserForm: React.FC<UserFormProps> = ({
 				type_use: userType,
 				e_mail: email,
 				pass: password,
-				cel: cellphone
+				cel: cellphone,
 			} as User);
 
 			onSubmit(true); // "true" tells the submission was an update
 		}
-
 		catch (error) {
-			if (error instanceof AxiosError && error.response?.status === 409) 
-				enqueueSnackbar("Ya hay un usuario con ese numero, intenta otro diferente", { variant: "error" });	
-				
-			else
-				enqueueSnackbar("Algo salio mal", { variant: "error" });
+			if (error instanceof AxiosError && error.response?.status === 409) {
+				enqueueSnackbar(
+					"Ya hay un usuario con ese numero, intenta otro diferente",
+					{ variant: "error" }
+				); 
+			}
+			else enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
 	}
 
@@ -183,7 +196,7 @@ const UserForm: React.FC<UserFormProps> = ({
 					label="Contraseña"
 					name="pass"
 					type={showPassword ? "text" : "password"}
-					defaultValue={userData?.pass}
+					defaultValue={userData?.pass ?? generateRandomPassword()}
 					endAdornment={
 						<InputAdornment position="end">
 							<IconButton
@@ -204,12 +217,16 @@ const UserForm: React.FC<UserFormProps> = ({
 				variant="outlined"
 				defaultValue={userData?.pass}
 				type="text"
-				inputProps={{ pattern: "^\\d{2}-\\d{4}-\\d{4}$", maxLength: 12, inputMode: "numeric" }}
+				inputProps={{
+					pattern: "^\\d{2}-\\d{4}-\\d{4}$",
+					maxLength: 12,
+					inputMode: "numeric",
+				}}
 				required
 			/>
 
 			<Button type="submit" variant="contained" fullWidth>
-				{ userData ? "Actualizar" : "Crear" }
+				{userData ? "Actualizar" : "Crear"}
 			</Button>
 		</Box>
 	);

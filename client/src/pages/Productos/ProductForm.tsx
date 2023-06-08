@@ -17,6 +17,8 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import { Category } from "models/Category";
 
+const regexKeyWord = /^[A-Za-z0-9\s\u00f1\u00d1]+$/g;
+
 interface ProductsFormProps {
 	onSubmit: (op: boolean) => void;
 	ProductData?: Product;
@@ -61,6 +63,12 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 		const price = data.get("price")?.toString();
 		const stock = data.get("stock")?.toString();
 
+		if (!regexKeyWord.test(key_word ?? "")) {
+			return window.alert(
+				"Recuerda que la palabra clave no acepta valores que no sean alfanumericos"
+			);
+		}
+
 		try {
 			await instance.post(
 				"/products",
@@ -92,11 +100,18 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const product_name = data.get("name")?.toString();
-		const description = data.get("description")?.toString();
-		const key_word = data.get("keyWord")?.toString();
-		const price = data.get("price")?.toString();
-		const stock = data.get("stock")?.toString();
+		const product_name = data.get("name")?.toString()?.trim();
+		const description = data.get("description")?.toString()?.trim();
+		const key_word = data.get("keyWord")?.toString()?.trim();
+		const price = data.get("price")?.toString().trim();
+		const stock = data.get("stock")?.toString().trim();
+
+		if (!regexKeyWord.test(key_word ?? "")) {
+			return window.alert(
+				"Recuerda que la palabra clave no acepta valores que no sean alfanumericos"
+			);
+		}
+
 		const productEdit = {
 			product_name,
 			description,
