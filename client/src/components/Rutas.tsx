@@ -33,9 +33,8 @@ const Rutas = () => {
 				<Route path="analisis">
 					<Route index element={<Analisis />} />;
 					<Route path="analisis-productos/*" element={<AnalisisProductos />} />
-					<Route path="analisis-clientes/" element={<AnalisisClientes />}>
-						<Route path="client/*" element={<ComprasCliente />} />
-					</Route>
+					<Route path="analisis-clientes/" element={<AnalisisClientes />} />
+					<Route path="cliente/:clientId" element={<ComprasCliente />} />;
 				</Route>
 
 				<Route path="configuracion/*" element={<Configuracion />} />

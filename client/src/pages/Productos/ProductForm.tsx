@@ -3,13 +3,10 @@ import {
 	Box,
 	Button,
 	FormControl,
-	FormControlLabel,
-	FormGroup,
 	InputLabel,
 	MenuItem,
 	Select,
 	SelectChangeEvent,
-	Switch,
 	TextField,
 } from "@mui/material";
 import { Product } from "models/Product";
@@ -23,12 +20,14 @@ interface ProductsFormProps {
 	onSubmit: (op: boolean) => void;
 	ProductData?: Product;
 	catalogId: React.MutableRefObject<string>;
+	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
 const CatalogsForm: React.FC<ProductsFormProps> = ({
 	onSubmit,
 	ProductData,
 	catalogId,
+	handleDownloadFile,
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const [categories, setCategories] = useState<Category[]>([]);
@@ -88,6 +87,7 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				}
 			);
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Product creation
+			handleDownloadFile(false);
 		}
 		catch (error: any) {
 			enqueueSnackbar("Error al crear el producto", { variant: "error" });
@@ -143,6 +143,7 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 				}
 			);
 			onSubmit(true);
+			handleDownloadFile(false);
 		}
 		catch (error: any) {
 			enqueueSnackbar(`Error al actualizar ${product_name}`, {

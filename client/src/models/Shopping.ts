@@ -1,7 +1,8 @@
 export interface Shopping {
 	id: number;
-	quantity: number;
-	date_purchase: Date;
-	id_product: string;
+	totalQuantity: number;
+	datePurchase: Date;
+	product: string;
+	keyWord: string;
 	id_client: string;
 }

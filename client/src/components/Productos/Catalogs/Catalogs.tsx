@@ -22,18 +22,12 @@ import { User } from "models/User";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
+import { FileUpload } from "@/FileUpload";
 
 const Catalogs: React.FC = () => {
 	const url = "/catalogs";
 
 	const { enqueueSnackbar } = useSnackbar();
-
-	const [Catalogs, setCatalogs] = useState<Catalog[]>([]);
-	const selectedCatalogToEdit = useRef<Catalog | boolean>(false);
-
-	const [showModal, setShowModal] = useState(false);
-	const openFormModal = () => setShowModal(true);
-	const closeFormModal = () => setShowModal(false);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -44,6 +38,15 @@ const Catalogs: React.FC = () => {
 	const tableHeaders = ["ID", "Nombre", "Descripcion", "Estado"];
 
 	const searchOptions = ["Nombre", "Estado"];
+
+	const [Catalogs, setCatalogs] = useState<Catalog[]>([]);
+	const selectedCatalogToEdit = useRef<Catalog | boolean>(false);
+
+	const [showModal, setShowModal] = useState(false);
+	const openFormModal = () => setShowModal(true);
+	const closeFormModal = () => setShowModal(false);
+
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -89,6 +92,10 @@ const Catalogs: React.FC = () => {
 		openFormModal();
 	}
 
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
 	async function createCatalog() {
 		selectedCatalogToEdit.current = false;
 		openFormModal();
@@ -111,8 +118,9 @@ const Catalogs: React.FC = () => {
 				setCatalogs((catalogs) =>
 					catalogs.filter((catalog) => catalog.id !== deleteCatalog.id)
 				);
+				handleDownloadFile(false);
 			}
-			catch (error: any) {
+			catch {
 				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
 			}
 		}
@@ -197,6 +205,7 @@ const Catalogs: React.FC = () => {
 											? selectedCatalogToEdit.current
 											: undefined
 									}
+									handleDownloadFile={handleDownloadFile}
 								></CatalogsForm>
 							</Modal>
 						)}
@@ -268,8 +277,15 @@ const Catalogs: React.FC = () => {
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
-
-								<ExcelDownloadButton apiObjective="catalogs" />
+								<ExcelDownloadButton
+									apiObjective="catalogs"
+									onDownload={() => setHasDownloadedFile(true)}
+								/>
+								<FileUpload
+									apiObjective="catalogs"
+									onUpload={fetchCatalogs}
+									disabled={!hasDownloadedFile}
+								/>
 							</Box>
 						)}
 					</Box>

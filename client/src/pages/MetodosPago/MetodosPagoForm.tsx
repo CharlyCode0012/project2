@@ -15,11 +15,13 @@ import { PaymentMethod } from "models/PaymentsMethod";
 interface PaymentMethodFormProps {
 	paymentMethodData?: PaymentMethod;
 	onSubmit: (wasAnUpdate: boolean) => void;
+	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
 const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 	paymentMethodData,
 	onSubmit,
+	handleDownloadFile,
 }) => {
 	/**
 	 * Displays notifications to the user
@@ -55,6 +57,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 			});
 
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new payment method creation
+			handleDownloadFile(false);
 		}
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
@@ -89,6 +92,7 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 			});
 
 			onSubmit(true); // "true" tells the submission was an update
+			handleDownloadFile(false);
 		}
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });

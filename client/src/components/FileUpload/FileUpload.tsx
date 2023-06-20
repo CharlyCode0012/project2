@@ -9,7 +9,11 @@ export interface FileUploadProps {
 	onUpload: () => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disabled }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+	apiObjective,
+	onUpload,
+	disabled,
+}) => {
 	/**
 	 * Displays notifications to the user
 	 */
@@ -24,7 +28,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disable
 	/**
 	 * Displays the name of the selected file
 	 */
-	function updateFilename (event: React.ChangeEvent<HTMLInputElement>) {
+	function updateFilename(event: React.ChangeEvent<HTMLInputElement>) {
 		setFilename(event.target.value.split("\\").pop() ?? "Selected File.xlsx");
 	}
 
@@ -32,22 +36,22 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disable
 	 * Takes the file selected in the form and submits it
 	 * to the server, if the info of the file was correct, the table will
 	 * update and the page will refresh.
-	 * 
+	 *
 	 * Otherwise, an error telling what happened will be displayed
-	 * 
+	 *
 	 * @param event contains the info of the file
 	 */
-	async function uploadFile (event: React.FormEvent<HTMLFormElement>) {
+	async function uploadFile(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const formData = new FormData(event.currentTarget);
 		console.log(formData);
-		
+
 		try {
 			await instance.post(`/${apiObjective}/upload`, formData, {
 				headers: {
-					"Content-Type": "multipart/form-data"
-				}
+					"Content-Type": "multipart/form-data",
+				},
 			});
 
 			onUpload(); // Refresh table with newer table values
@@ -55,7 +59,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disable
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
-
 	}
 
 	return (
@@ -87,7 +90,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ apiObjective, onUpload, disable
 					Seleccionar un archivo excel
 				</Button>
 			</label>
-			
+
 			{filename !== "" ? <Chip variant="outlined" label={filename} /> : <></>}
 
 			<Button

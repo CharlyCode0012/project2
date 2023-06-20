@@ -14,11 +14,13 @@ import { useSnackbar } from "notistack";
 interface CatalogsFormProps {
 	onSubmit: (op: boolean) => void;
 	CatalogData?: Catalog;
+	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
 const CatalogsForm: React.FC<CatalogsFormProps> = ({
 	onSubmit,
 	CatalogData,
+	handleDownloadFile,
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -40,10 +42,10 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 				description,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Catalog creation
+			handleDownloadFile(false);
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar("Error al crear el catalogo", { variant: "error" });
-			console.log(error);
 		}
 	}
 
@@ -66,14 +68,10 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 				description,
 			});
 			onSubmit(true);
+			handleDownloadFile(false);
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
 		}
 	}
 

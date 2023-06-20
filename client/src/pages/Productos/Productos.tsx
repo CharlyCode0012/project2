@@ -29,6 +29,7 @@ import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarProduct from "@/Navbar/NavbarProduct";
 import { Catalog } from "models/Menu";
+import { FileUpload } from "@/FileUpload";
 
 const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
 
@@ -41,6 +42,8 @@ const Products: React.FC = () => {
 	const [products, setProducts] = useState<Product[]>([]);
 	const selectedProductToEdit = useRef<Product | boolean>(false);
 	const catalogId = useRef<string>("");
+
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
 
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
@@ -160,6 +163,7 @@ const Products: React.FC = () => {
 					}`
 				);
 			}
+			handleDownloadFile(false);
 		}
 	}
 
@@ -231,6 +235,10 @@ const Products: React.FC = () => {
 		if (catalogId.current) fetchProducts();
 	}
 
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
 	return (
 		<>
 			<NavbarProduct />
@@ -268,6 +276,7 @@ const Products: React.FC = () => {
 											: undefined
 									}
 									catalogId={catalogId}
+									handleDownloadFile={handleDownloadFile}
 								></ProductForm>
 							</Modal>
 						)}
@@ -352,9 +361,7 @@ const Products: React.FC = () => {
 									<AddCircle fontSize="inherit" />
 								</IconButton>
 							)}
-							<ExcelDownloadButton apiObjective="products" />
-
-							<FormControl sx={{ justifyContent: "flex-end" }}>
+							<FormControl sx={{ alignSelf: "flex-start" }}>
 								<InputLabel>Catalogo</InputLabel>
 								<Select
 									label="Catalogo"
@@ -372,6 +379,15 @@ const Products: React.FC = () => {
 									)}
 								</Select>
 							</FormControl>
+							<ExcelDownloadButton
+								apiObjective="products"
+								onDownload={() => setHasDownloadedFile(true)}
+							/>
+							<FileUpload
+								apiObjective="products"
+								onUpload={fetchCatalogs}
+								disabled={!hasDownloadedFile}
+							/>
 						</Box>
 					</Box>
 				</Box>

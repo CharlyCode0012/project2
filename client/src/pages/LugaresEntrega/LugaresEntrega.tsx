@@ -129,6 +129,10 @@ const LugaresEntrega = () => {
 		}
 	}
 
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
 	/**
 	 * Gets called when a place was created or edited, closes the modal,
 	 * notifies the user and refreshes the table
@@ -169,15 +173,23 @@ const LugaresEntrega = () => {
 	 * @param place data from the place that will be deleted
 	 */
 	async function deleteDeliveryPlace(deletedPlace: DisplayedDeliveryPlace) {
-		try {
-			await instance.delete(`/places/${deletedPlace.id}`);
-			enqueueSnackbar("Lugar eliminado con exito", { variant: "success" });
-			setDeliveryPlaces((deliveryPlaces) =>
-				deliveryPlaces.filter((place) => place.id !== deletedPlace.id)
-			);
-		}
-		catch {
-			enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+		const { id } = deletedPlace;
+
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar al lugar: ${id}`
+		);
+		if (isDelete) {
+			try {
+				await instance.delete(`/places/${deletedPlace.id}`);
+				enqueueSnackbar("Lugar eliminado con exito", { variant: "success" });
+				setDeliveryPlaces((deliveryPlaces) =>
+					deliveryPlaces.filter((place) => place.id !== deletedPlace.id)
+				);
+				handleDownloadFile(false);
+			}
+			catch {
+				enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+			}
 		}
 	}
 
@@ -290,6 +302,7 @@ const LugaresEntrega = () => {
 											? selectedPlaceToEdit.current
 											: undefined
 									}
+									handleDownloadFile={handleDownloadFile}
 								></DeliveryPlaceForm>
 							</Modal>
 						)}

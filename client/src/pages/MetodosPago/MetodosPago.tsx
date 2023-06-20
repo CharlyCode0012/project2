@@ -120,6 +120,10 @@ const LugaresEntrega = () => {
 		fetchPaymentMethods();
 	}
 
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
 	/**
 	 * When called, establishes that there is nothing to edit
 	 * (as a new one is being created) and opens the modal
@@ -145,17 +149,26 @@ const LugaresEntrega = () => {
 	 * @param paymentMethod data from the method that will be deleted
 	 */
 	async function deletePaymentMethod(deletedMethod: PaymentMethod) {
-		try {
-			await instance.delete(`/payment_methods/${deletedMethod.id}`);
-			enqueueSnackbar("Metodo de pago eliminado con exito", {
-				variant: "success",
-			});
-			setPaymentMethods((paymentMethods) =>
-				paymentMethods.filter((method) => method.id !== deletedMethod.id)
-			);
-		}
-		catch {
-			enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+		const { name } = deletedMethod;
+
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar a: ${name}`
+		);
+
+		if (isDelete) {
+			try {
+				await instance.delete(`/payment_methods/${deletedMethod.id}`);
+				enqueueSnackbar("Metodo de pago eliminado con exito", {
+					variant: "success",
+				});
+				setPaymentMethods((paymentMethods) =>
+					paymentMethods.filter((method) => method.id !== deletedMethod.id)
+				);
+				handleDownloadFile(false);
+			}
+			catch {
+				enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+			}
 		}
 	}
 
@@ -280,6 +293,7 @@ const LugaresEntrega = () => {
 											? selectedMethodToEdit.current
 											: undefined
 									}
+									handleDownloadFile={handleDownloadFile}
 								></PaymentMethodForm>
 							</Modal>
 						)}

@@ -10,9 +10,9 @@ import {
 	TableSortLabel,
 	Container,
 } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./shopping.css";
-import { Shopping } from "models/Shopping";
+import { Client } from "models/Client";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 // import Modal from "@/Modal/Modal";
 // import ProductForm from "./ProductForm";
@@ -22,12 +22,11 @@ import { NavLink } from "react-router-dom";
 import NavbarAnalisis from "@/Navbar/NavbarAnalisis";
 
 const AnalisisClientes: React.FC = () => {
-	const url = "/products";
+	const url = "/clients";
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [shoppings, setShopping] = useState<Shopping[]>([]);
-	const selectedShoppingToEdit = useRef<Shopping | boolean>(false);
+	const [shoppings, setShopping] = useState<Client[]>([]);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -40,12 +39,12 @@ const AnalisisClientes: React.FC = () => {
 	const searchOptions = ["Celular", "Cantidad"];
 
 	useEffect(() => {
-		// fetchProducts();
+		fetchClients();
 	}, []);
 
-	async function fetchProducts() {
+	async function fetchClients() {
 		try {
-			const { data: shoppings } = await instance.get<Shopping[]>(url);
+			const { data: shoppings } = await instance.get<Client[]>(url);
 			setShopping(shoppings);
 		}
 		catch {
@@ -55,76 +54,26 @@ const AnalisisClientes: React.FC = () => {
 		}
 	}
 
-	function onProductSubmitted(wasUpdates: boolean) {
-		enqueueSnackbar(
-			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
-			{
-				variant: "success",
-			}
-		);
-		fetchProducts();
-	}
-
-	async function deleteShopping(Shopping: Shopping) {
-		const { id } = Shopping;
-		const deleteShoppingID: number = id;
-		// TODO: Display loader
-		const endpoint = `${url}/${deleteShoppingID}`;
-
-		try {
-			console.log(`delete endpoint: ${endpoint}`);
-
-			const res = await instance.delete(endpoint);
-			const dataCatalog = await res.data;
-
-			if (dataCatalog?.err) {
-				const message = dataCatalog?.statusText;
-				const status = dataCatalog?.status;
-				throw { message, status };
-			}
-			else {
-				const newCatalogs = shoppings.filter(
-					(CatalogD) => CatalogD.id !== deleteShoppingID
-				);
-				setShopping(newCatalogs);
-			}
-			enqueueSnackbar(`Se elimino exitosamente ${name}`, {
-				variant: "success",
-			});
-		}
-		catch (error: any) {
-			enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
-		}
-	}
-
 	async function onSubmitSearch(
 		filter: string,
 		search: string,
 		order: QueryOrder
 	) {
 		try {
-			let shoppings: Shopping[];
+			let shoppings: Client[];
 
 			switch (filter) {
 			case "Nombre":
 				shoppings = (
-					await instance.get<Shopping[]>(
-						`/products/productByName/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<Client[]>(`/products/productByName/${search}`, {
+						params: { order },
+					})
 				).data;
 				break;
 
 			case "Estado":
 				shoppings = (
-					await instance.get<Shopping[]>(`/products/productBy/${search}`, {
+					await instance.get<Client[]>(`/products/productBy/${search}`, {
 						params: { order },
 					})
 				).data;
@@ -132,7 +81,7 @@ const AnalisisClientes: React.FC = () => {
 
 			default:
 				shoppings = (
-					await instance.get<Shopping[]>(url, {
+					await instance.get<Client[]>(url, {
 						params: { order },
 					})
 				).data;
@@ -154,8 +103,6 @@ const AnalisisClientes: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
@@ -172,6 +119,7 @@ const AnalisisClientes: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
+						<h1>Analisis Clientes</h1>
 						<TableContainer
 							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}
@@ -194,17 +142,18 @@ const AnalisisClientes: React.FC = () => {
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										shoppings?.map((Shopping) => (
-											<TableRow key={Shopping.id}>
-												<TableCell align="left">{Shopping.id}</TableCell>
+										shoppings?.map((Client) => (
+											<TableRow key={Client.id}>
+												<TableCell align="left">{Client.id}</TableCell>
 												<TableCell align="left">
 													<NavLink
-														to={`/analisis/analisis-clientes/client/${Shopping.id_client}`}
+														to={`/analisis/cliente/${Client.number}`}
+														style={{ color: "inherit", textDecoration: "none" }}
 													>
-														{Shopping.id_client}
+														{Client.number}
 													</NavLink>
 												</TableCell>
-												<TableCell align="left">{Shopping.quantity}</TableCell>
+												<TableCell align="left">{Client.purcharses}</TableCell>
 											</TableRow>
 										))
 									)}

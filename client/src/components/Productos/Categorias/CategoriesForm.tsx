@@ -14,11 +14,13 @@ import { useSnackbar } from "notistack";
 interface CategoriesFormProps {
 	onSubmit: (op: boolean) => void;
 	categoryData?: Category;
+	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
 const CategoriesForm: React.FC<CategoriesFormProps> = ({
 	onSubmit,
 	categoryData,
+	handleDownloadFile,
 }) => {
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -40,10 +42,10 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 				state,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Category creation
+			handleDownloadFile(false);
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar("Error al crear la categoría", { variant: "error" });
-			console.log(error);
 		}
 	}
 
@@ -68,14 +70,10 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 				state,
 			});
 			onSubmit(true);
+			handleDownloadFile(false);
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
 		}
 	}
 

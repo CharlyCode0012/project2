@@ -11,8 +11,9 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import { AccountCircle, ArrowDropDown, Home } from "@mui/icons-material";
+import { AccountCircle, Home } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
+import { ButtonTheme } from "@/Theme/ButtonTheme";
 
 type NavPage = {
 	name: string;
@@ -115,6 +116,7 @@ const NavbarAnalisis = () => {
 								))}
 							</Menu>
 						</Box>
+						<ButtonTheme />
 					</Toolbar>
 				</Container>
 			</AppBar>

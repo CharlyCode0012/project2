@@ -9,24 +9,28 @@ import {
 	TableRow,
 	TableSortLabel,
 	Container,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	SelectChangeEvent,
 } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import { SoldProduct } from "models/SoldProduct";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 // import Modal from "@/Modal/Modal";
 // import ProductForm from "./ProductForm";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
-import { NavLink } from "react-router-dom";
 import NavbarAnalisis from "@/Navbar/NavbarAnalisis";
 
 const AnalisisClientes: React.FC = () => {
-	const url = "/products";
+	const url = "/sold_products";
 
 	const { enqueueSnackbar } = useSnackbar();
 
 	const [soldProducts, setSoldProducts] = useState<SoldProduct[]>([]);
-	const selectedShoppingToEdit = useRef<SoldProduct | boolean>(false);
+	const timePeriodSelected = useRef<string>("1 semana");
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -34,17 +38,23 @@ const AnalisisClientes: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["Id", "Categoria", "Producto", "Cantidad de compras"];
+	const tableHeaders = [
+		"#",
+		"Producto Id",
+		"Categoria",
+		"Producto",
+		"Cantidad de compras",
+	];
 
-	const searchOptions = ["Categoria", "Producto", "Cantidad de Compras"];
+	const searchOptions = ["Cantidad de Compras"];
 
-	useEffect(() => {
-		// fetchProducts();
-	}, []);
+	const timePeriods = ["1 semana", "1 mes", "2 meses", "6 meses"];
 
-	async function fetchProducts() {
+	async function fetchSoldProducts() {
 		try {
-			const { data: soldProducts } = await instance.get<SoldProduct[]>(url);
+			const { data: soldProducts } = await instance.get<SoldProduct[]>(url, {
+				params: { timePeriod: timePeriodSelected.current },
+			});
 			setSoldProducts(soldProducts);
 		}
 		catch {
@@ -54,52 +64,9 @@ const AnalisisClientes: React.FC = () => {
 		}
 	}
 
-	function onProductSubmitted(wasUpdates: boolean) {
-		enqueueSnackbar(
-			wasUpdates ? "Se actualizo exitosamente" : "Se creo con exito",
-			{
-				variant: "success",
-			}
-		);
-		fetchProducts();
-	}
-
-	async function deleteShopping(SoldProduct: SoldProduct) {
-		const { id } = SoldProduct;
-		const deleteShoppingID: number = id;
-		// TODO: Display loader
-		const endpoint = `${url}/${deleteShoppingID}`;
-
-		try {
-			console.log(`delete endpoint: ${endpoint}`);
-
-			const res = await instance.delete(endpoint);
-			const dataCatalog = await res.data;
-
-			if (dataCatalog?.err) {
-				const message = dataCatalog?.statusText;
-				const status = dataCatalog?.status;
-				throw { message, status };
-			}
-			else {
-				const newCatalogs = soldProducts.filter(
-					(CatalogD) => CatalogD.id !== deleteShoppingID
-				);
-				setSoldProducts(newCatalogs);
-			}
-			enqueueSnackbar(`Se elimino exitosamente ${name}`, {
-				variant: "success",
-			});
-		}
-		catch (error: any) {
-			enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
-		}
-	}
+	useEffect(() => {
+		fetchSoldProducts();
+	}, []);
 
 	async function onSubmitSearch(
 		filter: string,
@@ -110,42 +77,18 @@ const AnalisisClientes: React.FC = () => {
 			let soldProducts: SoldProduct[];
 
 			switch (filter) {
-			case "Categoria":
-				soldProducts = (
-					await instance.get<SoldProduct[]>(
-						`/products/productByCategory/${search}`,
-						{
-							params: { order },
-						}
-					)
-				).data;
-				break;
-
-			case "Producto":
-				soldProducts = (
-					await instance.get<SoldProduct[]>(
-						`/products/productByName/${search}`,
-						{
-							params: { order },
-						}
-					)
-				).data;
-				break;
 			case "Cantidad de Compras":
 				soldProducts = (
-					await instance.get<SoldProduct[]>(
-						`/products/productByQuantity/${search}`,
-						{
-							params: { order },
-						}
-					)
+					await instance.get<SoldProduct[]>("/sold_products/searchByStock", {
+						params: { order, timePeriod: timePeriodSelected.current, search },
+					})
 				).data;
 				break;
 
 			default:
 				soldProducts = (
 					await instance.get<SoldProduct[]>(url, {
-						params: { order },
+						params: { order, timePeriod: timePeriodSelected.current },
 					})
 				).data;
 				break;
@@ -160,14 +103,20 @@ const AnalisisClientes: React.FC = () => {
 		}
 	}
 
+	function handleTimePeriodChange(
+		event: SelectChangeEvent<string>,
+		child: ReactNode
+	): void {
+		timePeriodSelected.current = event.target.value as string;
+		// fetchSoldProducts();
+	}
+
 	return (
 		<>
 			<NavbarAnalisis />
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
@@ -184,6 +133,7 @@ const AnalisisClientes: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
+						<h1>Analisis Productos</h1>
 						<TableContainer
 							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}
@@ -206,18 +156,18 @@ const AnalisisClientes: React.FC = () => {
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										soldProducts?.map((SoldProduct) => (
+										soldProducts?.map((SoldProduct, index) => (
 											<TableRow key={SoldProduct.id}>
+												<TableCell align="left">{index + 1}</TableCell>
 												<TableCell align="left">{SoldProduct.id}</TableCell>
 												<TableCell align="left">
-													{SoldProduct.id_category}
-												</TableCell>
-												;
-												<TableCell align="left">
-													{SoldProduct.id_product}
+													{SoldProduct.category}
 												</TableCell>
 												<TableCell align="left">
-													{SoldProduct.quantity}
+													{SoldProduct.product}
+												</TableCell>
+												<TableCell align="left">
+													{SoldProduct.total_sold}
 												</TableCell>
 											</TableRow>
 										))
@@ -225,6 +175,28 @@ const AnalisisClientes: React.FC = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: "10px",
+							}}
+						>
+							<FormControl sx={{ justifyContent: "flex-end" }}>
+								<InputLabel>Periodo</InputLabel>
+								<Select
+									label="Periodo"
+									sx={{ width: "300px", color: "inherit" }}
+									onChange={handleTimePeriodChange}
+								>
+									{timePeriods?.map((time) => (
+										<MenuItem key={time} value={time}>
+											{time}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
 					</Box>
 				</Box>
 			</Container>

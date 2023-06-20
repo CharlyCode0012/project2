@@ -30,6 +30,11 @@ export const Config: React.FC = () => {
 						gap: "10px",
 					}}
 				>
+					<img
+						src={"http://127.0.0.1:3500/QR"}
+						style={{ width: "250px", height: "250px" }}
+						alt="Codigo QR"
+					></img>
 					<Button variant="contained" color="error" fullWidth onClick={onClose}>
 						Cerrar Sesion
 					</Button>

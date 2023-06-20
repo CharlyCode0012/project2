@@ -9,6 +9,8 @@ const QRPortalWeb = require("@bot-whatsapp/portal");
 const BaileysProvider = require("@bot-whatsapp/provider/baileys");
 const MySQLAdapter = require("@bot-whatsapp/database/mysql");
 
+const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const express = require("express");
 const app = express();
@@ -181,6 +183,19 @@ const main = async () => {
   });
 
   QRPortalWeb();
+
+
+  router.get("/QR", (req, res) => {
+    const imagePath = path.join(__dirname, "bot.qr.png");
+    console.log(imagePath);
+    try {
+      res.sendFile(imagePath);
+    } catch (error) {
+      console.error(error);
+      res.status(400).send("Error");
+    }
+  });
+
 
   router.post("/sendAnswer", async (req, res) => {
     const { question,answer, to, product } = req.body;

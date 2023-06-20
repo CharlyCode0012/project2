@@ -1,5 +1,5 @@
 import Navbar from "@/Navbar/Navbar";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Cookies from "universal-cookie";
 
 import { useSnackbar } from "notistack";
@@ -24,6 +24,7 @@ import { AxiosError } from "axios";
 import { instance } from "helper/API";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
+import LoginContext from "../../context/LoginContext";
 
 const Perfil = () => {
 	const userData: User | null = useReadLocalStorage("log_in");
@@ -44,6 +45,8 @@ const Perfil = () => {
 	 */
 	const [isEditing, setIsEditing] = useState(false);
 
+	const { handleLogin } = useContext(LoginContext);
+
 	/**
 	 * Updates the DB with the new password and cellphone
 	 * provided by the user
@@ -60,12 +63,16 @@ const Perfil = () => {
 
 		// Upload data to DB
 		try {
-			await instance.put("/users/updateProfile", {
-				id: userData?.id,
-				pass: password,
-				cel: cellphone,
-			});
+			const user: User = (
+				await instance.put("/users/updateProfile", {
+					id: userData?.id,
+					pass: password,
+					cel: cellphone,
+				})
+			).data;
 
+			console.log(user);
+			handleLogin(user);
 			enqueueSnackbar("Datos actualizados con exito", { variant: "success" });
 			setIsEditing(false);
 		}

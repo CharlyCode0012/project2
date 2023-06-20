@@ -46,7 +46,8 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({
 
 			onDownload(); // Enable file submission
 		}
-		catch {
+		catch (error) {
+			console.log(error);
 			enqueueSnackbar("Hubo un error al descargar el archivo", {
 				variant: "error",
 			});

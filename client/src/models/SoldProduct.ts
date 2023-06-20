@@ -1,7 +1,9 @@
 export interface SoldProduct {
 	id: number;
+	total_sold: number;
 	quantity: number;
 	date_purchase: Date;
-	id_category: string;
-	id_product: string;
+	category: string;
+	product: string;
+	key_word: string;
 }

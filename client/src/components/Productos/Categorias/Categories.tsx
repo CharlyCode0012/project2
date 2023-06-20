@@ -20,17 +20,14 @@ import CategoriesForm from "@/Productos/Categorias/CategoriesForm";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
+import { FileUpload } from "@/FileUpload";
 
 const Categories: React.FC = () => {
 	const url = "/categories";
-	const path = "/productos/categorias";
 
 	const { enqueueSnackbar } = useSnackbar();
-
-	const navigate = useNavigate();
 
 	const [categories, setCategories] = useState<Category[]>([]);
 	const selectedCategoryToEdit = useRef<Category | boolean>(false);
@@ -38,6 +35,8 @@ const Categories: React.FC = () => {
 	const [showModal, setShowModal] = useState(false);
 	const openFormModal = () => setShowModal(true);
 	const closeFormModal = () => setShowModal(false);
+
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
 
 	/**
 	 * Headers that will be displayed to the table, not
@@ -93,7 +92,11 @@ const Categories: React.FC = () => {
 		openFormModal();
 	}
 
-	async function createCategory() {
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
+	function createCategory() {
 		selectedCategoryToEdit.current = false;
 		openFormModal();
 	}
@@ -111,33 +114,21 @@ const Categories: React.FC = () => {
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
 
-				const res = await instance.delete(endpoint);
-				const dataCategory = await res.data;
+				await instance.delete(endpoint);
 
-				if (dataCategory?.err) {
-					const message = dataCategory?.statusText;
-					const status = dataCategory?.status;
-					throw { message, status };
-				}
-				else {
-					const newCategories = categories.filter(
-						(categoryD) => categoryD.id !== deletedCategoryID
-					);
-					setCategories(newCategories);
-				}
+				setCategories((categories) =>
+					categories.filter((category) => category.id !== deletedCategoryID)
+				);
 				enqueueSnackbar(`Se elimino exitosamente ${category_name}`, {
 					variant: "success",
 				});
+
+				handleDownloadFile(false);
 			}
-			catch (error: any) {
+			catch {
 				enqueueSnackbar(`Error al eliminar la ${category_name}`, {
 					variant: "error",
 				});
-				alert(
-					`Descripcion del error: ${error.message}\nEstado: ${
-						error?.status ?? 500
-					}`
-				);
 			}
 		}
 	}
@@ -226,6 +217,7 @@ const Categories: React.FC = () => {
 											? selectedCategoryToEdit.current
 											: undefined
 									}
+									handleDownloadFile={handleDownloadFile}
 								></CategoriesForm>
 							</Modal>
 						)}
@@ -299,8 +291,15 @@ const Categories: React.FC = () => {
 								>
 									<AddCircle fontSize="inherit" />
 								</IconButton>
-
-								<ExcelDownloadButton apiObjective="categories" />
+								<ExcelDownloadButton
+									apiObjective="categories"
+									onDownload={() => setHasDownloadedFile(true)}
+								/>
+								<FileUpload
+									apiObjective="categories"
+									onUpload={fetchCategories}
+									disabled={!hasDownloadedFile}
+								/>
 							</Box>
 						)}
 					</Box>

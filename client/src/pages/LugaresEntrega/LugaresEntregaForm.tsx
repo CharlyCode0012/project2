@@ -1,9 +1,5 @@
 import React from "react";
-import {
-	Box,
-	Button,
-	TextField,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { DisplayedDeliveryPlace, PlacesDelivery } from "models/PlacesDelivery";
 import { useSnackbar } from "notistack";
 import { instance } from "helper/API";
@@ -11,11 +7,13 @@ import { instance } from "helper/API";
 interface DeliveryPlaceFormProps {
 	placeData?: DisplayedDeliveryPlace;
 	onSubmit: (wasAnUpdate: boolean) => void;
+	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
 const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 	placeData,
 	onSubmit,
+	handleDownloadFile,
 }) => {
 	/**
 	 * Displays notifications to the user
@@ -25,10 +23,10 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 	/**
 	 * Takes what was filled in the form and saves a new
 	 * delivery place in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function createPlaceData (event: React.FormEvent<HTMLFormElement>) {
+	async function createPlaceData(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get place data from the form
@@ -53,8 +51,8 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 			} as PlacesDelivery);
 
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new place creation
+			handleDownloadFile(false);
 		}
-
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -63,10 +61,10 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 	/**
 	 * Takes what was filled in the form and updates the data
 	 * from the given place in the DB
-	 * 
+	 *
 	 * @param event Form event that contains all of its info
 	 */
-	async function updatePlaceData (event: React.FormEvent<HTMLFormElement>) {
+	async function updatePlaceData(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		// Get place data from the form
@@ -90,8 +88,8 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 			} as PlacesDelivery);
 
 			onSubmit(true); // "true" tells the submission was an update
+			handleDownloadFile(false);
 		}
-
 		catch {
 			enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -181,7 +179,7 @@ const DeliveryPlaceForm: React.FC<DeliveryPlaceFormProps> = ({
 			/>
 
 			<Button type="submit" variant="contained" fullWidth>
-				{ placeData ? "Actualizar" : "Crear" }
+				{placeData ? "Actualizar" : "Crear"}
 			</Button>
 		</Box>
 	);
