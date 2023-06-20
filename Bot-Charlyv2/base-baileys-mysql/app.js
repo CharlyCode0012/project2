@@ -36,6 +36,19 @@ const MYSQL_DB_PORT = process.env.DB_PORT;
  */
 
 let folio, date_delivery;
+let cart = [];
+
+/**
+ * Aqui declaramos los flujos hijos, los flujos se declaran de atras para adelante, es decir que si tienes un flujo de este tipo:
+ *
+ *          Menu Principal
+ *           - SubMenu 1
+ *             - Submenu 1.1
+ *           - Submenu 2
+ *             - Submenu 2.1
+ *
+ * Primero declaras los submenus 1.1 y 2.1, luego el 1 y 2 y al final el principal.
+ */
 
 async function sendAnswer(to, answer, question, product){
   const message = `Duda que solicitaste: ${question}\n\n` +
@@ -76,17 +89,7 @@ async function sendConfirmDate(to, text, folio){
 
 
 
-/**
- * Aqui declaramos los flujos hijos, los flujos se declaran de atras para adelante, es decir que si tienes un flujo de este tipo:
- *
- *          Menu Principal
- *           - SubMenu 1
- *             - Submenu 1.1
- *           - Submenu 2
- *             - Submenu 2.1
- *
- * Primero declaras los submenus 1.1 y 2.1, luego el 1 y 2 y al final el principal.
- */
+
 const flowScheduleDate = addKeyword(["Agendar", "Agendar fecha", "Agenda"]).addAnswer(
   [
     "Ingrese el folio para agendar cita: ",
@@ -174,7 +177,7 @@ const main = async () => {
   });
 
   const adapterFlow = createFlow([flowPrincipal, flowScheduleDate]);
- 
+
 
   createBot({
     flow: adapterFlow,
