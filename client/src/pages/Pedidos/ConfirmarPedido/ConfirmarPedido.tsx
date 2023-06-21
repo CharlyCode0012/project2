@@ -1,4 +1,4 @@
-import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import {
 	Box,
 	IconButton,
@@ -22,7 +22,6 @@ import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
-import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarOrders from "@/Navbar/NavbarOrders";
 
 const orders: React.FC = () => {
@@ -100,48 +99,6 @@ const orders: React.FC = () => {
 	function handleEdit(Order: Order) {
 		selectedOrderToEdit.current = Order;
 		openFormModal();
-	}
-
-	async function deleteOrder(Order: Order) {
-		const { folio, id } = Order;
-		const deletedCatalogID: number = id;
-		// TODO: Display loader
-		const isDelete = window.confirm(
-			`¿Estás seguro que quieres eliminar a: ${name}`
-		);
-
-		const endpoint = `${url}/${deletedCatalogID}`;
-		if (isDelete) {
-			try {
-				console.log(`delete endpoint: ${endpoint}`);
-
-				const res = await instance.delete(endpoint);
-				const dataCatalog = await res.data;
-
-				if (dataCatalog?.err) {
-					const message = dataCatalog?.statusText;
-					const status = dataCatalog?.status;
-					throw { message, status };
-				}
-				else {
-					const newOrders = confirmOrders.filter(
-						(order) => order.id !== deletedCatalogID
-					);
-					setConfirmOrders(newOrders);
-				}
-				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
-					variant: "success",
-				});
-			}
-			catch (error: any) {
-				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-				alert(
-					`Descripcion del error: ${error.message}\nEstado: ${
-						error?.status ?? 500
-					}`
-				);
-			}
-		}
 	}
 
 	async function onSubmitSearch(

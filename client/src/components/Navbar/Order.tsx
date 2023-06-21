@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { QueryOrder } from "./SearchAppBar";
+
 import {
 	FormControl,
 	InputLabel,
@@ -12,14 +10,13 @@ import {
 } from "@mui/material";
 
 interface PropsOrder {
-	value: string | null;
 	handleChangeOrder: (
 		event: SelectChangeEvent<string>,
 		child: ReactNode
 	) => void;
 }
 
-export const Order: React.FC<PropsOrder> = ({ handleChangeOrder, value }) => {
+export const Order: React.FC<PropsOrder> = ({ handleChangeOrder }) => {
 	const theme = useTheme();
 
 	return (

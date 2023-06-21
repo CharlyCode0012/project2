@@ -26,17 +26,7 @@ const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
 
 const NavbarOrders = () => {
 	// These are the anchor HTML elements where the submenus display.
-	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
-	// Submenus open and close handlers.
-	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorElNav(event.currentTarget);
-	};
-
-	const handleCloseNavMenu = () => {
-		setAnchorElNav(null);
-	};
 
 	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElUser(event.currentTarget);

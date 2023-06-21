@@ -2,6 +2,7 @@ const instance = require('instance');
 
 
 
+//TODO filter with keyWord
 
 async function fetchProducts(){
     const {data: products } = await instance.get('/products');

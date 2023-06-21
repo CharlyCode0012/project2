@@ -1,6 +1,5 @@
 import Navbar from "@/Navbar/Navbar";
 import React, { useState, useContext } from "react";
-import Cookies from "universal-cookie";
 
 import { useSnackbar } from "notistack";
 import {

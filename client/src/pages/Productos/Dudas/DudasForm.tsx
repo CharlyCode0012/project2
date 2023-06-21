@@ -48,13 +48,8 @@ const DudasForm: React.FC<DudasFormProps> = ({ onSubmit, questionData }) => {
 
 			onSubmit(true);
 		}
-		catch (error: any) {
-			enqueueSnackbar(`Error al actualizar ${name}`, { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
+		catch {
+			enqueueSnackbar("Error al respoder", { variant: "error" });
 		}
 	}
 

@@ -55,13 +55,15 @@ async function sendAnswer(to, answer, question, product){
   `Producto: *${product}*\n\n` + `Respuesta: ${answer}`;
 
     try {
-      
+
       const modProvider = await adapterProvider.getInstance();
       await modProvider.sendMessage(`521${to}@s.whatsapp.net`, { text: message });
 
     } catch (error) {
+
       console.log(error);
       return error;
+
     }
 }
 
@@ -70,66 +72,102 @@ async function sendAnswer(to, answer, question, product){
    * named 'from' that contains the cellphone number the client in the form:S '521XXXXXXXXXX'.
   */
 
-async function sendConfirmDate(to, text, folio){
-  const message = `${text}\n` +
-  `El folio es: *${folio}*\n\n` + 
+async function sendConfirmDate( to, text, folio ){
+  const message = `${ text }\n` +
+  `El folio es: *${ folio }*\n\n` + 
   `Para ver sus productos mande *folio*\n`+ 
   `Para agendar una fecha de entrega envíe *agendar*`;
 
     try {
       
       const modProvider = await adapterProvider.getInstance();
-      await modProvider.sendMessage(`521${to}@s.whatsapp.net`, { text: message });
+      await modProvider.sendMessage( `521${to}@s.whatsapp.net`, { text: message });
 
-    } catch (error) {
-      console.log(error);
+    } catch ( error ) {
+
+      console.log( error );
       return error;
+
     }
 }
 
 
 
 
-const flowScheduleDate = addKeyword(["Agendar", "Agendar fecha", "Agenda"]).addAnswer(
+const flowScheduleDate = addKeyword([ "Agendar", "Agendar fecha", "Agenda" ]).addAnswer(
   [
     "Ingrese el folio para agendar cita: ",
-  ], 
-  {capture: true},
-  async (ctx, {fallBack, flowDynamic}) => {
+  ],  
+  { capture: true },
+  async ( ctx, { fallBack, flowDynamic }) => {
+
     const getFolio = async () => {
       try {
-        const isFolio = await instance.get('/deliveries/searchByFolio', {params: {search: ctx.body}});
-        if(isFolio)
+
+        const isFolio = await instance.get( '/deliveries/searchByFolio', { params: { search: ctx.body }});
+        if( isFolio )
           folio = ctx.body;
         else
           return fallBack();
-      } catch (error) {
-        console.error(error);
+
+      } catch ( error ) {
+
+        console.error( error );
+
       }
     }
 
-    await flowDynamic(getFolio());
+    await flowDynamic( getFolio() );
   }
-).addAnswer(["Ingrese la fecha en formato *DD/MM/AAAA*:"],
-  {capture: true},
-  async (ctx, {fallBack, flowDynamic}) => {
+).addAnswer([ "Ingrese la fecha en formato *DD/MM/AAAA*:" ],
+  { capture: true },
+  async (ctx, { fallBack, flowDynamic }) => {
+
     date_delivery = ctx.body;
-    if(!regexDate.test(date_delivery))
+    if( !regexDate.test( date_delivery ))
       return fallBack();
+
     try {
-      await instance.put(`/deliveries/folio/${folio}`, {date_delivery});
-    } catch (error) {
-      console.error(error);
+
+      await instance.put( `/deliveries/folio/${ folio }`, { date_delivery });
+
+    } catch ( error ) {
+
+      console.error( error );
+
     }
   }
 );
 
+const flowCart = addKeyWord([ "cart", "carrito", "carro", "comprar" ]).addAnswer(
+  [
+    "Para poder obtener la información de un producto ingrese la palabra clave de este",
+    "La palabra clave la puedes encontrar en el catalogo",
+    "\n*1* Catalogo",
+    "*2* Ingresar un producto"
+  ],
+  { capture: true }, 
+  async ( ctx, { fallBack, flowDynamic }) => {
+    const option = ctx.body;
+    
+  },
+  [ flowCatalogos ]
+).addAnswer(
+  [
+    "Ingresa una palabra clave: "
+  ],
+  { capture: true },
+  async ( ctx, { fallBack, flowDynamic }) => {
+    
+  },
+);
 
-const flowCatalogos = addKeyword(["1", "Catalogo"]).addAnswer([
+
+const flowCatalogos = addKeyword([ "1", "Catalogo" ]).addAnswer([
   "Esoty obteniendo el cataloog, por favor espere...",
 ]);
 
-const flowSecundario = addKeyword(["2", "Contactar", "humano"]).addAnswer([
+const flowSecundario = addKeyword([ "2", "Contactar", "humano" ]).addAnswer([
   "Estamos contactando con alguien",
 ]);
 
@@ -137,7 +175,7 @@ const flowSecundario = addKeyword(["2", "Contactar", "humano"]).addAnswer([
     buttons: [{ body: 'Boton 1' }, { body: 'Boton 2' }, { body: 'Boton 3' }],
 });
  */
-const flowDocs = addKeyword(["3", "documentacion", "doc"]).addAnswer(
+const flowDocs = addKeyword([ "3", "documentacion", "doc" ]).addAnswer(
   [
     "📄 Aquí encontras las documentación: ",
     "https://bot-whatsapp.netlify.app/",
@@ -147,12 +185,14 @@ const flowDocs = addKeyword(["3", "documentacion", "doc"]).addAnswer(
   [flowSecundario]
 );
 
-const flowGracias = addKeyword(["gracias", "grac"]).addAnswer([
+const flowGracias = addKeyword([ "gracias", "grac" ]).addAnswer(
+  [
   "Muchas gracias por tu preferencia",
   "Tenga un excelente día",
-]);
+  ]
+);
 
-const flowPrincipal = addKeyword(["hola", "ole", "alo"])
+const flowPrincipal = addKeyword([ "hola", "ole", "alo", "inicio" ])
   ./* `addAnswer` is a method used to add a response to a specific keyword or set of keywords in a
   chatbot flow. It takes in an array of strings as the response message and can also include
   additional parameters such as buttons or child flows. */
@@ -161,7 +201,7 @@ const flowPrincipal = addKeyword(["hola", "ole", "alo"])
     "¿En que puedo ayudarte?",
   ])
   .addAnswer(
-    ["*1* Catalogo", "*2* Contactar con un humano", "*3* Documentacion"],
+    [ "*1* Catalogo", "*2* Contactar con un humano", "*3* Documentacion" ],
     null,
     null,
     [flowCatalogos, flowSecundario, flowDocs]
@@ -176,7 +216,7 @@ const main = async () => {
     port: MYSQL_DB_PORT,
   });
 
-  const adapterFlow = createFlow([flowPrincipal, flowScheduleDate]);
+  const adapterFlow = createFlow([ flowPrincipal, flowScheduleDate ]);
 
 
   createBot({
@@ -188,54 +228,64 @@ const main = async () => {
   QRPortalWeb();
 
 
-  router.get("/QR", (req, res) => {
-    const imagePath = path.join(__dirname, "bot.qr.png");
-    console.log(imagePath);
+  router.get( "/QR", ( req, res ) => {
+
+    const imagePath = path.join( __dirname, "bot.qr.png" );
+    console.log( imagePath );
+
     try {
-      res.sendFile(imagePath);
-    } catch (error) {
-      console.error(error);
-      res.status(400).send("Error");
+
+      res.sendFile( imagePath );
+
+    } catch ( error ) {
+
+      console.error( error );
+      res.status( 400 ).send( "Error" );
+
     }
   });
 
 
-  router.post("/sendAnswer", async (req, res) => {
+  router.post( "/sendAnswer", async ( req, res ) => {
     const { question,answer, to, product } = req.body;
     try {
       
-      await sendAnswer(to, answer, question, product);
-      res.status(220).send("Se envio mensaje");
-    } catch (error) {
-      res.send(error);
-      console.log(error);
+      await sendAnswer( to, answer, question, product );
+      res.status( 220 ).send( "Se envio mensaje" );
+
+    } catch ( error ) {
+
+      res.send( error );
+
     }
   });
 
-  router.post("/sendConfirmDate", async (req, res) => {
-    const { folio, message, to} = req.body;
+  router.post( "/sendConfirmDate", async ( req, res ) => {
+    const { folio, message, to } = req.body;
+  
     try {
       
-      await sendConfirmDate(to, message, folio);
-      res.status(220).send("Se envio mensaje");
-    } catch (error) {
-      res.send(error);
-      console.log(error);
+      await sendConfirmDate( to, message, folio );
+      res.status( 220 ).send( "Se envio mensaje" );
+
+    } catch ( error ) {
+
+      res.send( error );
+
     }
   });
 
-  app.use(cors({ origin: "*" }));
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
-  
+  app.use( cors({ origin: "*" }));
+  app.use( bodyParser.json());
+  app.use( bodyParser.urlencoded({ extended: true }));
 
   //Router logger, remove later
-  app.use((req, res, next) => {
-    console.log("\x1b[33m%s\x1b[0m", `=> ${req.url}`);
+  app.use(( req, res, next ) => {
+    console.log( "\x1b[33m%s\x1b[0m", `=> ${ req.url }`);
     next();
   });
 
-  app.use(router);
+  app.use( router );
 
   app.listen(process.env.PORT, () => {
     console.log("=========================");

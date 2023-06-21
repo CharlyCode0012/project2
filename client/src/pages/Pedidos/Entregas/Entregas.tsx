@@ -1,4 +1,4 @@
-import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import {
 	Box,
 	IconButton,
@@ -98,48 +98,6 @@ const deliveries: React.FC = () => {
 	function handleEdit(Delivery: Delivery) {
 		selectedDeliveryToEdit.current = Delivery;
 		openFormModal();
-	}
-
-	async function deleteDelivery(Delivery: Delivery) {
-		const { folio, id } = Delivery;
-		const deletedCatalogID: number = id;
-		// TODO: Display loader
-		const isDelete = window.confirm(
-			`¿Estás seguro que quieres eliminar a: ${name}`
-		);
-
-		const endpoint = `${url}/${deletedCatalogID}`;
-		if (isDelete) {
-			try {
-				console.log(`delete endpoint: ${endpoint}`);
-
-				const res = await instance.delete(endpoint);
-				const dataCatalog = await res.data;
-
-				if (dataCatalog?.err) {
-					const message = dataCatalog?.statusText;
-					const status = dataCatalog?.status;
-					throw { message, status };
-				}
-				else {
-					const newOrders = confirmDeliveries.filter(
-						(order) => order.id !== deletedCatalogID
-					);
-					setConfirmDeliveries(newOrders);
-				}
-				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
-					variant: "success",
-				});
-			}
-			catch (error: any) {
-				enqueueSnackbar(`Error al eliminar la ${name}`, { variant: "error" });
-				alert(
-					`Descripcion del error: ${error.message}\nEstado: ${
-						error?.status ?? 500
-					}`
-				);
-			}
-		}
 	}
 
 	async function onSubmitSearch(
@@ -307,7 +265,10 @@ const deliveries: React.FC = () => {
 									gap: "10px",
 								}}
 							>
-								<ExcelDownloadButton apiObjective="deliveries" />
+								<ExcelDownloadButton
+									apiObjective="deliveries"
+									onDownload={() => {}}
+								/>
 							</Box>
 						)}
 					</Box>

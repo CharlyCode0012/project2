@@ -103,7 +103,7 @@ export const SearchAppBar: React.FC<SearchAppBarProps> = ({
 		>
 			<AppBar position="static">
 				<Toolbar sx={{ padding: "10px", gap: "10px" }}>
-					<Order handleChangeOrder={handleChangeOrder} value={order} />
+					<Order handleChangeOrder={handleChangeOrder} />
 
 					<FormControl
 						sx={{ marginLeft: "2opx", marginRight: "20px" }}

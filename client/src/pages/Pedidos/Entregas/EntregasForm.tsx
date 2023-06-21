@@ -36,9 +36,8 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Delivery creation
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar("Error al crear la entrega", { variant: "error" });
-			console.log(error);
 		}
 	}
 
@@ -63,13 +62,8 @@ const OrdersForm: React.FC<OrdersFormProps> = ({ onSubmit, DeliveryData }) => {
 			});
 			onSubmit(true);
 		}
-		catch (error: any) {
+		catch {
 			enqueueSnackbar("Error al actualizar la entrega", { variant: "error" });
-			alert(
-				`Descripcion del error: ${error.message}\nEstado: ${
-					error?.status ?? 500
-				}`
-			);
 		}
 	}
 

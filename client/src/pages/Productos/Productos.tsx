@@ -153,15 +153,10 @@ const Products: React.FC = () => {
 					products.filter((product) => product.id !== deletedProductID)
 				);
 			}
-			catch (error: any) {
+			catch {
 				enqueueSnackbar(`Error al eliminar la ${product_name}`, {
 					variant: "error",
 				});
-				alert(
-					`Descripcion del error: ${error.message}\nEstado: ${
-						error?.status ?? 500
-					}`
-				);
 			}
 			handleDownloadFile(false);
 		}
