@@ -119,7 +119,7 @@ const AnalisisClientes: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Analisis Clientes</h1>
+						<h1>Análisis Clientes</h1>
 						<TableContainer
 							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}
@@ -147,7 +147,7 @@ const AnalisisClientes: React.FC = () => {
 												<TableCell align="left">{Client.id}</TableCell>
 												<TableCell align="left">
 													<NavLink
-														to={`/analisis/cliente/${Client.number}`}
+														to={`/análisis/cliente/${Client.number}`}
 														style={{ color: "inherit", textDecoration: "none" }}
 													>
 														{Client.number}

@@ -23,7 +23,7 @@ type NavPage = {
 const pages: NavPage[] = [
 	{ name: "Productos" },
 	{ name: "Pedidos" },
-	{ name: "Analisis" },
+	{ name: "Análisis" },
 	{
 		name: "Usuarios",
 		admin: true,
@@ -32,10 +32,10 @@ const pages: NavPage[] = [
 
 const navSettings: NavPage[] = [
 	{ name: "Lugares de Entrega" },
-	{ name: "Metodos de Pago" },
+	{ name: "Métodos de Pago" },
 ];
 
-const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
+const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuración" }];
 
 const Navbar = () => {
 	// These are the anchor HTML elements where the submenus display.

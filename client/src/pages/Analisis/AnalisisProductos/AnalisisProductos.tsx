@@ -41,7 +41,7 @@ const AnalisisClientes: React.FC = () => {
 	const tableHeaders = [
 		"#",
 		"Producto Id",
-		"Categoria",
+		"Categoría",
 		"Producto",
 		"Cantidad de compras",
 	];
@@ -133,7 +133,7 @@ const AnalisisClientes: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Analisis Productos</h1>
+						<h1>Análisis Productos</h1>
 						<TableContainer
 							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}

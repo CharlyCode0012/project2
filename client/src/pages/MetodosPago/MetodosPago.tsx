@@ -274,7 +274,7 @@ const LugaresEntrega = () => {
 							onSubmitSearch={onSubmitSearch}
 						/>
 
-						<h1>Metodos de pago</h1>
+						<h1>Métodos de pago</h1>
 
 						{showFormModal && (
 							<Modal

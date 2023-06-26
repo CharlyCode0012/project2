@@ -21,50 +21,47 @@ import ComprasCliente from "pages/Analisis/AnalisisClientes/ComprasCliente";
 import Dudas from "pages/Productos/Dudas/Dudas";
 import ProductImage from "pages/Productos/ProductImage";
 
-const Rutas = () => {
-	const num = 0;
-	return (
-		<>
-			<Routes>
-				<Route index path="/" element={<Login />} />
+const Rutas = () => (
+	<>
+		<Routes>
+			<Route index path="/" element={<Login />} />
 
-				<Route path="login" element={<Login />} />
+			<Route path="login" element={<Login />} />
 
-				<Route path="analisis">
-					<Route index element={<Analisis />} />;
-					<Route path="analisis-productos/*" element={<AnalisisProductos />} />
-					<Route path="analisis-clientes/" element={<AnalisisClientes />} />
-					<Route path="cliente/:clientId" element={<ComprasCliente />} />;
-				</Route>
+			<Route path="análisis">
+				<Route index element={<Analisis />} />;
+				<Route path="análisis-productos/*" element={<AnalisisProductos />} />
+				<Route path="análisis-clientes/" element={<AnalisisClientes />} />
+				<Route path="cliente/:clientId" element={<ComprasCliente />} />;
+			</Route>
 
-				<Route path="configuracion/*" element={<Configuracion />} />
+			<Route path="configuración/*" element={<Configuracion />} />
 
-				<Route path="inicio/*" element={<Home />} />
+			<Route path="inicio/*" element={<Home />} />
 
-				<Route path="lugares-de-entrega/*" element={<LugaresEntrega />} />
+			<Route path="lugares-de-entrega/*" element={<LugaresEntrega />} />
 
-				<Route path="metodos-de-pago/*" element={<MetodosPago />} />
+			<Route path="métodos-de-pago/*" element={<MetodosPago />} />
 
-				<Route path="pedidos">
-					<Route index element={<Pedidos />} />;
-					<Route path="entregas/*" element={<Entregas />} />
-					<Route path="confirmar-pedido/*" element={<ConfirmarPedido />} />
-				</Route>
+			<Route path="pedidos">
+				<Route index element={<Pedidos />} />;
+				<Route path="entregas/*" element={<Entregas />} />
+				<Route path="confirmar-pedido/*" element={<ConfirmarPedido />} />
+			</Route>
 
-				<Route path="perfil/*" element={<Perfil />} />
+			<Route path="perfil/*" element={<Perfil />} />
 
-				<Route path="productos">
-					<Route index element={<Productos />} />
-					<Route path="imagen/*" element={<ProductImage />} />
-					<Route path="categorias/*" element={<Categorias />} />
-					<Route path="catalogos/*" element={<Catalogos />} />
-					<Route path="dudas/*" element={<Dudas />} />;
-				</Route>
+			<Route path="productos">
+				<Route index element={<Productos />} />
+				<Route path="imagen/*" element={<ProductImage />} />
+				<Route path="categorías/*" element={<Categorias />} />
+				<Route path="catálogos/*" element={<Catalogos />} />
+				<Route path="dudas/*" element={<Dudas />} />;
+			</Route>
 
-				<Route path="usuarios/*" element={<Usuarios />} />
-			</Routes>
-		</>
-	);
-};
+			<Route path="usuarios/*" element={<Usuarios />} />
+		</Routes>
+	</>
+);
 
 export default Rutas;

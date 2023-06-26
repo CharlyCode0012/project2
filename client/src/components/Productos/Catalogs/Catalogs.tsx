@@ -35,7 +35,7 @@ const Catalogs: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["ID", "Nombre", "Descripcion", "Estado"];
+	const tableHeaders = ["ID", "Nombre", "Descripción", "Estado"];
 
 	const searchOptions = ["Nombre", "Estado"];
 
@@ -191,7 +191,7 @@ const Catalogs: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>catalogos</h1>
+						<h1>Catálogos</h1>
 						{showModal && (
 							<Modal
 								open={showModal}

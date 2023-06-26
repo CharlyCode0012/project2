@@ -162,9 +162,9 @@ const ProductImage = () => {
 											theme.palette.mode === "dark" ? "secondary" : "warning"
 										}
 									>
-										<InputLabel sx={{ color: "inherit" }}>Catalogo</InputLabel>
+										<InputLabel sx={{ color: "inherit" }}>Catálogo</InputLabel>
 										<Select
-											label="Catalogo"
+											label="Catálogo"
 											sx={{ width: "300px", color: "inherit" }}
 											onChange={handleCatalogChange}
 										>
@@ -187,7 +187,7 @@ const ProductImage = () => {
 										<InputLabel sx={{ color: "inherit" }}>Producto</InputLabel>
 										<Select
 											value={productId}
-											label="Catalogo"
+											label="Producto"
 											sx={{ width: "300px", color: "inherit" }}
 											onChange={handleProductChange}
 										>

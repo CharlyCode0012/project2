@@ -203,7 +203,7 @@ const Categories: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Categorias</h1>
+						<h1>Categorías</h1>
 						{showModal && (
 							<Modal
 								open={showModal}

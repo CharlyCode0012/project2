@@ -21,11 +21,11 @@ type NavPage = {
 };
 
 const pages: NavPage[] = [
-	{ name: "Analisis productos" },
-	{ name: "Analisis clientes" },
+	{ name: "Análisis productos" },
+	{ name: "Análisis clientes" },
 ];
 
-const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuracion" }];
+const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuración" }];
 
 const NavbarAnalisis = () => {
 	// These are the anchor HTML elements where the submenus display.
@@ -62,7 +62,7 @@ const NavbarAnalisis = () => {
 							{pages.map((page) => (
 								<NavLink
 									key={page.name}
-									to={`/analisis/${page.name
+									to={`/análisis/${page.name
 										.toLowerCase()
 										.split(/ +/)
 										.join("-")}`}

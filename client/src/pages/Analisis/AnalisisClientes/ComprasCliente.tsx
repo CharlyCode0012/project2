@@ -92,7 +92,7 @@ const ComprasCliente: React.FC = () => {
 							gap: "10px",
 						}}
 					>
-						<h1>Analisis de Compras</h1>
+						<h1>Análisis de Compras</h1>
 						<TableContainer
 							sx={{ width: "800px", maxHeight: "400px" }}
 							component={Paper}

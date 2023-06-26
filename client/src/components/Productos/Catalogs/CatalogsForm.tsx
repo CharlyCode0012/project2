@@ -99,7 +99,7 @@ const CatalogsForm: React.FC<CatalogsFormProps> = ({
 			<TextField
 				sx={{ width: "300px" }}
 				name="description"
-				label="Descripcion"
+				label="Descripción"
 				placeholder="Placeholder"
 				multiline
 				variant="outlined"

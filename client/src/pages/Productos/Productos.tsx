@@ -57,8 +57,8 @@ const Products: React.FC = () => {
 
 	const tableHeaders = [
 		"Nombre",
-		"Descripcion",
-		"Categoria",
+		"Descripción",
+		"Categoría",
 		"Palabra Clave",
 		"Precio",
 		"Cantidad",
@@ -357,9 +357,9 @@ const Products: React.FC = () => {
 								</IconButton>
 							)}
 							<FormControl sx={{ alignSelf: "flex-start" }}>
-								<InputLabel>Catalogo</InputLabel>
+								<InputLabel>Catálogo</InputLabel>
 								<Select
-									label="Catalogo"
+									label="Catálogo"
 									sx={{ width: "300px", color: "inherit" }}
 									onChange={handleCatalogChange}
 								>

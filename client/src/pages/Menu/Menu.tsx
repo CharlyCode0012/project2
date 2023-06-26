@@ -27,7 +27,8 @@ const toyStoreMenu: MenuData = {
 			id: "1",
 			index: 1,
 			brief: "Ver categorías de juguetes",
-			description: "Muestra un menú con las diferentes categorías de juguetes disponibles en la tienda.",
+			description:
+				"Muestra un menú con las diferentes categorías de juguetes disponibles en la tienda.",
 			keywords: ["categorías", "juguetes"],
 			actionType: "menu",
 			action: {
@@ -39,70 +40,90 @@ const toyStoreMenu: MenuData = {
 						id: "1",
 						index: 1,
 						brief: "Muñecos y figuras de acción",
-						description: "Muestra una lista de muñecos y figuras de acción disponibles en la tienda.",
+						description:
+							"Muestra una lista de muñecos y figuras de acción disponibles en la tienda.",
 						keywords: ["muñecos", "figuras", "acción"],
 						actionType: "catalog",
 						action: {
 							id: "1",
 							name: "Muñecos y figuras de acción",
-							description: "Encuentra a tus personajes favoritos de películas y series en forma de muñecos y figuras de acción.",
-							products: ["Spiderman", "Iron Man", "Batman", "Superman", "Harry Potter"]
-						}
+							description:
+								"Encuentra a tus personajes favoritos de películas y series en forma de muñecos y figuras de acción.",
+							products: [
+								"Spiderman",
+								"Iron Man",
+								"Batman",
+								"Superman",
+								"Harry Potter",
+							],
+						},
 					},
 					{
 						id: "2",
 						index: 2,
 						brief: "Juegos de mesa",
-						description: "Muestra una lista de juegos de mesa disponibles en la tienda.",
+						description:
+							"Muestra una lista de juegos de mesa disponibles en la tienda.",
 						keywords: ["juegos", "mesa"],
 						actionType: "catalog",
 						action: {
 							id: "2",
 							name: "Juegos de mesa",
-							description: "Diviértete en familia o con amigos con nuestra selección de juegos de mesa para todas las edades.",
-							products: ["Monopoly", "Scrabble", "Jenga", "Risk", "Catán"]
-						}
+							description:
+								"Diviértete en familia o con amigos con nuestra selección de juegos de mesa para todas las edades.",
+							products: ["Monopoly", "Scrabble", "Jenga", "Risk", "Catán"],
+						},
 					},
 					{
 						id: "3",
 						index: 3,
 						brief: "Peluches",
-						description: "Muestra una lista de peluches disponibles en la tienda.",
+						description:
+							"Muestra una lista de peluches disponibles en la tienda.",
 						keywords: ["peluches"],
 						actionType: "catalog",
 						action: {
 							id: "3",
 							name: "Peluches",
-							description: "Abraza a tus personajes favoritos en forma de peluche y tenlos siempre contigo.",
-							products: ["Pikachu", "Sonic", "Minions", "Doraemon", "Mickey Mouse"]
-						}
-					}
-				]
-			}
+							description:
+								"Abraza a tus personajes favoritos en forma de peluche y tenlos siempre contigo.",
+							products: [
+								"Pikachu",
+								"Sonic",
+								"Minions",
+								"Doraemon",
+								"Mickey Mouse",
+							],
+						},
+					},
+				],
+			},
 		},
 		{
 			id: "2",
 			index: 2,
 			brief: "Ver promociones",
-			description: "Muestra una lista de las promociones actuales en la tienda.",
+			description:
+				"Muestra una lista de las promociones actuales en la tienda.",
 			keywords: ["promociones"],
 			actionType: "link",
-			action: "https://www.toy-store.com/promociones"
+			action: "https://www.toy-store.com/promociones",
 		},
 		{
 			id: "3",
 			index: 3,
 			brief: "Ver carrito de compras",
-			description: "Muestra los productos que has añadido al carrito de compras.",
+			description:
+				"Muestra los productos que has añadido al carrito de compras.",
 			keywords: ["carrito", "compras"],
 			actionType: "message",
-			action: "Gracias por visitar la tienda. ¡Esperamos verte pronto de nuevo!"
-		}
-	]
+			action:
+				"Gracias por visitar la tienda. ¡Esperamos verte pronto de nuevo!",
+		},
+	],
 };
 
 const Menu = () => {
-
 	const isAdmin = true;
 
 	return (
@@ -116,7 +137,7 @@ const Menu = () => {
 					marginBottom: "20px",
 				}}
 			>
-				<h1>Menu</h1>
+				<h1>Menú</h1>
 
 				<Paper
 					elevation={4}

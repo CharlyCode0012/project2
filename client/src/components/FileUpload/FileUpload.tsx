@@ -57,7 +57,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 			onUpload(); // Refresh table with newer table values
 		}
 		catch {
-			enqueueSnackbar("Algo salio mal", { variant: "error" });
+			enqueueSnackbar("Algo salió mal", { variant: "error" });
 		}
 	}
 
