@@ -206,7 +206,8 @@ const flowCart = addKeyword([ "cart", "carrito", "carro", "comprar" ]).addAnswer
     { capture: true }, 
     async ( ctx, { fallBack, flowDynamic }) => {
         const option = ctx.body;
-    
+        if(option !== 1 || option !== 2)
+            return fallBack();
     },
     [ flowCatalogos ]
     ).addAnswer(
