@@ -20,12 +20,12 @@ import AnalisisClientes from "pages/Analisis/AnalisisClientes/AnalisisClientes";
 import ComprasCliente from "pages/Analisis/AnalisisClientes/ComprasCliente";
 import Dudas from "pages/Productos/Dudas/Dudas";
 import ProductImage from "pages/Productos/ProductImage";
+import MenuOptions from "pages/Menu/MenuOptions";
 
 const Rutas = () => (
 	<>
 		<Routes>
 			<Route index path="/" element={<Login />} />
-
 			<Route path="login" element={<Login />} />
 
 			<Route path="análisis">
@@ -36,11 +36,10 @@ const Rutas = () => (
 			</Route>
 
 			<Route path="configuración/*" element={<Configuracion />} />
-
 			<Route path="inicio/*" element={<Home />} />
+			<Route path="menu/:menuTitle/:menuID" element={<MenuOptions />} />
 
 			<Route path="lugares-de-entrega/*" element={<LugaresEntrega />} />
-
 			<Route path="métodos-de-pago/*" element={<MetodosPago />} />
 
 			<Route path="pedidos">

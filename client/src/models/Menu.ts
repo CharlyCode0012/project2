@@ -1,30 +1,21 @@
 export interface MenuData {
 	id: string;
-	title: string;
-	instruction: string;
+	name: string;
+	answer: string;
+	principalMenu: boolean;
 	options: MenuOption[];
 }
 
-export type OptionActionType = "menu" | "catalog" | "link" | "message";
+export type MenuOptionActionType = "Submenu" | "catalog" | "link" | "message";
 
-// TODO: Update type for messages and links
-export type OptionAction = MenuData | Catalog | string
+export type SubMenuOptionActionType = "catalog" | "link" | "message";
 
 export interface MenuOption {
 	id: string;
-	index: number;
-	brief: string;
-	description: string;
+	answer: number;
+	option: string;
 	keywords: string[];
-	actionType: OptionActionType;
-	action: OptionAction;
+	action_type: MenuOptionActionType | SubMenuOptionActionType;
+	reference: string;
+	referenceName: string;
 }
-
-export interface Catalog {
-	id: string;
-	name: string;
-	description: string;
-	products: string[];
-}
-
-// TODO: Create models for message and action

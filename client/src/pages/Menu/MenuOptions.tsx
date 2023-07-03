@@ -11,37 +11,30 @@ import {
 	TableRow,
 	TableSortLabel,
 	Container,
-	InputLabel,
-	FormControl,
-	Select,
-	MenuItem,
-	SelectChangeEvent,
 } from "@mui/material";
-import React, { useState, useEffect, useRef, ReactNode } from "react";
-import { Product } from "models/Product";
+import React, { useState, useEffect, useRef } from "react";
+import { MenuData, MenuOption } from "models/Menu";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
-import ProductForm from "./ProductForm";
+import MenuForm from "./MenuOptionForm";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
-import NavbarProduct from "@/Navbar/NavbarProduct";
-import { Catalog } from "models/Catalog";
+import Navbar from "@/Navbar/Navbar";
 import { FileUpload } from "@/FileUpload";
+import { useParams } from "react-router-dom";
 
-const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
-
-const Products: React.FC = () => {
-	const url = "/products";
+const MenuOptions: React.FC = () => {
+	const url = "/menu_options";
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
-	const [products, setProducts] = useState<Product[]>([]);
-	const selectedProductToEdit = useRef<Product | boolean>(false);
-	const catalogId = useRef<string>("");
+	const [menus, setMenus] = useState<MenuData[]>([]);
+	const [menuOptions, setMenuOptions] = useState<MenuOption[]>([]);
+	const selectedMenuOptionToEdit = useRef<MenuOption | boolean>(false);
+	const { menuTitle, menuID } = useParams();
 
 	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
 
@@ -56,16 +49,15 @@ const Products: React.FC = () => {
 	 */
 
 	const tableHeaders = [
-		"Nombre",
-		"Descripción",
-		"Categoría",
+		"#",
+		"Opcion",
 		"Palabra Clave",
-		"Precio",
-		"Cantidad",
-		"Imagen",
+		"Accion",
+		"Respuesta",
+		"Referencia",
 	];
 
-	const searchOptions = ["Cantidad", "Nombre", "Palabra clave", "Precio"];
+	const searchOptions = ["Palabra clave"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -80,33 +72,33 @@ const Products: React.FC = () => {
 	// TODO:
 
 	useEffect(() => {
-		// fetchProducts();
-		fetchCatalogs();
+		fetchMenuOptions();
+		// fetchMenu();
 	}, []);
 
-	async function fetchCatalogs() {
+	async function fetchMenu() {
 		try {
-			const { data: Catalogs } = await instance.get<Catalog[]>("/catalogs");
-			setCatalogs(Catalogs);
+			const { data: reqMenus } = await instance.get<MenuData[]>("/menus");
+			const Menus = reqMenus.filter((menu: MenuData) => menu.id !== menuID);
+			setMenus(Menus);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al traer los catalogos", {
+			enqueueSnackbar("Hubo un error al traer los menus", {
 				variant: "error",
 			});
 		}
 	}
 
-	async function fetchProducts() {
-		const cId = catalogId.current;
-		setProducts([]);
+	async function fetchMenuOptions() {
+		setMenuOptions([]);
 		try {
-			const { data: products } = await instance.get<Product[]>(url, {
-				params: { order: "ASC", catalogId: cId },
+			const { data: menuOptions } = await instance.get<MenuOption[]>(url, {
+				params: { order: "ASC", menuID },
 			});
-			setProducts(products);
+			setMenuOptions(menuOptions);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los productos", {
+			enqueueSnackbar("Hubo un error al mostrar las opciones", {
 				variant: "error",
 			});
 		}
@@ -120,25 +112,25 @@ const Products: React.FC = () => {
 				variant: "success",
 			}
 		);
-		fetchProducts();
+		fetchMenuOptions();
 	}
 
-	function handleEdit(product: Product) {
-		selectedProductToEdit.current = product;
+	function handleEdit(optionMenu: MenuOption) {
+		selectedMenuOptionToEdit.current = optionMenu;
 		openFormModal();
 	}
 
 	async function createProduct() {
-		selectedProductToEdit.current = false;
+		selectedMenuOptionToEdit.current = false;
 		openFormModal();
 	}
 
-	async function deleteProduct(product: Product) {
-		const { product_name, id } = product;
+	async function deleteProduct(optionMenu: MenuOption) {
+		const { keywords, id } = optionMenu;
 		const deletedProductID: string = id;
 		// TODO: Display loader
 		const isDelete = window.confirm(
-			`¿Estás seguro que quieres eliminar a: ${product_name}`
+			`¿Estás seguro que quieres eliminar a: ${keywords}`
 		);
 
 		const endpoint = `${url}/${deletedProductID}`;
@@ -146,15 +138,15 @@ const Products: React.FC = () => {
 			try {
 				console.log(`delete endpoint: ${endpoint}`);
 				await instance.delete(endpoint);
-				enqueueSnackbar(`Se elimino exitosamente ${product_name}`, {
+				enqueueSnackbar(`Se elimino exitosamente ${keywords}`, {
 					variant: "success",
 				});
-				setProducts((products) =>
-					products.filter((product) => product.id !== deletedProductID)
+				setMenuOptions((menuOptions) =>
+					menuOptions.filter((optionMenu) => optionMenu.id !== deletedProductID)
 				);
 			}
 			catch {
-				enqueueSnackbar(`Error al eliminar la ${product_name}`, {
+				enqueueSnackbar(`Error al eliminar la ${keywords}`, {
 					variant: "error",
 				});
 			}
@@ -168,66 +160,33 @@ const Products: React.FC = () => {
 		order: QueryOrder
 	) {
 		try {
-			let Products: Product[];
+			let MenuOptions: MenuOption[];
 
 			switch (filter) {
-			case "Cantidad":
-				Products = (
-					await instance.get<Product[]>("/products/searchByStock", {
-						params: { order, search },
-					})
-				).data;
-				break;
-
-			case "Nombre":
-				Products = (
-					await instance.get<Product[]>("/products/searchByName", {
-						params: { order, search },
-					})
-				).data;
-				break;
-
 			case "Palabra clave":
-				Products = (
-					await instance.get<Product[]>("/products/searchByKeyWord", {
-						params: { order, search },
-					})
-				).data;
-				break;
-
-			case "Precio":
-				Products = (
-					await instance.get<Product[]>("/products/searchByPrice", {
+				MenuOptions = (
+					await instance.get<MenuOption[]>("/menuOptions/searchByKeyWord", {
 						params: { order, search },
 					})
 				).data;
 				break;
 
 			default:
-				Products = (
-					await instance.get<Product[]>(url, {
+				MenuOptions = (
+					await instance.get<MenuOption[]>(url, {
 						params: { order },
 					})
 				).data;
 				break;
 			}
 
-			setProducts(Products);
+			setMenuOptions(MenuOptions);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los productos", {
+			enqueueSnackbar("Hubo un error al mostrar las opciones", {
 				variant: "error",
 			});
 		}
-	}
-
-	function handleCatalogChange(
-		event: SelectChangeEvent<string>,
-		child: ReactNode
-	): void {
-		catalogId.current = event.target.value as string;
-
-		if (catalogId.current) fetchProducts();
 	}
 
 	function handleDownloadFile(hasDownloaded: boolean) {
@@ -236,7 +195,7 @@ const Products: React.FC = () => {
 
 	return (
 		<>
-			<NavbarProduct />
+			<Navbar />
 			<Container maxWidth="sm">
 				<Box
 					sx={{
@@ -256,23 +215,23 @@ const Products: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Productos</h1>
+						<h1>{menuTitle}</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
 								handleOpen={setShowModal}
-								title="Formulario productos"
+								title="Formulario Opcion Menu"
 							>
-								<ProductForm
+								<MenuForm
 									onSubmit={onProductSubmitted}
-									ProductData={
-										selectedProductToEdit.current instanceof Object
-											? selectedProductToEdit.current
+									OptionData={
+										selectedMenuOptionToEdit.current instanceof Object
+											? selectedMenuOptionToEdit.current
 											: undefined
 									}
-									catalogId={catalogId}
+									menuID={menuID}
 									handleDownloadFile={handleDownloadFile}
-								></ProductForm>
+								></MenuForm>
 							</Modal>
 						)}
 						<TableContainer
@@ -294,38 +253,33 @@ const Products: React.FC = () => {
 								</TableHead>
 
 								<TableBody>
-									{!(products?.length > 0) ? (
+									{!(menuOptions?.length > 0) ? (
 										<TableRow>
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										products?.map((product: Product) => (
-											<TableRow key={product.id}>
+										menuOptions?.map((optionMenu: MenuOption, index) => (
+											<TableRow key={optionMenu.id}>
+												<TableCell align="left">{index + 1}</TableCell>
+												<TableCell align="left">{optionMenu.option}</TableCell>
 												<TableCell align="left">
-													{product.product_name}
+													{optionMenu.keywords}
 												</TableCell>
 												<TableCell align="left">
-													{product.description}
+													{optionMenu.action_type}
 												</TableCell>
+												<TableCell align="left">{optionMenu.answer}</TableCell>
 												<TableCell align="left">
-													{product.category_name}
-												</TableCell>
-												<TableCell align="left">{product.key_word}</TableCell>
-												<TableCell align="left">{product.price}</TableCell>
-												<TableCell align="left">{product.stock}</TableCell>
-												<TableCell align="left">
-													<img
-														style={{ width: "160px", height: "160px" }}
-														src={`${URL_IMAGE}${product.id}`}
-														alt={`Imagen ${product.id}`}
-													></img>
+													{optionMenu.referenceName}
 												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(product)}>
+														<IconButton onClick={() => handleEdit(optionMenu)}>
 															<Edit fontSize="inherit" />
 														</IconButton>
-														<IconButton onClick={() => deleteProduct(product)}>
+														<IconButton
+															onClick={() => deleteProduct(optionMenu)}
+														>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
 													</TableCell>
@@ -356,31 +310,13 @@ const Products: React.FC = () => {
 									<AddCircle fontSize="inherit" />
 								</IconButton>
 							)}
-							<FormControl sx={{ alignSelf: "flex-start" }}>
-								<InputLabel>Catálogo</InputLabel>
-								<Select
-									label="Catálogo"
-									sx={{ width: "300px", color: "inherit" }}
-									onChange={handleCatalogChange}
-								>
-									{catalogs?.length > 0 ? (
-										catalogs?.map((catalog: Catalog) => (
-											<MenuItem key={catalog.id} value={catalog.id}>
-												{catalog.name}
-											</MenuItem>
-										))
-									) : (
-										<MenuItem value=""> Sin catalogos</MenuItem>
-									)}
-								</Select>
-							</FormControl>
 							<ExcelDownloadButton
-								apiObjective="products"
+								apiObjective={`menu_options:${menuID}`}
 								onDownload={() => setHasDownloadedFile(true)}
 							/>
 							<FileUpload
-								apiObjective="products"
-								onUpload={fetchProducts}
+								apiObjective="menu_options"
+								onUpload={fetchMenu}
 								disabled={!hasDownloadedFile}
 							/>
 						</Box>
@@ -391,4 +327,4 @@ const Products: React.FC = () => {
 	);
 };
 
-export default Products;
+export default MenuOptions;

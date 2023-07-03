@@ -23,7 +23,7 @@ interface ProductsFormProps {
 	handleDownloadFile: (hasDownloadedFile: boolean) => void;
 }
 
-const CatalogsForm: React.FC<ProductsFormProps> = ({
+const ProductsForm: React.FC<ProductsFormProps> = ({
 	onSubmit,
 	ProductData,
 	catalogId,
@@ -255,4 +255,4 @@ const CatalogsForm: React.FC<ProductsFormProps> = ({
 	);
 };
 
-export default CatalogsForm;
+export default ProductsForm;

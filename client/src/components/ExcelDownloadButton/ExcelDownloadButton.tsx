@@ -23,9 +23,20 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({
 	 */
 	async function downloadFile() {
 		try {
-			const response = await instance.get(`/${apiObjective}/download`, {
-				responseType: "blob",
-			});
+			let response;
+			if (apiObjective.includes(":")) {
+				const endpoint = apiObjective.split(":");
+
+				response = await instance.get(`/${endpoint[0]}/download`, {
+					params: { info: endpoint[1] },
+					responseType: "blob",
+				});
+			}
+			else {
+				response = await instance.get(`/${apiObjective}/download`, {
+					responseType: "blob",
+				});
+			}
 
 			// Get the Excel filename returned by the server
 			const contentDispositionHeader = response.headers[

@@ -21,6 +21,9 @@ require("dotenv").config();
 const adapterProvider = createProvider(BaileysProvider);
 
 const instance = require('./src/request/instance.js');
+const {fetchCatalogs} = require('./src/request/catalog.js');
+const {downloadFileProducts} = require('./src/request/products.js');
+
 const regexDate = /^(?:(?:(?:0?[1-9]|1\d|2[0-8])[/](?:0?[1-9]|1[0-2])|(?:29|30)[/](?:0?[13-9]|1[0-2])|31[/](?:0?[13578]|1[02]))[/](?:0{2,3}[1-9]|0{1,2}[1-9]\d|0?[1-9]\d{2}|[1-9]\d{3})|29[/]0?2[/](?:\d{1,2}(?:0[48]|[2468][048]|[13579][26])|(?:0?[48]|[13579][26]|[2468][048])00))$/;
 /**
  * Declaramos las conexiones de MySQL
@@ -35,8 +38,9 @@ const MYSQL_DB_PORT = process.env.DB_PORT;
  * Aqui van las funciones para las peticiones del bot
  */
 
-let folio, date_delivery;
-let cart = [];
+let folio, date_delivery, catalog, clientName, clientNumber;
+let cart = [], catalogs = [];
+
 
 
 
@@ -61,6 +65,21 @@ async function sendAnswer(to, answer, question, product){
 /**TO DO remove the numbers 521 from sendMessage, because the ctx of addAnswer contains a property
 * named 'from' that contains the cellphone number the client in the form:S '521XXXXXXXXXX'.
 */
+
+async function sendCatalogProducts(to, catalogID){
+
+    try {
+        const file = fs.readFileSync('.src/Catalog/Productos '+catalogID+'.xlsx');
+    
+        const modProvider = await adapterProvider.getInstance();
+        const media = await modProvider.prepareMessageMedia(file, MessageType.document, { mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename: 'Productos '+catalogID+'.xlsx' });
+        await modProvider.sendMessage(chatId, media, MessageType.document);
+
+        console.log('Archivo enviado correctamente');
+    } catch (error) {
+        console.error('Error al hacer la petición:', error);
+    }
+}
 
 async function sendConfirmDate( to, text, folio ){
     const message = `${ text }\n` +
@@ -139,7 +158,45 @@ const flowScheduleDate = addKeyword([ "Agendar", "Agendar fecha", "Agenda" ]).ad
     }
 });
 
-/* const flowCart = addKeyword([ "cart", "carrito", "carro", "comprar" ]).addAnswer(
+const flowCatalogos = addKeyword([ "1", "Catalogo" ]).addAnswer(
+    [
+        "Estoy obteniendo los catálogos"
+    ],
+    { capture: true },
+    async ( ctx, { flowDynamic }) => {
+        try {
+            catalogs = await fetchCatalogs();
+            await flowDynamic(catalogs);
+        } catch (error) {
+            console.log(error);
+        }
+    } 
+).addAnswer(
+    "Ingrese un catalogo de acuerdo al numero",
+    {capture: true},
+    async (ctx, { fallBack, flowDynamic }) => {
+
+        try {
+            let indexCatalog = ctx.body;
+            clientNumber = ctx.from;
+
+            if(isNaN(indexCatalog)){
+                return fallBack();
+            }
+
+            indexCatalog -= 1;
+            catalog = catalogs[indexCatalog];
+
+            await downloadFileProducts(catalog?.id);
+            await sendCatalogProducts(clientNumber, catalog?.id);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+);
+
+const flowCart = addKeyword([ "cart", "carrito", "carro", "comprar" ]).addAnswer(
     [
         "Para poder obtener la información de un producto ingrese la palabra clave de este",
         "La palabra clave la puedes encontrar en el catalogo",
@@ -158,14 +215,16 @@ const flowScheduleDate = addKeyword([ "Agendar", "Agendar fecha", "Agenda" ]).ad
     ],
     { capture: true },
     async ( ctx, { fallBack, flowDynamic }) => {
-    
+        try {
+            
+        } catch (error) {
+            
+        }
     },
-); */
+); 
 
 
-const flowCatalogos = addKeyword([ "1", "Catalogo" ]).addAnswer([
-    "Esoty obteniendo el cataloog, por favor espere...",
-]);
+
 
 const flowSecundario = addKeyword([ "2", "Contactar", "humano" ]).addAnswer([
     "Estamos contactando con alguien",
@@ -204,7 +263,7 @@ addAnswer([
     [ "*1* Catalogo", "*2* Contactar con un humano", "*3* Documentacion" ],
     null,
     null,
-    [flowCatalogos, flowSecundario, flowDocs]
+    [flowCatalogos, flowSecundario, flowDocs, flowCart]
 );
 
 const main = async () => {
@@ -216,7 +275,7 @@ const main = async () => {
         port: MYSQL_DB_PORT,
     });
 
-    const adapterFlow = createFlow([ flowPrincipal, flowScheduleDate ]);
+    const adapterFlow = createFlow([ flowPrincipal, flowScheduleDate, flowCart ]);
 
 
     createBot({

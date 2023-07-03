@@ -1,5 +1,3 @@
-import Navbar from "@/Navbar/Navbar";
-import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
 import {
 	Box,
 	Paper,
@@ -10,149 +8,290 @@ import {
 	TableHead,
 	TableRow,
 	TableSortLabel,
-	IconButton,
 	Container,
+	IconButton,
 } from "@mui/material";
-import { MenuData } from "models/Menu";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Menu.css";
-import DisplayedMenu from "./DisplayedMenu";
+import { MenuData } from "models/Menu";
+import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
+// import Modal from "@/Modal/Modal";
+// import ProductForm from "./ProductForm";
+import { instance } from "helper/API";
+import { useSnackbar } from "notistack";
+import { NavLink } from "react-router-dom";
+import Navbar from "@/Navbar/Navbar";
+import { User } from "models/User";
+import { useReadLocalStorage } from "usehooks-ts";
+import { AddCircle, DeleteForever, Edit } from "@mui/icons-material";
+import Modal from "@/Modal/Modal";
+import MenuForm from "./MenuForm";
+import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
+import { FileUpload } from "@/FileUpload";
 
-const toyStoreMenu: MenuData = {
-	id: "1",
-	title: "Menu Principal",
-	instruction: "¿Qué acción desea realizar?",
-	options: [
-		{
-			id: "1",
-			index: 1,
-			brief: "Ver categorías de juguetes",
-			description:
-				"Muestra un menú con las diferentes categorías de juguetes disponibles en la tienda.",
-			keywords: ["categorías", "juguetes"],
-			actionType: "menu",
-			action: {
-				id: "2",
-				title: "Categorías de juguetes",
-				instruction: "¿Qué categoría de juguetes te interesa?",
-				options: [
-					{
-						id: "1",
-						index: 1,
-						brief: "Muñecos y figuras de acción",
-						description:
-							"Muestra una lista de muñecos y figuras de acción disponibles en la tienda.",
-						keywords: ["muñecos", "figuras", "acción"],
-						actionType: "catalog",
-						action: {
-							id: "1",
-							name: "Muñecos y figuras de acción",
-							description:
-								"Encuentra a tus personajes favoritos de películas y series en forma de muñecos y figuras de acción.",
-							products: [
-								"Spiderman",
-								"Iron Man",
-								"Batman",
-								"Superman",
-								"Harry Potter",
-							],
-						},
-					},
-					{
-						id: "2",
-						index: 2,
-						brief: "Juegos de mesa",
-						description:
-							"Muestra una lista de juegos de mesa disponibles en la tienda.",
-						keywords: ["juegos", "mesa"],
-						actionType: "catalog",
-						action: {
-							id: "2",
-							name: "Juegos de mesa",
-							description:
-								"Diviértete en familia o con amigos con nuestra selección de juegos de mesa para todas las edades.",
-							products: ["Monopoly", "Scrabble", "Jenga", "Risk", "Catán"],
-						},
-					},
-					{
-						id: "3",
-						index: 3,
-						brief: "Peluches",
-						description:
-							"Muestra una lista de peluches disponibles en la tienda.",
-						keywords: ["peluches"],
-						actionType: "catalog",
-						action: {
-							id: "3",
-							name: "Peluches",
-							description:
-								"Abraza a tus personajes favoritos en forma de peluche y tenlos siempre contigo.",
-							products: [
-								"Pikachu",
-								"Sonic",
-								"Minions",
-								"Doraemon",
-								"Mickey Mouse",
-							],
-						},
-					},
-				],
-			},
-		},
-		{
-			id: "2",
-			index: 2,
-			brief: "Ver promociones",
-			description:
-				"Muestra una lista de las promociones actuales en la tienda.",
-			keywords: ["promociones"],
-			actionType: "link",
-			action: "https://www.toy-store.com/promociones",
-		},
-		{
-			id: "3",
-			index: 3,
-			brief: "Ver carrito de compras",
-			description:
-				"Muestra los productos que has añadido al carrito de compras.",
-			keywords: ["carrito", "compras"],
-			actionType: "message",
-			action:
-				"Gracias por visitar la tienda. ¡Esperamos verte pronto de nuevo!",
-		},
-	],
-};
+const AnalisisClientes: React.FC = () => {
+	const url = "/menus";
 
-const Menu = () => {
-	const isAdmin = true;
+	const { enqueueSnackbar } = useSnackbar();
+
+	const [menus, setMenus] = useState<MenuData[]>([]);
+	const [showModal, setShowModal] = useState(false);
+	const openFormModal = () => setShowModal(true);
+	const closeFormModal = () => setShowModal(false);
+
+	/**
+	 * Headers that will be displayed to the table, not
+	 * counting the last one which will be for admin
+	 * purposes
+	 */
+
+	const tableHeaders = ["#", "Título", "Texto", "Tipo"];
+
+	const searchOptions = ["Texto"];
+
+	const userLogin: User | null = useReadLocalStorage("log_in");
+	const typeUser: string | undefined = userLogin?.type_use;
+	const isAdmin: boolean =
+		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+
+	const selectedMenuToEdit = useRef<MenuData | boolean>(false);
+
+	/**
+	 * Keeps track of wether the user has or hasn't downloaded the
+	 * excel file, if not, user cannot upload another file
+	 */
+	const [hasDownloadedFile, setHasDownloadedFile] = useState(false);
+
+	useEffect(() => {
+		fetchMenu();
+	}, []);
+
+	function handleDownloadFile(hasDownloaded: boolean) {
+		setHasDownloadedFile(hasDownloaded);
+	}
+
+	function onMenuSubmitted(wasAnUpdate: boolean) {
+		closeFormModal();
+		enqueueSnackbar(
+			wasAnUpdate ? "Se actualizó con éxito" : "Se creo con éxito",
+			{ variant: "success" }
+		);
+		fetchMenu();
+	}
+
+	function handleEdit(menu: MenuData) {
+		selectedMenuToEdit.current = menu;
+		openFormModal();
+	}
+
+	function createMenu() {
+		selectedMenuToEdit.current = false;
+		openFormModal();
+	}
+
+	async function deleteMenu(menu: MenuData) {
+		const { name, id } = menu;
+		const deletedMenuID: string = id;
+		// TODO: Display loader
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar a: ${name}`
+		);
+
+		const endpoint = `${url}/${deletedMenuID}`;
+		if (isDelete) {
+			try {
+				console.log(`delete endpoint: ${endpoint}`);
+				await instance.delete(endpoint);
+				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
+					variant: "success",
+				});
+				setMenus((menus) => menus.filter((menu) => menu.id !== deletedMenuID));
+			}
+			catch {
+				enqueueSnackbar(`Error al eliminar la ${name}`, {
+					variant: "error",
+				});
+			}
+			handleDownloadFile(false);
+		}
+	}
+
+	async function fetchMenu() {
+		try {
+			const { data: menus } = await instance.get<MenuData[]>(url);
+			setMenus(menus);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los Menus", {
+				variant: "error",
+			});
+		}
+	}
+
+	async function onSubmitSearch(
+		filter: string,
+		search: string,
+		order: QueryOrder
+	) {
+		try {
+			let menus: MenuData[];
+
+			switch (filter) {
+			case "Texto":
+				menus = (
+					await instance.get<MenuData[]>(`/menus/menuByText/${search}`, {
+						params: { order },
+					})
+				).data;
+				break;
+
+			default:
+				menus = (
+					await instance.get<MenuData[]>(url, {
+						params: { order },
+					})
+				).data;
+				break;
+			}
+
+			setMenus(menus);
+		}
+		catch {
+			enqueueSnackbar("Hubo un error al mostrar los menus", {
+				variant: "error",
+			});
+		}
+	}
 
 	return (
 		<>
 			<Navbar />
-
-			<Container
-				sx={{
-					width: "600px",
-					marginTop: "20px",
-					marginBottom: "20px",
-				}}
-			>
-				<h1>Menú</h1>
-
-				<Paper
-					elevation={4}
+			<Container maxWidth="sm">
+				<Box
 					sx={{
 						display: "flex",
-						flexDirection: "column",
-						padding: "20px",
-						gap: "20px",
+						alignItems: "center",
+						justifyContent: "center",
 					}}
 				>
-					<DisplayedMenu data={toyStoreMenu} />
-				</Paper>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							gap: "10px",
+						}}
+					>
+						<SearchAppBar
+							searchOptions={searchOptions}
+							onSubmitSearch={onSubmitSearch}
+						/>
+						<h1>Menus</h1>
+						{showModal && (
+							<Modal
+								open={showModal}
+								handleOpen={setShowModal}
+								title="Formulario Opcion Menu"
+							>
+								<MenuForm
+									onSubmit={onMenuSubmitted}
+									MenuData={
+										selectedMenuToEdit.current instanceof Object
+											? selectedMenuToEdit.current
+											: undefined
+									}
+									handleDownloadFile={handleDownloadFile}
+								></MenuForm>
+							</Modal>
+						)}
+						<TableContainer
+							sx={{ width: "800px", maxHeight: "400px" }}
+							component={Paper}
+							elevation={5}
+						>
+							<Table>
+								<TableHead>
+									<TableRow>
+										{tableHeaders.map((header) => (
+											<TableCell key={header} align="left">
+												<TableSortLabel>{header}</TableSortLabel>
+											</TableCell>
+										))}
+									</TableRow>
+								</TableHead>
+
+								<TableBody>
+									{!(menus?.length > 0) ? (
+										<TableRow>
+											<TableCell>Sin datos</TableCell>
+										</TableRow>
+									) : (
+										menus?.map((menu, index) => (
+											<TableRow key={menu.id}>
+												<TableCell align="left">{index + 1}</TableCell>
+												<TableCell align="left">
+													<NavLink
+														to={`/menu/${menu.name}/${menu.id}`}
+														style={{ color: "inherit", textDecoration: "none" }}
+													>
+														{menu.name}
+													</NavLink>
+												</TableCell>
+												<TableCell align="left">{menu.answer}</TableCell>
+												<TableCell align="left">
+													{menu.principalMenu === false ? "Submenu" : "Menu"}
+												</TableCell>
+												{isAdmin && (
+													<TableCell align="left">
+														<IconButton onClick={() => handleEdit(menu)}>
+															<Edit fontSize="inherit" />
+														</IconButton>
+														{!menu.principalMenu && (
+															<IconButton onClick={() => deleteMenu(menu)}>
+																<DeleteForever fontSize="inherit" />
+															</IconButton>
+														)}
+													</TableCell>
+												)}
+											</TableRow>
+										))
+									)}
+								</TableBody>
+							</Table>
+						</TableContainer>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								gap: "10px",
+							}}
+						>
+							{isAdmin && (
+								<IconButton
+									sx={{
+										alignSelf: "flex-start",
+										fontSize: "40px",
+										padding: "0px",
+									}}
+									onClick={() => createMenu()}
+								>
+									<AddCircle fontSize="inherit" />
+								</IconButton>
+							)}
+							<ExcelDownloadButton
+								apiObjective="menus"
+								onDownload={() => setHasDownloadedFile(true)}
+							/>
+							<FileUpload
+								apiObjective="menus"
+								onUpload={fetchMenu}
+								disabled={!hasDownloadedFile}
+							/>
+						</Box>
+					</Box>
+				</Box>
 			</Container>
 		</>
 	);
 };
 
-export default Menu;
+export default AnalisisClientes;
