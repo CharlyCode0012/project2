@@ -48,15 +48,31 @@ const FileUpload: React.FC<FileUploadProps> = ({
 		console.log(formData);
 
 		try {
-			await instance.post(`/${apiObjective}/upload`, formData, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			});
+			if (apiObjective.includes(":")) {
+				const endpoint = apiObjective.split(":");
+				await instance.post(`/${endpoint[0]}/upload`, formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+					params: {
+						info: endpoint[1],
+					},
+				});
+			}
+			else {
+				await instance.post(`/${apiObjective}/upload`, formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+				});
+			}
+
+			enqueueSnackbar("Se subió con exito el archivo", { variant: "success" });
 
 			onUpload(); // Refresh table with newer table values
 		}
-		catch {
+		catch (error) {
+			console.log(error);
 			enqueueSnackbar("Algo salió mal", { variant: "error" });
 		}
 	}

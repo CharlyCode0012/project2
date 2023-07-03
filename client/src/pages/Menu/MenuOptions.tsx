@@ -73,7 +73,6 @@ const MenuOptions: React.FC = () => {
 
 	useEffect(() => {
 		fetchMenuOptions();
-		// fetchMenu();
 	}, []);
 
 	async function fetchMenu() {
@@ -315,8 +314,8 @@ const MenuOptions: React.FC = () => {
 								onDownload={() => setHasDownloadedFile(true)}
 							/>
 							<FileUpload
-								apiObjective="menu_options"
-								onUpload={fetchMenu}
+								apiObjective={`menu_options:${menuID}`}
+								onUpload={fetchMenuOptions}
 								disabled={!hasDownloadedFile}
 							/>
 						</Box>

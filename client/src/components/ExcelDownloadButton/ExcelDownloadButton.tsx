@@ -55,6 +55,7 @@ const ExcelDownloadButton: React.FC<ExcelDownloadButtonProps> = ({
 			document.body.appendChild(link);
 			link.click();
 
+			enqueueSnackbar("Se descargó con exito", { variant: "success" });
 			onDownload(); // Enable file submission
 		}
 		catch (error) {

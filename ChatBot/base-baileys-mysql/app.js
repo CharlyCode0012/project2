@@ -69,12 +69,13 @@ async function sendAnswer(to, answer, question, product){
 async function sendCatalogProducts(to, catalogID){
 
     try {
-        const file = fs.readFileSync('.src/Catalog/Productos '+catalogID+'.xlsx');
+        const file = fs.readFileSync('src/Catalog/Productos '+catalogID+'.xlsx');
     
+        /* const modProvider = await adapterProvider.getInstance();
+        const media = await BaileysProvider.prepareMessageMedia(file, BaileysProvider.MessageType, { mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename: 'Productos '+catalogID+'.xlsx' });
+        await modProvider.sendMessage(chatId, media, MessageType.document); */
         const modProvider = await adapterProvider.getInstance();
-        const media = await modProvider.prepareMessageMedia(file, MessageType.document, { mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename: 'Productos '+catalogID+'.xlsx' });
-        await modProvider.sendMessage(chatId, media, MessageType.document);
-
+        await modProvider.sendMessage(`${to}@s.whatsapp.net`, {text: `Ve al enlace para descagargar el catálogo\n*Link:*\n http://localhost:3200/api/products/downloadWithCatalogId?catalogID=${catalogID}`});
         console.log('Archivo enviado correctamente');
     } catch (error) {
         console.error('Error al hacer la petición:', error);
@@ -118,7 +119,8 @@ const flowScheduleDate = addKeyword([ "Agendar", "Agendar fecha", "Agenda" ]).ad
     [
         "Ingrese el folio para agendar cita: ",
     ],  
-    { capture: true },
+    { capture: true ,
+    delay: 2000},
     async ( ctx, { fallBack, flowDynamic }) => {
 
         const getFolio = async () => {
@@ -140,7 +142,10 @@ const flowScheduleDate = addKeyword([ "Agendar", "Agendar fecha", "Agenda" ]).ad
     await flowDynamic( getFolio() );
     }
 ).addAnswer([ "Ingrese la fecha en formato *DD/MM/AAAA*:" ],
-    { capture: true },
+    { 
+        capture: true,
+        delay: 2000 
+    },
     async (ctx, { fallBack, flowDynamic }) => {
 
         date_delivery = ctx.body;
@@ -162,23 +167,28 @@ const flowCatalogos = addKeyword([ "1", "Catalogo" ]).addAnswer(
     [
         "Estoy obteniendo los catálogos"
     ],
-    { capture: true },
+    {delay: 2000},
     async ( ctx, { flowDynamic }) => {
         try {
             catalogs = await fetchCatalogs();
-            await flowDynamic(catalogs);
+            console.log(catalogs);
+            await flowDynamic(catalogs); 
         } catch (error) {
             console.log(error);
         }
     } 
 ).addAnswer(
     "Ingrese un catalogo de acuerdo al numero",
-    {capture: true},
+    {
+        capture: true,
+        delay: 1000,
+    },
     async (ctx, { fallBack, flowDynamic }) => {
 
         try {
             let indexCatalog = ctx.body;
             clientNumber = ctx.from;
+            console.log(clientNumber);
 
             if(isNaN(indexCatalog)){
                 return fallBack();
@@ -186,8 +196,10 @@ const flowCatalogos = addKeyword([ "1", "Catalogo" ]).addAnswer(
 
             indexCatalog -= 1;
             catalog = catalogs[indexCatalog];
+            console.log(catalog);
 
-            await downloadFileProducts(catalog?.id);
+            //await downloadFileProducts(catalog?.id);
+            //await sendCatalogProducts(clientNumber, catalog?.id);
             await sendCatalogProducts(clientNumber, catalog?.id);
 
         } catch (error) {
@@ -203,7 +215,10 @@ const flowCart = addKeyword([ "cart", "carrito", "carro", "comprar" ]).addAnswer
         "\n*1* Catalogo",
         "*2* Ingresar un producto"
     ],
-    { capture: true }, 
+    { 
+        capture: true, 
+        delay: 2000,
+    }, 
     async ( ctx, { fallBack, flowDynamic }) => {
         const option = ctx.body;
         if(option !== 1 || option !== 2)
@@ -214,10 +229,27 @@ const flowCart = addKeyword([ "cart", "carrito", "carro", "comprar" ]).addAnswer
     [
         "Ingresa una palabra clave: "
     ],
-    { capture: true },
+    { 
+        capture: true,
+        delay: 700,
+    },
     async ( ctx, { fallBack, flowDynamic }) => {
         try {
-            
+            const keyWord = ctx.body;
+            const product = instance.get('/products/searchBykeyWord', {params: {search: keyWord}});
+            if(!product){
+                await flowDynamic("No se encontró un producto con esa palabra clave");
+                return fallBack();
+            }
+            const message = {
+                body: `
+                ${product.product_name} 
+                \nDescripción: ${product.description} 
+                \nPrecio: ${product.price}
+                \nExistencia: ${product.stock}`,
+                media: `http://127.0.0.1:3200/api/images/${product.id}`
+            }
+            await flowDynamic(message);
         } catch (error) {
             
         }
@@ -259,10 +291,13 @@ const flowPrincipal = addKeyword([ "hola", "ole", "alo", "inicio" ]).
 addAnswer([
     "Hola buenas tardes, este es un bot de una tienda",
     "¿En que puedo ayudarte?",
-])
+],
+{
+    delay: 500,
+})
 .addAnswer(
     [ "*1* Catalogo", "*2* Contactar con un humano", "*3* Documentacion" ],
-    null,
+    {delay: 500},
     null,
     [flowCatalogos, flowSecundario, flowDocs, flowCart]
 );

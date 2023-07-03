@@ -1,4 +1,4 @@
-const instance = require('instance');
+const instance = require('./instance');
 const fs = require('fs');
 
 
@@ -21,11 +21,11 @@ async function downloadFileProducts(catalogID) {
             params: {
                 catalogID: catalogID
             },
-            responseType: 'arraybuffer'
+            responseType: 'blob'
         });
 
         // Guardar el archivo recibido en disco
-        const filePath = '.src/Catalog/Productos '+catalogID+'.xlsx'
+        const filePath = 'src/Catalog/Productos '+catalogID+'.xlsx'
         fs.writeFileSync(filePath, response.data);
         console.log('Archivo descargado correctamente');
     } catch (error) {
