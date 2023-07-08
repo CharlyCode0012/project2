@@ -48,13 +48,17 @@ const MenuForm: React.FC<MenuFormProps> = ({
 		const name = data.get("name")?.toString()?.trim();
 		const answer = data.get("answer")?.toString()?.trim();
 
-		const endpoint = `/menus/${MenuData?.id}`;
+		const endpoint = "/menus";
 
 		try {
-			await instance.put(endpoint, {
-				name,
-				answer,
-			});
+			await instance.put(
+				endpoint,
+				{
+					name,
+					answer,
+				},
+				{ params: { menuId: MenuData?.id } }
+			);
 			onSubmit(true);
 			handleDownloadFile(false);
 		}

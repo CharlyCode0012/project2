@@ -1,12 +1,12 @@
-const axios = require('axios');
+const axios = require("axios");
 
 const instance = axios.create({
-	// baseURL: "https://server-production-4487.up.railway.app/api/",
-	baseURL: "http://localhost:3200/api",
-	headers: {
-		"Access-Control-Allow-Origin": "*",
-		"Content-Type": "application/json",
-	},
+  // baseURL: "https://server-production-4487.up.railway.app/api/",
+  baseURL: "http://localhost:3200/api",
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json",
+  },
 });
 
-module.exports =  instance;
+module.exports = instance;

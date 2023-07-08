@@ -14,8 +14,6 @@ import { Catalog } from "models/Catalog";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 
-const regexKeyWord = /^[A-Za-z0-9\s\u00f1\u00d1]+$/g;
-
 interface MenuOptionFormProps {
 	onSubmit: (op: boolean) => void;
 	OptionData?: MenuOption;
@@ -50,7 +48,8 @@ const MenuOptionForm: React.FC<MenuOptionFormProps> = ({
 	async function fetchCatalogs() {
 		try {
 			const { data: Catalogs } = await instance.get<Catalog[]>("/catalogs");
-			setReferences(Catalogs);
+
+			setReferences(Catalogs.filter((catalog) => catalog.state !== false));
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al traer los catálogos", {
@@ -146,22 +145,24 @@ const MenuOptionForm: React.FC<MenuOptionFormProps> = ({
 		const reference = data.get("reference")?.toString().trim() ?? null;
 		const answer = data.get("answer")?.toString().trim() ?? null;
 
-		if (!regexKeyWord.test(keywords ?? "")) {
-			return window.alert(
-				"Recuerda que la palabra clave no acepta valores que no sean alfanumericos"
-			);
-		}
-
-		const endpoint = `/menu_options/${OptionData?.id}`;
+		const endpoint = "/menu_options";
 
 		try {
-			await instance.put(endpoint, {
-				answer,
-				option,
-				keywords,
-				reference,
-				action_type: actionType,
-			});
+			await instance.put(
+				endpoint,
+				{
+					answer,
+					option,
+					keywords,
+					reference,
+					action_type: actionType,
+				},
+				{
+					params: {
+						menuResId: OptionData?.id,
+					},
+				}
+			);
 			onSubmit(true);
 			handleDownloadFile(false);
 		}
