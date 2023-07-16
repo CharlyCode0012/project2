@@ -45,9 +45,9 @@ const AnalisisClientes: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["#", "Título", "Texto", "Tipo"];
+	const tableHeaders = ["#", "Título", "Texto", "Tipo", "ID"];
 
-	const searchOptions = ["Texto"];
+	const searchOptions = ["Texto", "Título"];
 
 	const userLogin: User | null = useReadLocalStorage("log_in");
 	const typeUser: string | undefined = userLogin?.type_use;
@@ -139,8 +139,16 @@ const AnalisisClientes: React.FC = () => {
 			switch (filter) {
 			case "Texto":
 				menus = (
-					await instance.get<MenuData[]>(`/menus/menuByText/${search}`, {
-						params: { order },
+					await instance.get<MenuData[]>("/menus/searchWithText", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
+			case "Título":
+				menus = (
+					await instance.get<MenuData[]>("/menus/searchWithName", {
+						params: { order, search },
 					})
 				).data;
 				break;
@@ -240,6 +248,7 @@ const AnalisisClientes: React.FC = () => {
 												<TableCell align="left">
 													{menu.principalMenu === false ? "Submenu" : "Menu"}
 												</TableCell>
+												<TableCell align="left">{menu.id}</TableCell>
 												{isAdmin && (
 													<TableCell align="left">
 														<IconButton onClick={() => handleEdit(menu)}>

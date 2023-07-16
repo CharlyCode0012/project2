@@ -63,18 +63,18 @@ const AnalisisClientes: React.FC = () => {
 			let shoppings: Client[];
 
 			switch (filter) {
-			case "Nombre":
+			case "Celular":
 				shoppings = (
-					await instance.get<Client[]>(`/products/productByName/${search}`, {
-						params: { order },
+					await instance.get<Client[]>("/clients/searchByNumber", {
+						params: { order, search },
 					})
 				).data;
 				break;
 
-			case "Estado":
+			case "Cantidad":
 				shoppings = (
-					await instance.get<Client[]>(`/products/productBy/${search}`, {
-						params: { order },
+					await instance.get<Client[]>("/clients/searchByQuantity", {
+						params: { order, search },
 					})
 				).data;
 				break;

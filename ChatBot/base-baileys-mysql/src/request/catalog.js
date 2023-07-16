@@ -5,21 +5,17 @@ const instance = require("./instance");
 async function fetchCatalogs() {
   try {
     const { data: catalogs } = await instance.get("/catalogs");
-
-    const data = catalogs.map((catalog, index) => ({
-      body: `${index + 1} *${catalog.name}:* ${catalog.description} `,
-      id: catalog.id,
-    }));
-
-    /* const data = catalogs.map((catalog, index) => {
-        return `${index + 1} *${ catalog.name }:* ${ catalog.description } `;
-    })
- */
-    return data;
+    return catalogs;
   } catch (error) {
     console.log(error);
     return {};
   }
 }
 
-module.exports = { fetchCatalogs };
+function messsageCatalogs(catalogs){
+  const data = catalogs.map((catalog, index) => (`${index + 1} *${catalog.name}:* ${catalog.description} `));
+
+  return data;
+}
+
+module.exports = { fetchCatalogs, messsageCatalogs };

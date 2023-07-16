@@ -48,12 +48,9 @@ async function fetchMenusWithOptions(){
       const { data: responseOptions } = await instance.get("/menu_options", {
         params: { menuID: menu.id },
       });
-      console.log("opciones: ",responseOptions);
       menu.setMenuOptions = responseOptions;
       return menu;
     }));
-
-    console.log("menus: ", menus);
 
     return menusWithOptions; 
   }catch (error){

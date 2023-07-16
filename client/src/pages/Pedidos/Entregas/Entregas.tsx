@@ -54,7 +54,7 @@ const deliveries: React.FC = () => {
 		"Entregado",
 	];
 
-	const searchOptions = ["Estado", "Fecha", "Folio", "Lugar"];
+	const searchOptions = ["Estado", "Fecha", "Folio", "Lugar", "Numero cliente"];
 
 	/**
 	 * Determines if some admin action buttons will be
@@ -75,7 +75,9 @@ const deliveries: React.FC = () => {
 	async function fetchDeliveries() {
 		try {
 			const { data: deliveries } = await instance.get<Delivery[]>(url);
-			setConfirmDeliveries(deliveries);
+			setConfirmDeliveries(
+				deliveries.filter((delivery) => delivery.state == false)
+			);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar las entregas", {
@@ -143,6 +145,14 @@ const deliveries: React.FC = () => {
 				).data;
 				break;
 
+			case "Numero cliente":
+				deliveries = (
+					await instance.get<Delivery[]>("/deliveries/searchByClientNumber", {
+						params: { order, search },
+					})
+				).data;
+				break;
+
 			default:
 				deliveries = (
 					await instance.get<Delivery[]>(url, {
@@ -167,8 +177,6 @@ const deliveries: React.FC = () => {
 			<Container maxWidth="sm">
 				<Box
 					sx={{
-						height: "560px",
-						flexGrow: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",

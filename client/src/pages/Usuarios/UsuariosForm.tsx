@@ -85,7 +85,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, onSubmit }) => {
 				enqueueSnackbar(
 					"Ya hay un usuario con ese numero, intenta otro diferente",
 					{ variant: "error" }
-				); 
+				);
 			}
 			else enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -127,7 +127,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, onSubmit }) => {
 				enqueueSnackbar(
 					"Ya hay un usuario con ese numero, intenta otro diferente",
 					{ variant: "error" }
-				); 
+				);
 			}
 			else enqueueSnackbar("Algo salio mal", { variant: "error" });
 		}
@@ -215,7 +215,7 @@ const UserForm: React.FC<UserFormProps> = ({ userData, onSubmit }) => {
 				label="Celular"
 				name="cel"
 				variant="outlined"
-				defaultValue={userData?.pass}
+				defaultValue={userData?.cel}
 				type="text"
 				inputProps={{
 					pattern: "^\\d{2}-\\d{4}-\\d{4}$",

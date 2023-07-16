@@ -17,6 +17,7 @@ import {
 	TextField,
 } from "@mui/material";
 import { ServerResponse } from "models/ServerResponse";
+import { useSnackbar } from "notistack";
 import Cookies from "universal-cookie";
 import { DeleteProps } from "helper/DeleteProps";
 import LoginContext from "context/LoginContext";
@@ -35,40 +36,13 @@ const initialForm: FormLogin = {
 
 const cookies = new Cookies();
 
-function validationsForm(form: FormLogin) {
-	const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
-	const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
-	const regexPass =
-		/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
-	const regexSigns = /[-<>/]+/g;
-	const errors = {};
-
-	if (!form.name.trim()) alert("Llena el campo nombre");
-	else if (!regexName.test(form.name.trim()))
-		alert("El campo nombre solo acepta letras y espcios en blanco ' '");
-
-	if (!form.pass.trim()) alert("El campo contraseña es requerido");
-	else if (
-		!regexPass.test(form.pass.trim()) ||
-		regexSigns.test(form.pass.trim())
-	)
-		alert("Debe ser una contraseña robusta y no se permiten \"-<>/</>\"");
-
-	if (!form.cel.trim()) alert("Llena el campo celular");
-	else if (!regexNum.test(form.cel.trim())) {
-		alert(
-			"El campo celular solo acepta numeros y no mas de 10 digitos, (XX-XXXX-XXXX)"
-		);
-	}
-	return errors;
-}
-
 const Login: React.FC = () => {
 	/**
 	 * Determines if the password will be shown or hidden
 	 * in its input field
 	 */
 	// const { form, handleChange, setInfo } = useForm<FormLogin>(initialForm);
+	const { enqueueSnackbar } = useSnackbar();
 	const [form, setForm] = useState<FormLogin>(initialForm);
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -95,8 +69,46 @@ const Login: React.FC = () => {
 		cookies.set("user", user?.success, { path: "/" });
 	}
 
+	function validationsForm(form: FormLogin) {
+		const regexName = /^[A-Za-zÑñÁáÉéÍíÓóÚúÜü\s]+$/;
+		const regexNum = /^[2-9]{2}-{1}[0-9]{4}-{1}[0-9]{4}$/;
+		const regexPass =
+			/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+		const regexSigns = /[-<>/]+/g;
+		const errors: any = {};
+
+		if (!form.name.trim()) errors.name = "Llena el campo nombre";
+		else if (!regexName.test(form.name.trim())) {
+			errors.name =
+				"El campo nombre solo acepta letras y espacios en blanco ' '";
+		}
+
+		if (!form.pass.trim()) errors.pass = "El campo contraseña es requerido";
+		else if (
+			!regexPass.test(form.pass.trim()) ||
+			regexSigns.test(form.pass.trim())
+		) {
+			errors.pass =
+				"Debe ser una contraseña robusta y no se permiten \"-<>/</>\"";
+		}
+
+		if (!form.cel.trim()) errors.cel = "Llena el campo celular";
+		else if (!regexNum.test(form.cel.trim())) {
+			errors.cel =
+				"El campo celular solo acepta números y no más de 10 dígitos, (XX-XXXX-XXXX)";
+		}
+
+		return errors;
+	}
+
 	async function authenticate(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+		const validationErrors = validationsForm(form);
+		if (Object.keys(validationErrors).length > 0) {
+			const errorMessage = Object.values(validationErrors).join("\n");
+			enqueueSnackbar(errorMessage, { variant: "warning" });
+			return;
+		}
 
 		// Get data from the form
 		const data = new FormData(event.currentTarget);
@@ -138,10 +150,11 @@ const Login: React.FC = () => {
 			}
 		}
 		catch (error: any) {
-			alert(
+			enqueueSnackbar(
 				`Descripcion del error: ${error.message}\nEstado: ${
 					error?.status ?? 500
-				}`
+				}`,
+				{ variant: "error" }
 			);
 		}
 	}

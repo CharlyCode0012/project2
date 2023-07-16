@@ -46,7 +46,7 @@ const AnalisisClientes: React.FC = () => {
 		"Cantidad de compras",
 	];
 
-	const searchOptions = ["Cantidad de Compras"];
+	const searchOptions = ["Cantidad de Compras", "Categoría"];
 
 	const timePeriods = ["1 semana", "1 mes", "2 meses", "6 meses"];
 
@@ -82,6 +82,21 @@ const AnalisisClientes: React.FC = () => {
 					await instance.get<SoldProduct[]>("/sold_products/searchByStock", {
 						params: { order, timePeriod: timePeriodSelected.current, search },
 					})
+				).data;
+				break;
+
+			case "Categoría":
+				soldProducts = (
+					await instance.get<SoldProduct[]>(
+						"/sold_products/searchByCategory",
+						{
+							params: {
+								order,
+								timePeriod: timePeriodSelected.current,
+								search,
+							},
+						}
+					)
 				).data;
 				break;
 

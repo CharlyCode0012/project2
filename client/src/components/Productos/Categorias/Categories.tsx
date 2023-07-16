@@ -44,7 +44,7 @@ const Categories: React.FC = () => {
 	 * purposes
 	 */
 
-	const tableHeaders = ["ID", "Nombre", "Estado"];
+	const tableHeaders = ["ID", "Nombre", "Descripción", "Estado"];
 
 	const searchOptions = ["Estado", "Nombre"];
 
@@ -250,6 +250,9 @@ const Categories: React.FC = () => {
 												<TableCell align="left">{category.id}</TableCell>
 												<TableCell align="left">
 													{category.category_name}
+												</TableCell>
+												<TableCell align="left">
+													{category.description}
 												</TableCell>
 												<TableCell align="left">
 													{category.state ? "Activada" : "Desactivada"}

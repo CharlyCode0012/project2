@@ -169,7 +169,7 @@ const Products: React.FC = () => {
 	) {
 		try {
 			let Products: Product[];
-
+			let tempProduct: Product;
 			switch (filter) {
 			case "Cantidad":
 				Products = (
@@ -188,11 +188,13 @@ const Products: React.FC = () => {
 				break;
 
 			case "Palabra clave":
-				Products = (
-					await instance.get<Product[]>("/products/searchByKeyWord", {
+				tempProduct = (
+					await instance.get<Product>("/products/searchByKeyWord", {
 						params: { order, search },
 					})
 				).data;
+
+				Products = [tempProduct];
 				break;
 
 			case "Precio":
@@ -211,7 +213,7 @@ const Products: React.FC = () => {
 				).data;
 				break;
 			}
-
+			console.log(Products);
 			setProducts(Products);
 		}
 		catch {

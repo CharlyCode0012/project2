@@ -29,7 +29,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
+		const category_name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 		console.log("name: ", name);
@@ -38,7 +39,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 		try {
 			await instance.post("/categories", {
 				id: Date.now().toString(),
-				name,
+				category_name,
+				description,
 				state,
 			});
 			onSubmit(false); // "false" tells the submission wasn't an update, it was a new Category creation
@@ -54,7 +56,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 
 		// Get payment method data from the form
 		const data = new FormData(event.currentTarget);
-		const name = data.get("name")?.toString();
+		const category_name = data.get("name")?.toString();
+		const description = data.get("description")?.toString();
 		const actived = data.get("state")?.toString();
 		const state = actived ? true : false;
 
@@ -66,7 +69,8 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 			console.log(`update endpoint: ${endpoint}`);
 
 			await instance.put(endpoint, {
-				name,
+				category_name,
+				description,
 				state,
 			});
 			onSubmit(true);
@@ -95,6 +99,15 @@ const CategoriesForm: React.FC<CategoriesFormProps> = ({
 				name="name"
 				variant="outlined"
 				defaultValue={categoryData?.category_name}
+				type="text"
+				required
+			/>
+			<TextField
+				sx={{ width: "300px" }}
+				label="Descripción"
+				name="description"
+				variant="outlined"
+				defaultValue={categoryData?.description}
 				type="text"
 				required
 			/>

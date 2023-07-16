@@ -36,7 +36,7 @@ const MenuOptionForm: React.FC<MenuOptionFormProps> = ({
 	async function fetchMenu() {
 		try {
 			const { data: Menus } = await instance.get<MenuData[]>("/menus");
-			setReferences(Menus);
+			setReferences(Menus.filter((menu) => menu.id !== menuID));
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al traer los menus", {

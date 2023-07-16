@@ -75,19 +75,6 @@ const MenuOptions: React.FC = () => {
 		fetchMenuOptions();
 	}, []);
 
-	async function fetchMenu() {
-		try {
-			const { data: reqMenus } = await instance.get<MenuData[]>("/menus");
-			const Menus = reqMenus.filter((menu: MenuData) => menu.id !== menuID);
-			setMenus(Menus);
-		}
-		catch {
-			enqueueSnackbar("Hubo un error al traer los menus", {
-				variant: "error",
-			});
-		}
-	}
-
 	async function fetchMenuOptions() {
 		setMenuOptions([]);
 		try {
@@ -164,8 +151,8 @@ const MenuOptions: React.FC = () => {
 			switch (filter) {
 			case "Palabra clave":
 				MenuOptions = (
-					await instance.get<MenuOption[]>("/menuOptions/searchByKeyWord", {
-						params: { order, search },
+					await instance.get<MenuOption[]>("/menu_options/searchByKeyWord", {
+						params: { order, search, menuID },
 					})
 				).data;
 				break;
@@ -173,7 +160,7 @@ const MenuOptions: React.FC = () => {
 			default:
 				MenuOptions = (
 					await instance.get<MenuOption[]>(url, {
-						params: { order },
+						params: { order, menuID },
 					})
 				).data;
 				break;

@@ -17,8 +17,7 @@ import { Question } from "models/Question";
 import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import Modal from "@/Modal/Modal";
 import DudasForm from "./DudasForm";
-import { useReadLocalStorage } from "usehooks-ts";
-import { User } from "models/User";
+
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import NavbarProduct from "@/Navbar/NavbarProduct";
@@ -50,10 +49,6 @@ const Dudas: React.FC = () => {
 	 * Determines if some admin action buttons will be
 	 * displayed in the table too
 	 */
-	const userLogin: User | null = useReadLocalStorage("log_in");
-	const typeUser: string | undefined = userLogin?.type_use;
-	const isAdmin: boolean =
-		typeUser === "admin" || typeUser === "vendedor" ? true : false;
 
 	// console.log(isAdmin);
 	// TODO:
@@ -207,7 +202,7 @@ const Dudas: React.FC = () => {
 											</TableCell>
 										))}
 
-										{isAdmin && <TableCell />}
+										<TableCell />
 									</TableRow>
 								</TableHead>
 
@@ -220,7 +215,11 @@ const Dudas: React.FC = () => {
 										questions?.map((question: Question) => (
 											<TableRow key={question.id}>
 												<TableCell align="left">{question.id}</TableCell>
-												<TableCell align="left">{question.id_client}</TableCell>
+												<TableCell align="left">
+													{question.id_client.substring(0, 3) === "521"
+														? question.id_client.substring(3)
+														: question.id_client}
+												</TableCell>
 												<TableCell align="left">
 													{question.id_product}
 												</TableCell>
@@ -228,13 +227,12 @@ const Dudas: React.FC = () => {
 													{question.product_name}
 												</TableCell>
 												<TableCell align="left">{question.question}</TableCell>
-												{isAdmin && (
-													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(question)}>
-															<Edit fontSize="inherit" />
-														</IconButton>
-													</TableCell>
-												)}
+
+												<TableCell align="center">
+													<IconButton onClick={() => handleEdit(question)}>
+														<Edit fontSize="inherit" />
+													</IconButton>
+												</TableCell>
 											</TableRow>
 										))
 									)}
