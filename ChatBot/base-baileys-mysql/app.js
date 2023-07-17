@@ -24,6 +24,8 @@ const { getFlows } = require("./src/func/makeFlows.js");
 const { createPrincipalFlow } = require("./src/flows/principalFlow");
 const { helperFlow } = require("./src/flows/helperFlow");
 const { menuProducts } = require("./src/flows/menuProductsFlow");
+const { payFlow } = require("./src/flows/payFlow");
+const { showProductsFlow } = require("./src/flows/showProductsFlow");
 
 /**
  * creamos el adapterProvider
@@ -84,7 +86,6 @@ async function sendAnswer(to, answer, question, product) {
  */
 
 async function sendConfirmDate(to, text, folio) {
-
   let valTo = to.substring(0, 3);
 
   if (valTo == "521") {
@@ -136,10 +137,11 @@ socket.on("menu_updated_event", async () => {
   //console.log(flows);
   flows.push(menuPago);
   flows.push(helperFlow);
+  flows.push(payFlow);
 
   const principalFlow = await createPrincipalFlow(flows);
 
-  const adapterFlow = createFlow([principalFlow, scheduleDateFlow]);
+  const adapterFlow = createFlow([principalFlow, scheduleDateFlow, showProductsFlow]);
 
   if (bot) {
     bot.then((botInstance) => {
@@ -216,11 +218,16 @@ async function createInstance() {
 
   flows.push(menuPago);
   flows.push(helperFlow);
+  flows.push(payFlow);
 
   const principalFlow = await createPrincipalFlow(flows);
   //console.log("\nprincipal flow: ", principalFlow);
 
-  const adapterFlow = createFlow([principalFlow, scheduleDateFlow, menuProducts]);
+  const adapterFlow = createFlow([
+    principalFlow,
+    scheduleDateFlow,
+    showProductsFlow,
+  ]);
 
   bot = createBot({
     flow: adapterFlow,

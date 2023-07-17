@@ -78,7 +78,7 @@ const methodFlow = addKeyword(["3", "metodo"])
         // Obtener el contexto del usuario
         const userContext = moduleContext.getUserContext(userId);
         analyzePaymentMethodInContext(userId, method, userContext);
-        return await gotoFlow(menuPago);
+        await gotoFlow(menuPago);
       } catch (error) {
         console.log(error);
       }

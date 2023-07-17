@@ -15,7 +15,7 @@ const { ProductCart, Cart } = require("../models/Cart.js");
 
 function agregarProductoAlCarrito(productData, userId, userContext) {
   // Verificar si el usuario ya tiene un carrito
-  if (!userContext.cart) {
+  if ((!userContext.cart || Object.entries(userContext.cart).length === 0)) {
     // Si no tiene carrito, crear uno nuevo
     userContext.cart = new Cart();
   }
@@ -24,7 +24,7 @@ function agregarProductoAlCarrito(productData, userId, userContext) {
   const cart = userContext.cart;
 
   // Buscar si el producto ya está en el carrito
-  const existingProduct = cart.products.find(
+  const existingProduct = cart?.products?.find(
     (prod) => prod.id === productData.id
   );
 
@@ -144,7 +144,7 @@ const menuProducts = addKeyword(["2", "pedir"]).addAnswer(
 
       if (option == "5")
         return endFlow({
-          body: "Para volver puedes poner inicio, o simplemente mandar *pedir* para volver a seleccionar otro producto",
+          body: "Gracias por su preferencia",
         });
     } catch (error) {
       console.log(error);

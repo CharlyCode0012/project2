@@ -1,41 +1,6 @@
 {
-    "paymentMethod": {
-        "id": "3",
-        "name": "Carlos Hernandez",
-        "CLABE": "246813579024681357",
-        "no_card": "2468135790246813",
-        "bank": "Santander",
-        "subsidary": "seven eleven",
-        "createdAt": "2023-07-02T22:05:35.000Z",
-        "updatedAt": "2023-07-12T18:53:14.000Z"
-    },
-    "cart": {
-        "products": [
-            {
-                "id": "306",
-                "product_name": "Auriculares Sony WH-1000XM4",
-                "quantity": 1,
-                "price": 349.99,
-                "totalPrice": 349.99
-            },
-            {
-                "id": "308",
-                "product_name": "Consola de videojuegos Sony PlayStation 5",
-                "quantity": 1,
-                "price": 499.99,
-                "totalPrice": 499.99
-            }
-        ],
-        "totalPrice": 849.98
-    },
-    "deliveryLocation": {
-        "id": "5",
-        "name": "Zapopan",
-        "address": "Av. Vallarta 789. undefined",
-        "cp": "45110",
-        "open_h": "09:30",
-        "close_h": "23:00",
-        "createdAt": "2023-07-02T22:05:40.000Z",
-        "updatedAt": "2023-07-12T18:14:43.000Z"
-    }
+    "paymentMethod": {},
+    "cart": {},
+    "deliveryLocation": {},
+    "folio": "QC6kckSW29"
 }

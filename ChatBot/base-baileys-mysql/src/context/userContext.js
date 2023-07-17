@@ -96,9 +96,11 @@ function updateContextOnFile(userId, userContext) {
 
   // Fusionar el contexto existente con el nuevo contexto
   const contextoActualizado = { ...contextoExistente, ...userContext };
+  console.log("Actualizado: ", contextoActualizado);
 
   // Guardar el contexto actualizado en el archivo
   const contextoJSON = JSON.stringify(contextoActualizado, null, 4);
+  console.log("JSON: ", contextoJSON);
   fs.writeFileSync(rutaArchivo, contextoJSON);
 }
 
@@ -144,10 +146,7 @@ function removeProductFromCartInContextAndFile(userId, productId, userContext) {
   );
 }
 
-function removeElementFromContext(userId, elementoKey) {
-  // Obtener el contexto del usuario
-  const userContext = userContexts[userId];
-
+function removeElementFromContext(userId, userContext, elementoKey) {
   // Verificar si el usuario tiene un contexto
   if (!userContext) {
     console.log("El usuario no tiene un contexto.");
@@ -161,7 +160,8 @@ function removeElementFromContext(userId, elementoKey) {
   }
 
   // Eliminar la propiedad del contexto
-  delete userContext[elementoKey];
+  userContext[elementoKey] = {};
+  console.log("after delete: ", userContext);
 
   // Guardar el contexto actualizado en el archivo
   updateContextOnFile(userId, userContext);
@@ -184,9 +184,7 @@ function createFolio() {
   return folio;
 }
 
-function addFolioToContext(userId) {
-  // Obtener el contexto del usuario
-  const userContext = userContexts[userId];
+function addFolioToContext(userId, userContext) {
 
   // Verificar si el usuario tiene un contexto
   if (!userContext) {
@@ -217,6 +215,5 @@ module.exports = {
   initializeUserContextsFromFiles,
   removeProductFromCartInContextAndFile,
   removeElementFromContext,
-  addFolioToContext
-  
+  addFolioToContext,
 };

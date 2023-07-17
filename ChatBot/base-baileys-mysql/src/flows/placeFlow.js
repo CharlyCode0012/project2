@@ -60,7 +60,7 @@ const placeFlow = addKeyword(["4", "lugar"])
       capture: true,
       delay: 400,
     },
-    async (ctx, { flowDynamic, gotoFlow }) => {
+    async (ctx, { flowDynamic }) => {
       try {
         const userId = ctx.from;
         const answer = ctx.body;
@@ -74,7 +74,7 @@ const placeFlow = addKeyword(["4", "lugar"])
         const place = places[index];
         const userContext = moduleContext.getUserContext(userId);
         analyzePlaceDeliveryInContext(userId, place, userContext);
-        return await gotoFlow(menuPago);
+        await flowDynamic({ body: "Se agrego su lugar de entrega" });
       } catch (error) {
         console.log(error);
       }
