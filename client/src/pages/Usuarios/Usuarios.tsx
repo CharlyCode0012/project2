@@ -21,12 +21,14 @@ import { QueryOrder, SearchAppBar } from "@/Navbar/SearchAppBar";
 import { User } from "models/User";
 import UserForm from "./UsuariosForm";
 import { useReadLocalStorage } from "usehooks-ts";
+import { useTheme } from "@mui/material/styles";
 
 const Usuarios = () => {
 	/**
 	 * Displays notifications to the user
 	 */
 	const { enqueueSnackbar } = useSnackbar();
+	const theme = useTheme();
 
 	/**
 	 * Headers that will be displayed to the table
@@ -68,8 +70,7 @@ const Usuarios = () => {
 	const selectedUserToEdit = useRef<User | boolean>(false);
 	const userLogin: User | null = useReadLocalStorage("log_in");
 	const typeUser: string | undefined = userLogin?.type_use;
-	const isAdmin: boolean =
-		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+	const isSeller: boolean = typeUser === "vendedor" ? true : false;
 	/**
 	 * When rendered, users are obtained from DB and displayed in the table
 	 */
@@ -273,14 +274,20 @@ const Usuarios = () => {
 												<TableCell align="left">{user.e_mail}</TableCell>
 												<TableCell align="left">{user.pass}</TableCell>
 												<TableCell align="left">{user.cel}</TableCell>
-												{isAdmin && (
+												{isSeller && (
 													<TableCell align="center">
 														{user.type_use !== "vendedor" ? (
 															<>
-																<IconButton onClick={() => editUser(user)}>
+																<IconButton
+																	sx={{ color: theme.palette.text.primary }}
+																	onClick={() => editUser(user)}
+																>
 																	<Edit fontSize="inherit" />
 																</IconButton>
-																<IconButton onClick={() => deleteUser(user)}>
+																<IconButton
+																	sx={{ color: theme.palette.text.primary }}
+																	onClick={() => deleteUser(user)}
+																>
 																	<DeleteForever fontSize="inherit" />
 																</IconButton>
 															</>
@@ -295,12 +302,13 @@ const Usuarios = () => {
 								</TableBody>
 							</Table>
 						</TableContainer>
-						{isAdmin && (
+						{isSeller && (
 							<IconButton
 								sx={{
 									alignSelf: "flex-start",
 									fontSize: "40px",
 									padding: "0px",
+									color: theme.palette.text.primary,
 								}}
 								onClick={() => createUser()}
 							>

@@ -14,6 +14,7 @@ import {
 import { AccountCircle, ArrowDropDown, Home } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import { ButtonTheme } from "@/Theme/ButtonTheme";
+import { useTheme } from "@mui/material/styles";
 
 type NavPage = {
 	name: string;
@@ -29,6 +30,8 @@ const pages: NavPage[] = [
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuración" }];
 
 const NavbarProduct = () => {
+	const theme = useTheme();
+
 	// These are the anchor HTML elements where the submenus display.
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -57,14 +60,17 @@ const NavbarProduct = () => {
 					<Toolbar variant="dense" disableGutters>
 						<NavLink to="/inicio">
 							<IconButton size="large" edge="start" aria-label="inicio">
-								<Home sx={{ color: "white" }} />
+								<Home sx={{ color: theme.palette.text.primary }} />
 							</IconButton>
 						</NavLink>
 						{/* Maps each page to a <NavLink /> with an href of 'pages-name-with-dashes'. */}
 						<Box sx={{ flexGrow: 1, display: "flex" }}>
 							<Box>
-								<Button onClick={handleOpenNavMenu} sx={{ color: "white" }}>
-									Otros
+								<Button
+									onClick={handleOpenNavMenu}
+									sx={{ color: theme.palette.text.primary }}
+								>
+									Productos
 									<ArrowDropDown />
 								</Button>
 								<Menu
@@ -80,7 +86,10 @@ const NavbarProduct = () => {
 									<MenuItem key="productos" onClick={handleCloseUserMenu}>
 										<NavLink
 											to="/productos"
-											style={{ color: "inherit", textDecoration: "none" }}
+											style={{
+												color: theme.palette.text.primary,
+												textDecoration: "none",
+											}}
 										>
 											<Typography textAlign="center">Productos</Typography>
 										</NavLink>
@@ -88,7 +97,10 @@ const NavbarProduct = () => {
 									<MenuItem key="imagen" onClick={handleCloseUserMenu}>
 										<NavLink
 											to="/productos/imagen"
-											style={{ color: "inherit", textDecoration: "none" }}
+											style={{
+												color: theme.palette.text.primary,
+												textDecoration: "none",
+											}}
 										>
 											<Typography textAlign="center">Imagen</Typography>
 										</NavLink>
@@ -104,7 +116,9 @@ const NavbarProduct = () => {
 										.join("-")}`}
 									style={{ textDecoration: "none" }}
 								>
-									<Button sx={{ color: "white" }}>{page.name}</Button>
+									<Button sx={{ color: theme.palette.text.primary }}>
+										{page.name}
+									</Button>
 								</NavLink>
 							))}
 						</Box>
@@ -116,7 +130,7 @@ const NavbarProduct = () => {
 									edge="end"
 									onClick={handleOpenUserMenu}
 								>
-									<AccountCircle sx={{ color: "white" }} />
+									<AccountCircle sx={{ color: theme.palette.text.primary }} />
 								</IconButton>
 							</Tooltip>
 							<Menu
@@ -133,7 +147,10 @@ const NavbarProduct = () => {
 									<MenuItem key={page.name} onClick={handleCloseUserMenu}>
 										<NavLink
 											to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
-											style={{ color: "inherit", textDecoration: "none" }}
+											style={{
+												color: theme.palette.text.primary,
+												textDecoration: "none",
+											}}
 										>
 											<Typography textAlign="center">{page.name}</Typography>
 										</NavLink>

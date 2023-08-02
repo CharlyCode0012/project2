@@ -24,9 +24,11 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarOrders from "@/Navbar/NavbarOrders";
+import { useTheme } from "@mui/material/styles";
 
 const deliveries: React.FC = () => {
 	const url = "/deliveries";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -254,7 +256,10 @@ const deliveries: React.FC = () => {
 												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(delivery)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(delivery)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 													</TableCell>

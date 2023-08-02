@@ -23,12 +23,13 @@ import { User } from "models/User";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import NavbarOrders from "@/Navbar/NavbarOrders";
+import { useTheme } from "@mui/material/styles";
 
 const orders: React.FC = () => {
 	const url = "/orders";
 
 	const { enqueueSnackbar } = useSnackbar();
-
+	const theme = useTheme();
 	const [confirmOrders, setConfirmOrders] = useState<Order[]>([]);
 	const selectedOrderToEdit = useRef<Order | boolean>(false);
 
@@ -236,7 +237,10 @@ const orders: React.FC = () => {
 												<TableCell align="left">{Order.state}</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(Order)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(Order)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 													</TableCell>

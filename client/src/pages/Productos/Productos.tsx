@@ -30,11 +30,13 @@ import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import NavbarProduct from "@/Navbar/NavbarProduct";
 import { Catalog } from "models/Catalog";
 import { FileUpload } from "@/FileUpload";
+import { useTheme } from "@mui/material/styles";
 
 const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
 
 const Products: React.FC = () => {
 	const url = "/products";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -277,12 +279,18 @@ const Products: React.FC = () => {
 								></ProductForm>
 							</Modal>
 						)}
+
 						<TableContainer
-							sx={{ width: "1100px", maxHeight: "400px" }}
+							sx={{ width: "1000px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
-							<Table>
+							<Table
+								sx={{
+									minWidth: "100%",
+									tableLayout: "fixed", // This ensures the table columns have equal width
+								}}
+							>
 								<TableHead>
 									<TableRow>
 										{tableHeaders.map((header) => (
@@ -324,10 +332,16 @@ const Products: React.FC = () => {
 												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(product)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(product)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
-														<IconButton onClick={() => deleteProduct(product)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => deleteProduct(product)}
+														>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
 													</TableCell>
@@ -347,22 +361,44 @@ const Products: React.FC = () => {
 							}}
 						>
 							{isAdmin && (
-								<IconButton
-									sx={{
-										alignSelf: "flex-start",
-										fontSize: "40px",
-										padding: "0px",
-									}}
-									onClick={() => createProduct()}
-								>
-									<AddCircle fontSize="inherit" />
-								</IconButton>
+								<>
+									<IconButton
+										sx={{
+											alignSelf: "flex-start",
+											fontSize: "40px",
+											padding: "0px",
+											color: theme.palette.text.primary,
+										}}
+										onClick={() => createProduct()}
+									>
+										<AddCircle fontSize="inherit" />
+									</IconButton>
+									<ExcelDownloadButton
+										apiObjective="products"
+										onDownload={() => setHasDownloadedFile(true)}
+									/>
+									<FileUpload
+										apiObjective="products"
+										onUpload={fetchProducts}
+										disabled={!hasDownloadedFile}
+									/>
+								</>
 							)}
-							<FormControl sx={{ alignSelf: "flex-start" }}>
-								<InputLabel>Catálogo</InputLabel>
+							<FormControl
+								sx={{
+									alignSelf: "flex-start",
+									color: theme.palette.text.primary,
+								}}
+							>
+								<InputLabel sx={{ color: theme.palette.text.primary }}>
+									Catálogo
+								</InputLabel>
 								<Select
 									label="Catálogo"
-									sx={{ width: "300px", color: "inherit" }}
+									sx={{
+										width: "300px",
+										color: theme.palette.text.primary,
+									}}
 									onChange={handleCatalogChange}
 								>
 									{catalogs?.length > 0 ? (
@@ -376,15 +412,6 @@ const Products: React.FC = () => {
 									)}
 								</Select>
 							</FormControl>
-							<ExcelDownloadButton
-								apiObjective="products"
-								onDownload={() => setHasDownloadedFile(true)}
-							/>
-							<FileUpload
-								apiObjective="products"
-								onUpload={fetchProducts}
-								disabled={!hasDownloadedFile}
-							/>
 						</Box>
 					</Box>
 				</Box>

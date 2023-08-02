@@ -23,9 +23,11 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import { FileUpload } from "@/FileUpload";
+import { useTheme } from "@mui/material/styles";
 
 const Categories: React.FC = () => {
 	const url = "/categories";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -260,10 +262,14 @@ const Categories: React.FC = () => {
 
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(category)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(category)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 														<IconButton
+															sx={{ color: theme.palette.text.primary }}
 															onClick={() => deleteCategory(category)}
 														>
 															<DeleteForever fontSize="inherit" />
@@ -289,6 +295,7 @@ const Categories: React.FC = () => {
 										alignSelf: "flex-start",
 										fontSize: "40px",
 										padding: "0px",
+										color: theme.palette.text.primary,
 									}}
 									onClick={() => createCategory()}
 								>

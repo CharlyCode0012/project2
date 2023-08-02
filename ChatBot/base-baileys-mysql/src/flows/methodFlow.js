@@ -63,7 +63,7 @@ const methodFlow = addKeyword(["3", "metodo"])
       capture: true,
       delay: 1000,
     },
-    async (ctx, { fallBack, flowDynamic, gotoFlow }) => {
+    async (ctx, { fallBack, flowDynamic, endFlow }) => {
       try {
         const userId = ctx.from;
         const answer = ctx.body;
@@ -78,7 +78,7 @@ const methodFlow = addKeyword(["3", "metodo"])
         // Obtener el contexto del usuario
         const userContext = moduleContext.getUserContext(userId);
         analyzePaymentMethodInContext(userId, method, userContext);
-        await gotoFlow(menuPago);
+        endFlow({ body: "Se ha seleccionado el método de pago" });
       } catch (error) {
         console.log(error);
       }

@@ -24,12 +24,14 @@ import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import { FileUpload } from "@/FileUpload";
 import { User } from "models/User";
 import { useReadLocalStorage } from "usehooks-ts";
+import { useTheme } from "@mui/material/styles";
 
 const LugaresEntrega = () => {
 	/**
 	 * Displays notifications to the user
 	 */
 	const { enqueueSnackbar } = useSnackbar();
+	const theme = useTheme();
 
 	/**
 	 * Headers that will be displayed to the table
@@ -337,11 +339,13 @@ const LugaresEntrega = () => {
 												{isAdmin && (
 													<TableCell align="center">
 														<IconButton
+															sx={{ color: theme.palette.text.primary }}
 															onClick={() => editPaymentMethod(paymentMethod)}
 														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 														<IconButton
+															sx={{ color: theme.palette.text.primary }}
 															onClick={() => deletePaymentMethod(paymentMethod)}
 														>
 															<DeleteForever fontSize="inherit" />
@@ -367,6 +371,7 @@ const LugaresEntrega = () => {
 										alignSelf: "flex-start",
 										fontSize: "40px",
 										padding: "0px",
+										color: theme.palette.text.primary,
 									}}
 									onClick={() => createPaymentMethod()}
 								>

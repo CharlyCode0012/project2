@@ -25,13 +25,14 @@ import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import Navbar from "@/Navbar/Navbar";
 import { FileUpload } from "@/FileUpload";
 import { useParams } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 
 const MenuOptions: React.FC = () => {
 	const url = "/menu_options";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [menus, setMenus] = useState<MenuData[]>([]);
 	const [menuOptions, setMenuOptions] = useState<MenuOption[]>([]);
 	const selectedMenuOptionToEdit = useRef<MenuOption | boolean>(false);
 	const { menuTitle, menuID } = useParams();
@@ -65,10 +66,9 @@ const MenuOptions: React.FC = () => {
 	 */
 	const userLogin: User | null = useReadLocalStorage("log_in");
 	const typeUser: string | undefined = userLogin?.type_use;
-	const isAdmin: boolean =
-		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+	const isSeller: boolean = typeUser === "vendedor" ? true : false;
 
-	// console.log(isAdmin);
+	// console.log(isSeller);
 	// TODO:
 
 	useEffect(() => {
@@ -234,7 +234,7 @@ const MenuOptions: React.FC = () => {
 											</TableCell>
 										))}
 
-										{isAdmin && <TableCell />}
+										{isSeller && <TableCell />}
 									</TableRow>
 								</TableHead>
 
@@ -258,12 +258,16 @@ const MenuOptions: React.FC = () => {
 												<TableCell align="left">
 													{optionMenu.referenceName}
 												</TableCell>
-												{isAdmin && (
+												{isSeller && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(optionMenu)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(optionMenu)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 														<IconButton
+															sx={{ color: theme.palette.text.primary }}
 															onClick={() => deleteProduct(optionMenu)}
 														>
 															<DeleteForever fontSize="inherit" />
@@ -284,27 +288,30 @@ const MenuOptions: React.FC = () => {
 								gap: "10px",
 							}}
 						>
-							{isAdmin && (
-								<IconButton
-									sx={{
-										alignSelf: "flex-start",
-										fontSize: "40px",
-										padding: "0px",
-									}}
-									onClick={() => createProduct()}
-								>
-									<AddCircle fontSize="inherit" />
-								</IconButton>
+							{isSeller && (
+								<>
+									<IconButton
+										sx={{
+											alignSelf: "flex-start",
+											fontSize: "40px",
+											padding: "0px",
+											color: theme.palette.text.primary,
+										}}
+										onClick={() => createProduct()}
+									>
+										<AddCircle fontSize="inherit" />
+									</IconButton>
+									<ExcelDownloadButton
+										apiObjective={`menu_options:${menuID}`}
+										onDownload={() => setHasDownloadedFile(true)}
+									/>
+									<FileUpload
+										apiObjective={`menu_options:${menuID}`}
+										onUpload={fetchMenuOptions}
+										disabled={!hasDownloadedFile}
+									/>
+								</>
 							)}
-							<ExcelDownloadButton
-								apiObjective={`menu_options:${menuID}`}
-								onDownload={() => setHasDownloadedFile(true)}
-							/>
-							<FileUpload
-								apiObjective={`menu_options:${menuID}`}
-								onUpload={fetchMenuOptions}
-								disabled={!hasDownloadedFile}
-							/>
 						</Box>
 					</Box>
 				</Box>

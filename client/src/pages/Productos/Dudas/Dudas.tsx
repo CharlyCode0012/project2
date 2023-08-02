@@ -21,9 +21,11 @@ import DudasForm from "./DudasForm";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import NavbarProduct from "@/Navbar/NavbarProduct";
+import { useTheme } from "@mui/material/styles";
 
 const Dudas: React.FC = () => {
 	const url = "/questions";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -229,7 +231,10 @@ const Dudas: React.FC = () => {
 												<TableCell align="left">{question.question}</TableCell>
 
 												<TableCell align="center">
-													<IconButton onClick={() => handleEdit(question)}>
+													<IconButton
+														sx={{ color: theme.palette.text.primary }}
+														onClick={() => handleEdit(question)}
+													>
 														<Edit fontSize="inherit" />
 													</IconButton>
 												</TableCell>

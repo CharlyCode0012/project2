@@ -2,6 +2,7 @@ import { Box, Button, Chip } from "@mui/material";
 import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import React, { useState } from "react";
+import { useTheme } from "@mui/material/styles";
 
 export interface FileUploadProps {
 	apiObjective: string;
@@ -14,39 +15,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
 	onUpload,
 	disabled,
 }) => {
-	/**
-	 * Displays notifications to the user
-	 */
 	const { enqueueSnackbar } = useSnackbar();
-
-	/**
-	 * Keeps track of the name of the file submitted by
-	 * the user
-	 */
+	const theme = useTheme();
 	const [filename, setFilename] = useState("");
 
-	/**
-	 * Displays the name of the selected file
-	 */
 	function updateFilename(event: React.ChangeEvent<HTMLInputElement>) {
 		setFilename(event.target.value.split("\\").pop() ?? "Selected File.xlsx");
 	}
 
-	/**
-	 * Takes the file selected in the form and submits it
-	 * to the server, if the info of the file was correct, the table will
-	 * update and the page will refresh.
-	 *
-	 * Otherwise, an error telling what happened will be displayed
-	 *
-	 * @param event contains the info of the file
-	 */
 	async function uploadFile(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-
 		const formData = new FormData(event.currentTarget);
-		console.log(formData);
-
 		try {
 			if (apiObjective.includes(":")) {
 				const endpoint = apiObjective.split(":");
@@ -68,14 +47,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
 			}
 
 			enqueueSnackbar("Se subió con exito el archivo", { variant: "success" });
-
-			onUpload(); // Refresh table with newer table values
+			onUpload();
 		}
 		catch (error) {
 			console.log(error);
 			enqueueSnackbar("Algo salió mal", { variant: "error" });
 		}
 	}
+
+	const disabledColor = theme.palette.mode === "dark" ? "#bbb" : "#ddd";
 
 	return (
 		<Box
@@ -85,6 +65,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 				flexDirection: "row",
 				alignItems: "center",
 				gap: "10px",
+				color: theme.palette.text.secondary,
 			}}
 			onSubmit={uploadFile}
 		>
@@ -97,26 +78,41 @@ const FileUpload: React.FC<FileUploadProps> = ({
 				onChange={updateFilename}
 			/>
 			<label htmlFor="file-input">
-				<Button
-					variant="outlined"
-					color="primary"
-					component="span"
-					disabled={disabled}
+				<Box
+					sx={{
+						backgroundColor: disabled ? disabledColor : "inherit",
+						p: 1,
+						borderRadius: 1,
+						color: theme.palette.text.primary,
+					}}
 				>
-					Seleccionar un archivo excel
-				</Button>
+					<Button
+						variant="outlined"
+						component="span"
+						disabled={disabled}
+						sx={{
+							outlineColor: theme.palette.text.secondary,
+							color: theme.palette.text.secondary,
+						}}
+					>
+						Seleccionar un archivo excel
+					</Button>
+				</Box>
 			</label>
 
 			{filename !== "" ? <Chip variant="outlined" label={filename} /> : <></>}
 
-			<Button
-				type="submit"
-				variant="contained"
-				color="primary"
-				disabled={disabled}
+			<Box
+				sx={{
+					backgroundColor: disabled ? disabledColor : "inherit",
+					p: 1,
+					borderRadius: 1,
+				}}
 			>
-				Subir archivo
-			</Button>
+				<Button type="submit" variant="contained" disabled={disabled}>
+					Subir archivo
+				</Button>
+			</Box>
 		</Box>
 	);
 };

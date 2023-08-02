@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import LoginContext from "context/LoginContext";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
+import Cookies from "universal-cookie";
+import { ThemeName } from "../../themes/themes";
+import { ThemeContext } from "App";
 
 export const Config: React.FC = () => {
 	const { handleLogin } = useContext(LoginContext);
+	const { setThemeName } = useContext(ThemeContext);
 	const navigate = useNavigate();
 	const userLogin: User | null = useReadLocalStorage("log_in");
 	const typeUser: string | undefined = userLogin?.type_use;
@@ -16,6 +20,10 @@ export const Config: React.FC = () => {
 		handleLogin(null);
 		navigate("/", { replace: true });
 	}
+
+	const selectTheme = (themeName: ThemeName) => {
+		setThemeName(themeName);
+	};
 
 	return (
 		<>
@@ -35,6 +43,39 @@ export const Config: React.FC = () => {
 						gap: "10px",
 					}}
 				>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "row",
+							gap: "10px",
+						}}
+					>
+						<Box
+							sx={{
+								width: "50px",
+								height: "50px",
+								backgroundColor: "green",
+							}}
+							onClick={() => selectTheme("green")}
+						/>
+						<Box
+							sx={{
+								width: "50px",
+								height: "50px",
+								backgroundColor: "blue",
+							}}
+							onClick={() => selectTheme("blue")}
+						/>
+						<Box
+							sx={{
+								width: "50px",
+								height: "50px",
+								backgroundColor: "red",
+							}}
+							onClick={() => selectTheme("red")}
+						/>
+					</Box>
+
 					{isVendedor && (
 						<img
 							src={"http://127.0.0.1:3500/QR"}

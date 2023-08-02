@@ -23,9 +23,11 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import { FileUpload } from "@/FileUpload";
+import { useTheme } from "@mui/material/styles";
 
 const Catalogs: React.FC = () => {
 	const url = "/catalogs";
+	const theme = useTheme();
 
 	const { enqueueSnackbar } = useSnackbar();
 
@@ -245,10 +247,16 @@ const Catalogs: React.FC = () => {
 												</TableCell>
 												{isAdmin && (
 													<TableCell align="center">
-														<IconButton onClick={() => handleEdit(Catalog)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(Catalog)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
-														<IconButton onClick={() => deleteCatalog(Catalog)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => deleteCatalog(Catalog)}
+														>
 															<DeleteForever fontSize="inherit" />
 														</IconButton>
 													</TableCell>
@@ -272,6 +280,7 @@ const Catalogs: React.FC = () => {
 										alignSelf: "flex-start",
 										fontSize: "40px",
 										padding: "0px",
+										color: theme.palette.text.primary,
 									}}
 									onClick={() => createCatalog()}
 								>

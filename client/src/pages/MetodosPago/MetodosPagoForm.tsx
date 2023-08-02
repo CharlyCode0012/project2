@@ -144,11 +144,11 @@ const PaymentMethodForm: React.FC<PaymentMethodFormProps> = ({
 				required
 			/>
 			<FormControl>
-				<InputLabel>Filtrar por</InputLabel>
+				<InputLabel>Banco</InputLabel>
 
 				<Select
 					defaultValue={"Santander"}
-					label="Filtrar por"
+					label="Banco"
 					sx={{ width: "300px" }}
 					name="banco"
 				>

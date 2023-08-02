@@ -1,4 +1,5 @@
 const { addKeyword } = require("@bot-whatsapp/bot");
+const { adapterProvider} = require("./adapterProvider");
 
 const { methodFlow } = require("./methodFlow");
 const { placeFlow } = require("./placeFlow");
@@ -28,7 +29,12 @@ function agregarProductoAlCarrito(productData, userId, userContext) {
     (prod) => prod.id === productData.id
   );
 
+  
+
   if (existingProduct) {
+    if(existingProduct.quantity + 1 > productData.stock){
+      console.log("")
+    }
     // El producto ya existe en el carrito, actualizar la cantidad y el precio total
     existingProduct.quantity += 1;
     existingProduct.totalPrice =

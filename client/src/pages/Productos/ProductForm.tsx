@@ -14,7 +14,7 @@ import { instance } from "helper/API";
 import { useSnackbar } from "notistack";
 import { Category } from "models/Category";
 
-const regexKeyWord = /^[A-Za-z0-9\s\u00f1\u00d1]+$/g;
+const regexKeyWord = /^[A-Za-z0-9\s\u00f1\u00d1]{2,}$/;
 
 interface ProductsFormProps {
 	onSubmit: (op: boolean) => void;

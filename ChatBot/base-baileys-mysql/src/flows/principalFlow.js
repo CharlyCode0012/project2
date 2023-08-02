@@ -1,5 +1,6 @@
 const { addKeyword } = require("@bot-whatsapp/bot");
 const { fetchMenuWithOptions } = require("../request/menus");
+const getGlobalState = require('./getGlobalState');
 
 async function createPrincipalFlow(flow) {
   const pirncipalMenuData = await fetchMenuWithOptions(1);
@@ -27,11 +28,26 @@ async function createPrincipalFlow(flow) {
   let options = optionsTemp.reduce((acc, val) => acc.concat(val), []);
   options = options.map((element) => element.trim());
 
-  console.log("opciones: ", options);
+  //console.log("opciones: ", options);
+
+  let GLOBAL = true;
+
+  // Leer el archivo JSON
+  getGlobalState((err, global) => {
+    if (err) {
+      console.error('Error al obtener el estado global:', err);
+    } else {
+      // Aquí puedes utilizar la variable GLOBAL como necesites
+      console.log('Valor de GLOBAL:', global);
+      GLOBAL = global;
+    }
+  });
+
   principalFlow = addKeyword(["hola", "alo", "ole", "inicio"]).addAnswer(
     answers,
     { capture: true, delay: 500 },
-    async (ctx, { fallBack, flowDynamic }) => {
+    async (ctx, { fallBack, endFlow }) => {
+      if(!GLOBAL) return endFlow({body: "Estamos fuera de servicio"})
       const option = ctx.body;
       console.log(ctx.body);
       if (!options.includes(option)) {

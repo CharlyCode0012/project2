@@ -1,13 +1,12 @@
 const {
   createBot,
   createFlow,
-  addKeyword,
-  addAnswer,
 } = require("@bot-whatsapp/bot");
 
 const QRPortalWeb = require("@bot-whatsapp/portal");
 const MySQLAdapter = require("@bot-whatsapp/database/mysql");
 const { adapterProvider } = require("./src/flows/adapterProvider");
+const fs = require('fs');
 
 const express = require("express");
 const app = express();
@@ -16,6 +15,7 @@ const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const io = require("socket.io-client");
+const async = require("async");
 require("dotenv").config();
 
 const { scheduleDateFlow } = require("./src/flows/scheduleDateFlow.js");
@@ -23,9 +23,10 @@ const { menuPago } = require("./src/flows/menuPagoFlow");
 const { getFlows } = require("./src/func/makeFlows.js");
 const { createPrincipalFlow } = require("./src/flows/principalFlow");
 const { helperFlow } = require("./src/flows/helperFlow");
-const { menuProducts } = require("./src/flows/menuProductsFlow");
 const { payFlow } = require("./src/flows/payFlow");
 const { showProductsFlow } = require("./src/flows/showProductsFlow");
+
+
 
 /**
  * creamos el adapterProvider
@@ -46,17 +47,65 @@ const MYSQL_DB_PORT = process.env.DB_PORT;
 //variables from the dataBase or relationated with it.
 let flows = [];
 
-//variables to control some actions or get information from the user
 let isFirstRun = false;
+let GLOBAL = false
 
 /**
- * function to make some process in the bot
- */
+  function to do some proceadure
+*/
+
+function saveStateOnFile() {
+  const estado = { GLOBAL }; // Crear un objeto con la variable GLOBAL
+  const data = JSON.stringify(estado, null, 2); // Convertir el objeto a formato JSON con formato legible (indentación de 2 espacios)
+
+  fs.writeFile('state.json', data, (err) => {
+    if (err) {
+      console.error('Error al guardar el estado en el archivo:', err);
+    } else {
+      console.log('Estado guardado en el archivo correctamente.');
+    }
+  });
+}
+
 
 /**
  * functions to send some information to the cient.
  */
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+async function sendOrderFailed(to, folio, products) {
+  let valTo = to.substring(0, 3);
+
+  if (valTo == "521") {
+    valTo = to;
+  } else {
+    valTo = `521${to}`;
+  }
+
+  const messages = [
+    `Su pedido con el folio: *${folio}* no se comprobó su pago\n\nLos productos de ese pedido eran`,
+  ];
+
+  products?.map((product, index) => {
+    const mess = `*Nombre:* ${product.name}\n *Cantidad:* ${product.quantity}`;
+    messages.push(mess);
+  });
+
+  try {
+    const modProvider = await adapterProvider.getInstance();
+    const delayBetweenMessages = 2000; //2 seg de delay
+    const fullMessage = messages.join('\n\n'); // Unir todos los mensajes en uno solo
+
+      await delay(delayBetweenMessages);
+      await modProvider.sendMessage(`${valTo}@s.whatsapp.net`, {
+        text: fullMessage,
+      });
+    
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
 async function sendAnswer(to, answer, question, product) {
   let valTo = to.substring(0, 3);
 
@@ -141,7 +190,11 @@ socket.on("menu_updated_event", async () => {
 
   const principalFlow = await createPrincipalFlow(flows);
 
-  const adapterFlow = createFlow([principalFlow, scheduleDateFlow, showProductsFlow]);
+  const adapterFlow = createFlow([
+    principalFlow,
+    scheduleDateFlow,
+    showProductsFlow,
+  ]);
 
   if (bot) {
     bot.then((botInstance) => {
@@ -156,6 +209,35 @@ socket.on("menu_updated_event", async () => {
 // Emitir eventos al servidor
 socket.emit("menu_updated");
 
+const responseQueue = async.queue(async (task) => {
+  try {
+    const { data } = task;
+    console.log("Evento de order rechazada recibido");
+    console.log("Folio del pedido procesado:", data.folio);
+    console.log("ID del cliente:", data.to);
+    console.log("Productos:", data.products);
+    const { to, folio, products } = data;
+    await sendOrderFailed(to, folio, products);
+  } catch (error) {
+    console.error("Error al procesar la respuesta:", error);
+  }
+}, 1); // 1 indica que solo se procesa un elemento a la vez
+
+socket.on("orderProcessed", (data) => {
+  // Agregar la respuesta a la cola para procesarla en orden
+  responseQueue.push({ data });
+});
+
+// Manejar errores de conexión
+socket.on("connect_error", (error) => {
+  console.error("Error al conectar al servidor de Socket.IO:", error);
+});
+
+// Desconectar del servidor de Socket.IO
+socket.on("disconnect", () => {
+  console.log("Desconectado del servidor de Socket.IO");
+});
+
 router.get("/QR", (req, res) => {
   const imagePath = path.join(__dirname, "bot.qr.png");
   //console.log( imagePath );
@@ -165,6 +247,18 @@ router.get("/QR", (req, res) => {
     console.error(error);
     res.status(400).send("Error");
   }
+});
+
+router.get('/off', (req,res) => {
+  GLOBAL = false
+  saveStateOnFile();
+  res.send('APAGADO')
+});
+
+router.get('/on', (req,res) => {
+  GLOBAL = true
+  saveStateOnFile();
+  res.send('PRENDIDO')
 });
 
 router.post("/sendAnswer", async (req, res) => {

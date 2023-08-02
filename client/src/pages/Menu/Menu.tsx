@@ -28,11 +28,13 @@ import Modal from "@/Modal/Modal";
 import MenuForm from "./MenuForm";
 import ExcelDownloadButton from "@/ExcelDownloadButton/ExcelDownloadButton";
 import { FileUpload } from "@/FileUpload";
+import { useTheme } from "@mui/material/styles";
 
 const AnalisisClientes: React.FC = () => {
 	const url = "/menus";
 
 	const { enqueueSnackbar } = useSnackbar();
+	const theme = useTheme();
 
 	const [menus, setMenus] = useState<MenuData[]>([]);
 	const [showModal, setShowModal] = useState(false);
@@ -51,8 +53,7 @@ const AnalisisClientes: React.FC = () => {
 
 	const userLogin: User | null = useReadLocalStorage("log_in");
 	const typeUser: string | undefined = userLogin?.type_use;
-	const isAdmin: boolean =
-		typeUser === "admin" || typeUser === "vendedor" ? true : false;
+	const isSeller: boolean = typeUser === "vendedor" ? true : false;
 
 	const selectedMenuToEdit = useRef<MenuData | boolean>(false);
 
@@ -249,13 +250,19 @@ const AnalisisClientes: React.FC = () => {
 													{menu.principalMenu === false ? "Submenu" : "Menu"}
 												</TableCell>
 												<TableCell align="left">{menu.id}</TableCell>
-												{isAdmin && (
+												{isSeller && (
 													<TableCell align="left">
-														<IconButton onClick={() => handleEdit(menu)}>
+														<IconButton
+															sx={{ color: theme.palette.text.primary }}
+															onClick={() => handleEdit(menu)}
+														>
 															<Edit fontSize="inherit" />
 														</IconButton>
 														{!menu.principalMenu && (
-															<IconButton onClick={() => deleteMenu(menu)}>
+															<IconButton
+																sx={{ color: theme.palette.text.primary }}
+																onClick={() => deleteMenu(menu)}
+															>
 																<DeleteForever fontSize="inherit" />
 															</IconButton>
 														)}
@@ -274,27 +281,30 @@ const AnalisisClientes: React.FC = () => {
 								gap: "10px",
 							}}
 						>
-							{isAdmin && (
-								<IconButton
-									sx={{
-										alignSelf: "flex-start",
-										fontSize: "40px",
-										padding: "0px",
-									}}
-									onClick={() => createMenu()}
-								>
-									<AddCircle fontSize="inherit" />
-								</IconButton>
+							{isSeller && (
+								<>
+									<IconButton
+										sx={{
+											alignSelf: "flex-start",
+											fontSize: "40px",
+											padding: "0px",
+											color: theme.palette.text.primary,
+										}}
+										onClick={() => createMenu()}
+									>
+										<AddCircle fontSize="inherit" />
+									</IconButton>
+									<ExcelDownloadButton
+										apiObjective="menus"
+										onDownload={() => setHasDownloadedFile(true)}
+									/>
+									<FileUpload
+										apiObjective="menus"
+										onUpload={fetchMenu}
+										disabled={!hasDownloadedFile}
+									/>
+								</>
 							)}
-							<ExcelDownloadButton
-								apiObjective="menus"
-								onDownload={() => setHasDownloadedFile(true)}
-							/>
-							<FileUpload
-								apiObjective="menus"
-								onUpload={fetchMenu}
-								disabled={!hasDownloadedFile}
-							/>
 						</Box>
 					</Box>
 				</Box>

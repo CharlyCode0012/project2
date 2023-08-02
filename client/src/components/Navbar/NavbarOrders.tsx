@@ -14,6 +14,7 @@ import {
 import { AccountCircle, Home } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import { ButtonTheme } from "@/Theme/ButtonTheme";
+import { useTheme } from "@mui/material/styles";
 
 type NavPage = {
 	name: string;
@@ -25,6 +26,8 @@ const pages: NavPage[] = [{ name: "Confirmar Pedido" }, { name: "Entregas" }];
 const userSettings: NavPage[] = [{ name: "Perfil" }, { name: "Configuración" }];
 
 const NavbarOrders = () => {
+	const theme = useTheme();
+
 	// These are the anchor HTML elements where the submenus display.
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -43,7 +46,7 @@ const NavbarOrders = () => {
 					<Toolbar variant="dense" disableGutters>
 						<NavLink to="/inicio">
 							<IconButton size="large" edge="start" aria-label="inicio">
-								<Home sx={{ color: "white" }} />
+								<Home sx={{ color: theme.palette.text.primary }} />
 							</IconButton>
 						</NavLink>
 
@@ -65,7 +68,9 @@ const NavbarOrders = () => {
 										.join("-")}`}
 									style={{ textDecoration: "none" }}
 								>
-									<Button sx={{ color: "white" }}>{page.name}</Button>
+									<Button sx={{ color: theme.palette.text.primary }}>
+										{page.name}
+									</Button>
 								</NavLink>
 							))}
 						</Box>
@@ -78,7 +83,7 @@ const NavbarOrders = () => {
 									edge="end"
 									onClick={handleOpenUserMenu}
 								>
-									<AccountCircle sx={{ color: "white" }} />
+									<AccountCircle sx={{ color: theme.palette.text.primary }} />
 								</IconButton>
 							</Tooltip>
 							<Menu
@@ -95,7 +100,10 @@ const NavbarOrders = () => {
 									<MenuItem key={page.name} onClick={handleCloseUserMenu}>
 										<NavLink
 											to={`/${page.name.toLowerCase().split(/ +/).join("-")}`}
-											style={{ color: "inherit", textDecoration: "none" }}
+											style={{
+												color: theme.palette.text.primary,
+												textDecoration: "none",
+											}}
 										>
 											<Typography textAlign="center">{page.name}</Typography>
 										</NavLink>

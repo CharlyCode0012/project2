@@ -24,9 +24,12 @@ import { instance } from "helper/API";
 import { useReadLocalStorage } from "usehooks-ts";
 import { User } from "models/User";
 import LoginContext from "../../context/LoginContext";
+import { useTheme } from "@mui/material/styles";
 
 const Perfil = () => {
 	const userData: User | null = useReadLocalStorage("log_in");
+	const theme = useTheme();
+
 	/**
 	 * Displays notifications to the user
 	 */
@@ -95,6 +98,7 @@ const Perfil = () => {
 					width: "500px",
 					marginTop: "20px",
 					marginBottom: "20px",
+					color: theme.palette.text.primary,
 				}}
 			>
 				<h1>Perfil</h1>
@@ -105,6 +109,7 @@ const Perfil = () => {
 						flexDirection: "column",
 						padding: "20px",
 						gap: "20px",
+						color: theme.palette.text.primary,
 					}}
 				>
 					<Box
@@ -113,6 +118,7 @@ const Perfil = () => {
 							display: "flex",
 							alignItems: "center",
 							gap: "20px",
+							color: theme.palette.text.primary,
 						}}
 					>
 						<Avatar
@@ -150,10 +156,33 @@ const Perfil = () => {
 							type="text"
 							required
 							disabled
+							InputLabelProps={{
+								sx: {
+									color:
+										theme.palette.mode === "light"
+											? theme.palette.text.primary
+											: theme.palette.text.secondary,
+								},
+							}}
+							InputProps={{
+								sx: {
+									opacity: 0.5, // Adjust the opacity value to your liking
+									// Add any other styles you want for disabled state
+								},
+							}}
 						/>
-
 						<FormControl>
-							<InputLabel htmlFor="password">Contraseña</InputLabel>
+							<InputLabel
+								htmlFor="password"
+								sx={{
+									color:
+										theme.palette.mode === "light"
+											? theme.palette.text.primary
+											: theme.palette.text.secondary,
+								}}
+							>
+								Contraseña
+							</InputLabel>
 							<OutlinedInput
 								id="pass"
 								label="Contraseña"
@@ -165,29 +194,46 @@ const Perfil = () => {
 									<InputAdornment position="end">
 										<IconButton
 											edge="end"
+											sx={{ color: theme.palette.text.primary }}
 											onClick={() => setShowPassword(!showPassword)}
 										>
 											{showPassword ? <Visibility /> : <VisibilityOff />}
 										</IconButton>
 									</InputAdornment>
 								}
+								sx={{
+									opacity: 0.5, // Adjust the opacity value to your liking
+									// Add any other styles you want for disabled state
+								}}
 							/>
 						</FormControl>
-
 						<TextField
 							label="Tipo"
 							variant="filled"
 							value={userData?.type_use}
 							type="text"
+							sx={{
+								color:
+									theme.palette.mode === "light"
+										? theme.palette.text.primary
+										: theme.palette.text.secondary,
+								opacity: 0.5, // Adjust the opacity value to your liking
+								// Add any other styles you want for disabled state
+							}}
 							disabled
 						/>
-
 						<TextField
 							label="Celular"
 							id="cell"
 							name="cellphone"
 							variant="outlined"
 							defaultValue={userData?.cel}
+							sx={{
+								color:
+									theme.palette.mode === "light"
+										? theme.palette.text.primary
+										: theme.palette.text.secondary,
+							}}
 							type="text"
 							inputProps={{
 								pattern: "^\\d{2}-\\d{4}-\\d{4}$",
@@ -196,8 +242,13 @@ const Perfil = () => {
 							}}
 							required
 							disabled={!isEditing}
+							InputProps={{
+								sx: {
+									opacity: 0.5, // Adjust the opacity value to your liking
+									// Add any other styles you want for disabled state
+								},
+							}}
 						/>
-
 						{!isEditing ? (
 							<Button
 								variant="contained"
@@ -209,7 +260,6 @@ const Perfil = () => {
 						) : (
 							<></>
 						)}
-
 						{isEditing ? (
 							<Box
 								sx={{

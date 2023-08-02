@@ -1,6 +1,5 @@
 import * as React from "react";
 import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
@@ -11,9 +10,8 @@ export const ButtonTheme: React.FC = () => {
 	const colorMode = React.useContext(ColorModeContext);
 	return (
 		<IconButton
-			sx={{ ml: 1 }}
+			sx={{ ml: 1, color: theme.palette.text.primary }}
 			onClick={colorMode.toggleColorMode}
-			color="inherit"
 		>
 			{theme.palette.mode === "dark" ? (
 				<Brightness7Icon />
