@@ -1,6 +1,8 @@
 const {
   createBot,
   createFlow,
+  addKeyword,
+  addAnswer,
 } = require("@bot-whatsapp/bot");
 
 const QRPortalWeb = require("@bot-whatsapp/portal");
@@ -23,6 +25,7 @@ const { menuPago } = require("./src/flows/menuPagoFlow");
 const { getFlows } = require("./src/func/makeFlows.js");
 const { createPrincipalFlow } = require("./src/flows/principalFlow");
 const { helperFlow } = require("./src/flows/helperFlow");
+const { menuProducts } = require("./src/flows/menuProductsFlow");
 const { payFlow } = require("./src/flows/payFlow");
 const { showProductsFlow } = require("./src/flows/showProductsFlow");
 

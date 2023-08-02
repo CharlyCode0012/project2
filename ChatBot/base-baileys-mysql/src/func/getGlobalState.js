@@ -1,6 +1,7 @@
 const fs = require('fs');
+const path = require('path');
 
-const filePath = '../../state.json';
+const filePath = path.join(__dirname, '..', '..', 'state.json');
 
 function obtenerEstadoGlobal(callback) {
     if (fs.existsSync(filePath)) {
@@ -18,7 +19,7 @@ function obtenerEstadoGlobal(callback) {
           }
         });
       } else {
-        callback(new Error('El archivo state.json no existe en la ruta especificada.'));
+        callback(new Error(`El archivo state.json no existe en la ruta especificada. ${filePath}`));
       }
 }
 

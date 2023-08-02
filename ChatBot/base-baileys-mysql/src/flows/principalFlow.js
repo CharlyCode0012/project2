@@ -1,6 +1,6 @@
 const { addKeyword } = require("@bot-whatsapp/bot");
 const { fetchMenuWithOptions } = require("../request/menus");
-const getGlobalState = require('./getGlobalState');
+const getGlobalState = require('../func/getGlobalState');
 
 async function createPrincipalFlow(flow) {
   const pirncipalMenuData = await fetchMenuWithOptions(1);

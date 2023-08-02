@@ -68,6 +68,10 @@ async function getFlows() {
   try {
     menus = await fetchMenusWithOptions();
 
+    if (!Array.isArray(menus)) {
+      throw new Error("Los menús no son un arreglo válido.");
+    }
+
     const flows = pseudoFlow(
       menus.flatMap((menu) => {
         const menuOptions = menu.options.map((option) => {
@@ -84,5 +88,8 @@ async function getFlows() {
     return error;
   }
 }
+
+module.exports = { getFlows };
+
 
 module.exports = { getFlows };
