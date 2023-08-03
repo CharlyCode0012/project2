@@ -32,7 +32,8 @@ import { Catalog } from "models/Catalog";
 import { FileUpload } from "@/FileUpload";
 import { useTheme } from "@mui/material/styles";
 
-const URL_IMAGE = "https://server-production-c7b4.up.railway.app/api/images/";
+const URL_IMAGE =
+	"https://server-databot-2184e3a8d57a.herokuapp.com/api/images/";
 
 const Products: React.FC = () => {
 	const url = "/products";
