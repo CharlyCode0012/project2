@@ -125,6 +125,8 @@ const orders: React.FC = () => {
 						params: { order, search },
 					})
 				).data;
+
+				console.log(orders);
 				break;
 			case "Fecha":
 				orders = (
@@ -227,7 +229,9 @@ const orders: React.FC = () => {
 											<TableRow key={Order.id}>
 												<TableCell align="left">{Order.folio}</TableCell>
 												<TableCell align="left">
-													{Order.date_order.toString()}
+													{new Date(Order.date_order)
+														.toISOString()
+														.substring(0, 10)}
 												</TableCell>
 												<TableCell align="left">{Order.total}</TableCell>
 												<TableCell align="left">{Order.amount}</TableCell>

@@ -281,16 +281,11 @@ const Products: React.FC = () => {
 						)}
 
 						<TableContainer
-							sx={{ width: "1000px", maxHeight: "400px" }}
+							sx={{ width: "1100px", maxHeight: "400px" }}
 							component={Paper}
 							elevation={5}
 						>
-							<Table
-								sx={{
-									minWidth: "100%",
-									tableLayout: "fixed", // This ensures the table columns have equal width
-								}}
-							>
+							<Table>
 								<TableHead>
 									<TableRow>
 										{tableHeaders.map((header) => (
@@ -323,7 +318,7 @@ const Products: React.FC = () => {
 												<TableCell align="left">{product.key_word}</TableCell>
 												<TableCell align="left">{product.price}</TableCell>
 												<TableCell align="left">{product.stock}</TableCell>
-												<TableCell align="left">
+												<TableCell align="left" sx={{ width: "180px" }}>
 													<img
 														style={{ width: "160px", height: "160px" }}
 														src={`${URL_IMAGE}${product.id}`}

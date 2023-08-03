@@ -26,8 +26,8 @@ const AnalisisClientes: React.FC = () => {
 
 	const { enqueueSnackbar } = useSnackbar();
 
-	const [shoppings, setShopping] = useState<Client[]>([]);
-
+	const [clients, setClients] = useState<Client[]>([]);
+	const [numbers, setNumbers] = useState<string[]>([]);
 	/**
 	 * Headers that will be displayed to the table, not
 	 * counting the last one which will be for admin
@@ -44,8 +44,21 @@ const AnalisisClientes: React.FC = () => {
 
 	async function fetchClients() {
 		try {
-			const { data: shoppings } = await instance.get<Client[]>(url);
-			setShopping(shoppings);
+			const { data: clients } = await instance.get<Client[]>(url);
+
+			// Update the numbers array after fetching the clients
+			const updatedNumbers = clients.map((client) => {
+				const tempNum = client.number.substring(0, 3);
+				let number = "";
+
+				if (tempNum.includes("521")) number = client.number.substring(3);
+				else number = client.number;
+
+				return number;
+			});
+
+			setClients(clients);
+			setNumbers(updatedNumbers);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar las productos", {
@@ -60,11 +73,11 @@ const AnalisisClientes: React.FC = () => {
 		order: QueryOrder
 	) {
 		try {
-			let shoppings: Client[];
+			let clients: Client[];
 
 			switch (filter) {
 			case "Celular":
-				shoppings = (
+				clients = (
 					await instance.get<Client[]>("/clients/searchByNumber", {
 						params: { order, search },
 					})
@@ -72,7 +85,7 @@ const AnalisisClientes: React.FC = () => {
 				break;
 
 			case "Cantidad":
-				shoppings = (
+				clients = (
 					await instance.get<Client[]>("/clients/searchByQuantity", {
 						params: { order, search },
 					})
@@ -80,7 +93,7 @@ const AnalisisClientes: React.FC = () => {
 				break;
 
 			default:
-				shoppings = (
+				clients = (
 					await instance.get<Client[]>(url, {
 						params: { order },
 					})
@@ -88,7 +101,7 @@ const AnalisisClientes: React.FC = () => {
 				break;
 			}
 
-			setShopping(shoppings);
+			setClients(clients);
 		}
 		catch {
 			enqueueSnackbar("Hubo un error al mostrar los productos", {
@@ -137,12 +150,12 @@ const AnalisisClientes: React.FC = () => {
 								</TableHead>
 
 								<TableBody>
-									{!(shoppings?.length > 0) ? (
+									{!(clients?.length > 0) ? (
 										<TableRow>
 											<TableCell>Sin datos</TableCell>
 										</TableRow>
 									) : (
-										shoppings?.map((Client) => (
+										clients?.map((Client, index) => (
 											<TableRow key={Client.id}>
 												<TableCell align="left">{Client.id}</TableCell>
 												<TableCell align="left">
@@ -150,7 +163,7 @@ const AnalisisClientes: React.FC = () => {
 														to={`/análisis/cliente/${Client.number}`}
 														style={{ color: "inherit", textDecoration: "none" }}
 													>
-														{Client.number}
+														{numbers[index]}
 													</NavLink>
 												</TableCell>
 												<TableCell align="left">{Client.purcharses}</TableCell>

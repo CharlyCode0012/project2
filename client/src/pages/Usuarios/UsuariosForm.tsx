@@ -111,14 +111,18 @@ const UserForm: React.FC<UserFormProps> = ({ userData, onSubmit }) => {
 
 		// Update data to DB
 		try {
-			await instance.put(`/users/${userData?.id}`, {
-				name,
-				date_B: new Date(birthday ?? "2000-01-01"),
-				type_use: userType,
-				e_mail: email,
-				pass: password,
-				cel: cellphone,
-			} as User);
+			await instance.put(
+				"/users",
+				{
+					name,
+					date_B: new Date(birthday ?? "2000-01-01"),
+					type_use: userType,
+					e_mail: email,
+					pass: password,
+					cel: cellphone,
+				} as User,
+				{ params: { userId: userData?.id } }
+			);
 
 			onSubmit(true); // "true" tells the submission was an update
 		}

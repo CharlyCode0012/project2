@@ -248,7 +248,9 @@ const deliveries: React.FC = () => {
 												<TableCell align="left">{delivery.place}</TableCell>
 												<TableCell align="left">
 													{delivery.date_delivery
-														? delivery.date_delivery.toString()
+														? new Date(delivery.date_delivery)
+															.toISOString()
+															.substring(0, 10)
 														: ""}
 												</TableCell>
 												<TableCell align="left">

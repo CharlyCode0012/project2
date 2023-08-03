@@ -22,7 +22,7 @@ import React, {
 	useEffect,
 } from "react";
 import { instance } from "helper/API";
-import { Catalog } from "models/Menu";
+import { Catalog } from "models/Catalog";
 import { Product } from "models/Product";
 import { enqueueSnackbar } from "notistack";
 
@@ -34,7 +34,7 @@ const ProductImage = () => {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [catalogs, setCatalogs] = useState<Catalog[]>([]);
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
-	const [imageUrl, setImageUrl] = useState<string>();
+	const [imageUrl, setImageUrl] = useState<string>("");
 	const catalogId = useRef<string>("");
 	const theme = useTheme();
 
@@ -207,7 +207,8 @@ const ProductImage = () => {
 						</Box>
 
 						<img
-							src={`http://127.0.0.1:3200/api/images/${imageUrl}`}
+							// src={`https://server-databot-2184e3a8d57a.herokuapp.com/api/images/${imageUrl}`}
+							src={`http://localhost:3200/api/images/${imageUrl}`}
 							style={{ width: "200px", height: "200px" }}
 						></img>
 						<Box

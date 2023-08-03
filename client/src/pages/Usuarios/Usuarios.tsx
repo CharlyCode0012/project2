@@ -134,13 +134,18 @@ const Usuarios = () => {
 	 * @param user data from the user that will be deleted
 	 */
 	async function deleteUser(deletedUser: User) {
-		try {
-			await instance.delete(`/users/${deletedUser.id}`);
-			enqueueSnackbar("Usuario eliminado con exito", { variant: "success" });
-			setUsers((users) => users.filter((user) => user.id !== deletedUser.id));
-		}
-		catch {
-			enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+		const isDelete = window.confirm(
+			`¿Estás seguro que quieres eliminar a: ${deletedUser.name}`
+		);
+		if (isDelete) {
+			try {
+				await instance.delete(`/users/${deletedUser.id}`);
+				enqueueSnackbar("Usuario eliminado con exito", { variant: "success" });
+				setUsers((users) => users.filter((user) => user.id !== deletedUser.id));
+			}
+			catch {
+				enqueueSnackbar("No se pudo eliminar", { variant: "error" });
+			}
 		}
 	}
 
