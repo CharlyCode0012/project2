@@ -32,7 +32,7 @@ import { Catalog } from "models/Catalog";
 import { FileUpload } from "@/FileUpload";
 import { useTheme } from "@mui/material/styles";
 
-const URL_IMAGE = "http://127.0.0.1:3200/api/images/";
+const URL_IMAGE = "https://server-production-c7b4.up.railway.app/api/images/";
 
 const Products: React.FC = () => {
 	const url = "/products";

@@ -207,8 +207,8 @@ const ProductImage = () => {
 						</Box>
 
 						<img
-							// src={`https://server-databot-2184e3a8d57a.herokuapp.com/api/images/${imageUrl}`}
-							src={`http://localhost:3200/api/images/${imageUrl}`}
+							src={`https://server-production-c7b4.up.railway.app/api/images/${imageUrl}`}
+							// src={`http://localhost:3200/api/images/${imageUrl}`}
 							style={{ width: "200px", height: "200px" }}
 						></img>
 						<Box

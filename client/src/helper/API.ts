@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const instance = axios.create({
-	// baseURL: "https://server-databot-2184e3a8d57a.herokuapp.com/api/",
-	// baseURL: "https://server-production-c7b4.up.railway.app/api/",
-	baseURL: "http://localhost:3200/api",
+	baseURL: "https://server-production-c7b4.up.railway.app/api/",
+	// baseURL: "http://localhost:3200/api",
 	headers: {
 		"Access-Control-Allow-Origin": "*",
 		"Content-Type": "application/json",
@@ -11,8 +10,8 @@ const instance = axios.create({
 });
 
 const instanceBot = axios.create({
-	// baseURL: "https://server-production-4487.up.railway.app/api/",
-	baseURL: "http://localhost:3500",
+	baseURL: "https://chatbot-production-f3e4.up.railway.app",
+	// baseURL: "http://localhost:3500",
 	headers: {
 		"Access-Control-Allow-Origin": "*",
 		"Content-Type": "application/json",

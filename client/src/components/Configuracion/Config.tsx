@@ -95,7 +95,7 @@ export const Config: React.FC = () => {
 					{isVendedor && (
 						<>
 							<img
-								src={"http://127.0.0.1:3500/QR"}
+								src={"https://chatbot-production-f3e4.up.railway.app/QR"}
 								style={{ width: "250px", height: "250px" }}
 								alt="Codigo QR"
 							></img>
