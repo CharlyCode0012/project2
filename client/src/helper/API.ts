@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const instance = axios.create({
-	// baseURL: "https://server-databot-2184e3a8d57a.herokuapp.com/api",
 	baseURL: "https://server-production-0b53.up.railway.app/api/",
 	// baseURL: "http://localhost:3200/api",
 	headers: {
