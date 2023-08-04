@@ -110,10 +110,9 @@ const Catalogs: React.FC = () => {
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
 
-		const endpoint = `${url}/${id}`;
 		if (isDelete) {
 			try {
-				await instance.delete(endpoint);
+				await instance.delete(url, { params: { catalogId: id } });
 				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
 					variant: "success",
 				});

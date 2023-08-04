@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, HashRouter } from "react-router-dom";
 import "./App.css";
 
 import Rutas from "@/Rutas";
@@ -50,11 +50,11 @@ const App: React.FC = () => {
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<SnackbarProvider maxSnack={3}>
-						<Router>
+						<HashRouter>
 							<LoginProvider>
 								<Rutas />
 							</LoginProvider>
-						</Router>
+						</HashRouter>
 					</SnackbarProvider>
 				</ThemeProvider>
 			</ColorModeContext.Provider>

@@ -1,11 +1,13 @@
 import React from "react";
+import Navbar from "@/Navbar/Navbar";
 
 const Error404 = () => {
 	const num = 0;
 	return (
-		<div>
-			<h2>Error404: NOT FOUND</h2>
-		</div>
+		<>
+			<Navbar />
+			<h1> Página no encontrada</h1>
+		</>
 	);
 };
 

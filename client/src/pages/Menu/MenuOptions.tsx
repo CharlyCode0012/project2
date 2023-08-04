@@ -119,11 +119,9 @@ const MenuOptions: React.FC = () => {
 			`¿Estás seguro que quieres eliminar a: ${keywords}`
 		);
 
-		const endpoint = `${url}/${deletedProductID}`;
 		if (isDelete) {
 			try {
-				console.log(`delete endpoint: ${endpoint}`);
-				await instance.delete(endpoint);
+				await instance.delete(url, { params: { menuResId: deletedProductID } });
 				enqueueSnackbar(`Se elimino exitosamente ${keywords}`, {
 					variant: "success",
 				});

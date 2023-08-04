@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Box, Button, Switch } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoginContext from "context/LoginContext";
@@ -18,6 +18,16 @@ export const Config: React.FC = () => {
 	const isVendedor: boolean = typeUser === "vendedor" ? true : false;
 
 	const [botState, setBotState] = useState(true); // Assuming the bot is initially turned on.
+
+	async function fetchState() {
+		const { data: state } = await instanceBot.get("/state");
+		console.log("state", state);
+		setBotState(state);
+	}
+
+	useEffect(() => {
+		fetchState();
+	}, []);
 
 	function onClose(): void {
 		handleLogin(null);

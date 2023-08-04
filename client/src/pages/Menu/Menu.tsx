@@ -98,11 +98,12 @@ const AnalisisClientes: React.FC = () => {
 			`¿Estás seguro que quieres eliminar a: ${name}`
 		);
 
-		const endpoint = `${url}/${deletedMenuID}`;
 		if (isDelete) {
 			try {
-				console.log(`delete endpoint: ${endpoint}`);
-				await instance.delete(endpoint);
+				const result = await instance.delete(url, {
+					params: { menuId: deletedMenuID },
+				});
+				console.log(result);
 				enqueueSnackbar(`Se elimino exitosamente ${name}`, {
 					variant: "success",
 				});
@@ -123,7 +124,7 @@ const AnalisisClientes: React.FC = () => {
 			setMenus(menus);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los Menus", {
+			enqueueSnackbar("Hubo un error al mostrar los Menús", {
 				variant: "error",
 			});
 		}
@@ -166,7 +167,7 @@ const AnalisisClientes: React.FC = () => {
 			setMenus(menus);
 		}
 		catch {
-			enqueueSnackbar("Hubo un error al mostrar los menus", {
+			enqueueSnackbar("Hubo un error al mostrar los menús", {
 				variant: "error",
 			});
 		}
@@ -194,7 +195,7 @@ const AnalisisClientes: React.FC = () => {
 							searchOptions={searchOptions}
 							onSubmitSearch={onSubmitSearch}
 						/>
-						<h1>Menus</h1>
+						<h1>Menús</h1>
 						{showModal && (
 							<Modal
 								open={showModal}
@@ -247,7 +248,7 @@ const AnalisisClientes: React.FC = () => {
 												</TableCell>
 												<TableCell align="left">{menu.answer}</TableCell>
 												<TableCell align="left">
-													{menu.principalMenu === false ? "Submenu" : "Menu"}
+													{menu.principalMenu === false ? "Submenú" : "Menú"}
 												</TableCell>
 												<TableCell align="left">{menu.id}</TableCell>
 												{isSeller && (
